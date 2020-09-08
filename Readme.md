@@ -1,5 +1,8 @@
 # **BovTB-nf**
 
+# Template:
+[![APHA-CSU](https://circleci.com/gh/APHA-CSU/BovTB-nf.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
+
 ------------
 
 This is the updated pipeline for APHA's processing of *Mycobacterium bovis* WGS data. BovTB-nf is designed to process a batch (1 or more samples) of paired-end fastq files generated on an Illumina sequencer. It will first remove duplicate reads from the dataset (FastUniq) and then trim the unique reads based on base-call quality and the presence of adapters (Trimmomatic). Reads are then mapped to the *M. bovis* AF2122 reference genome and variants called (bwa/samtools/bcftools).
