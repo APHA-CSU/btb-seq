@@ -1,6 +1,5 @@
 # **BovTB-nf**
 
-# Template:
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/BovTB-nf.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
 ------------
@@ -32,12 +31,17 @@ If required, there is simple script for installing the dependancies (helpfully c
 
 # Docker build
 
-Alternatively, the pipeline can run in an ubuntu image on docker. 
-To build the image:
-`docker build /PATH/TO/REPO/ -t bov-tb`
+Alternatively, the pipeline can run in a docker ubuntu image. 
 
-Run a docker container in bash:
-`docker run --rm -it bov-tb`
+Pull the latest (master) image from docker hub:
+> docker pull aaronsfishman/bov-tb:latest
+
+Then run the docker container in bash:
+> docker run --rm -it aaronsfishman/bov-tb:latest
+
+Or build and run the image directly from source
+> docker build /PATH/TO/REPO/ -t bov-tb
+> docker run --rm -it bov-tb
 
 -------------
 
