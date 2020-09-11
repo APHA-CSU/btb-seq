@@ -1,6 +1,5 @@
 # **BovTB-nf**
 
-# Template:
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/BovTB-nf.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
 ------------
