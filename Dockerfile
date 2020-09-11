@@ -12,7 +12,7 @@ LABEL about.tags="Genomics, WGS"
 
 ################## DEPENDENCIES ######################
 
-RUN this_should_throw_an_error
+RUN this_should_throw_an_error 
 
 # apt-get dependencies
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
