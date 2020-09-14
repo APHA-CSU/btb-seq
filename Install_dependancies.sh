@@ -70,9 +70,4 @@ cd Bracken-2.5.3
 sh ./install_bracken.sh ../bracken
 cd ..
 
-# Add locations to nextflow.config
-
-echo "params.dependPath = "\"$PWD"\"" >> ./nextflow.config
-echo "params.kraken2db = "\"$PWD"/Kraken2/db\"" >> ./nextflow.config
-
 echo "Dependancies installed successfully!"

@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-WORKDIR /BovTB-nf/
+
 
 ################## METADATA ##########################
 
@@ -11,6 +11,10 @@ LABEL about.tags="Genomics, WGS"
 
 
 ################## DEPENDENCIES ######################
+
+# Copy repository
+WORKDIR /BovTB-nf/
+COPY ./ ./
 
 # apt-get dependencies
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -49,13 +53,17 @@ RUN pip3 install biopython
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # bovtb tools
+WORKDIR /biotools/
+
 COPY ./Install_dependancies.sh ./Install_dependancies.sh
 RUN sh ./Install_dependancies.sh
 
-# pipeline
-COPY ./bTB-WGS_process.nf ./
+# Add locations to nextflow.config
+RUN echo "params.dependPath = "\"$PWD"\"" >> /BovTB-nf/nextflow.config
+RUN echo "params.kraken2db = "\"$PWD"/Kraken2/db\"" >> /BovTB-nf/nextflow.config
 
 
 ################## ENTRY ######################
 
+WORKDIR /BovTB-nf/
 CMD /bin/bash
