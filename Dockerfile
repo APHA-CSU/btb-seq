@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+ARG BOVTB_PATH=/BovTB-nf/
+ARG BIOTOOLS_PATH=/biotools/
 
 ################## METADATA ##########################
 
@@ -11,11 +13,6 @@ LABEL about.tags="Genomics, WGS"
 
 
 ################## DEPENDENCIES ######################
-
-# Copy repository
-WORKDIR /BovTB-nf/
-COPY ./ ./
-
 # apt-get dependencies
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-8-jdk \
@@ -40,6 +37,14 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-numpy \
     python3-pip
 
+# python 
+RUN pip3 install biopython
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
+
+################## BIOTOOLS ######################
+WORKDIR $BIOTOOLS_PATH
+
 # Install nextflow.
 # ENV line required to set jvm memory and cpu limits to docker. 
 # see: https://github.com/nextflow-io/nextflow/blob/v20.07.1/docker/Dockerfile
@@ -48,22 +53,20 @@ COPY install_nextflow-20.7.1.bash ./install_nextflow.bash
 RUN cat ./install_nextflow.bash | bash
 RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 
-# python 
-RUN pip3 install biopython
-RUN ln -s /usr/bin/python3 /usr/bin/python
-
-# bovtb tools
-WORKDIR /biotools/
-
+# Install other dependancies
+# TODO: embed this script within dockerfile to optimise cache
 COPY ./Install_dependancies.sh ./Install_dependancies.sh
 RUN sh ./Install_dependancies.sh
 
-# Add locations to nextflow.config
-RUN echo "params.dependPath = "\"$PWD"\"" >> /BovTB-nf/nextflow.config
-RUN echo "params.kraken2db = "\"$PWD"/Kraken2/db\"" >> /BovTB-nf/nextflow.config
-
 
 ################## ENTRY ######################
+WORKDIR $BOVTB_PATH
 
-WORKDIR /BovTB-nf/
+# Copy repository
+COPY ./ ./
+
+# Add locations to nextflow.config
+RUN echo "params.dependPath = \"$BIOTOOLS_PATH\"" >> ./nextflow.config
+RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db\"" >> ./nextflow.config
+
 CMD /bin/bash
