@@ -113,12 +113,12 @@ RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
     ./install_kraken2.sh ../Kraken2 && \
     cd ..
 
-# RUN mkdir Kraken2/db && \
-#     cd Kraken2/db && \
-#     wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_201904.tgz && \
-#     tar xvf minikraken2_v1_8GB_201904.tgz && \
-#     rm -f minikraken2_v1_8GB_201904.tgz && \
-#     cd ../..
+RUN mkdir Kraken2/db && \
+    cd Kraken2/db && \
+    wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_201904.tgz && \
+    tar xvf minikraken2_v1_8GB_201904.tgz && \
+    rm -f minikraken2_v1_8GB_201904.tgz && \
+    cd ../..
 
 # bracken
 RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.5.3.tar.gz && \
