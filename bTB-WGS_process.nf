@@ -349,10 +349,10 @@ process IDnonbovis{
 /* Combine all cluster assignment data into a single results file */
 
 AssignCluster
-	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$PWD/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
 
 QueryBovis
-	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$PWD/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
 
 workflow.onComplete {
 		log.info "Completed sucessfully:	$workflow.success"		
