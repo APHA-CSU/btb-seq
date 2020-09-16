@@ -19,6 +19,16 @@ jobs:
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
+  minimal-reads:
+    executor: nf-pipeline
+    steps:
+      - run: |
+          mkdir /results/
+          ln -s $PWD/tests/minimal-read-pair/ /reads
+          nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
+          WGS_CLUSTER_CSV=/results/`sh tests/print_todays_wgs_cluster.sh`
+          python tests/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome InsufficientData
+
 executors:
   nf-pipeline:
     docker:
@@ -26,6 +36,9 @@ executors:
 
 # Orchestrates sets of jobs
 workflows:
-  build:
+  validation:
     jobs:
       - build
+      - minimal-reads:
+        requires:
+          - build
