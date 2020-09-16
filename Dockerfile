@@ -138,4 +138,4 @@ COPY ./ ./
 RUN echo "params.dependPath = \"$BIOTOOLS_PATH\"" >> ./nextflow.config
 RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db/minikraken2_v1_8GB/\"" >> ./nextflow.config
 
-CMD /bin/bash
+CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
