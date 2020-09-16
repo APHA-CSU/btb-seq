@@ -18,7 +18,7 @@ ARG BIOTOOLS_PATH="/biotools/"
 ################## DEPENDENCIES ######################
 
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    openjdk-8-jdk \
+    openjdk-11-jdk \
     sudo \
     wget \
     make \
@@ -45,21 +45,13 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 # python 
-RUN pip3 install biopython
-RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN pip3 install biopython pandas && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 
 ################## BIOTOOLS ######################
 
 WORKDIR $BIOTOOLS_PATH
-
-# Install nextflow.
-# ENV line required to set jvm memory and cpu limits to docker. 
-# see: https://github.com/nextflow-io/nextflow/blob/v20.07.1/docker/Dockerfile
-ENV NXF_OPTS='-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap' NXF_HOME=/.nextflow
-COPY install_nextflow-20.7.1.bash ./install_nextflow.bash
-RUN cat ./install_nextflow.bash | bash
-RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 
 # FastUniq
 RUN wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz && \
@@ -128,6 +120,12 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.5.3.tar.gz && \
     sh ./install_bracken.sh ../bracken && \
     cd ..
 
+# Install nextflow.
+# ENV line required to set jvm memory and cpu limits to docker. 
+# see: https://github.com/nextflow-io/nextflow/blob/v20.07.1/docker/Dockerfile
+COPY install_nextflow-20.7.1.bash ./install_nextflow.bash
+RUN cat ./install_nextflow.bash | bash
+RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 
 ################## ENTRY ######################
 
@@ -138,6 +136,6 @@ COPY ./ ./
 
 # Add locations to nextflow.config
 RUN echo "params.dependPath = \"$BIOTOOLS_PATH\"" >> ./nextflow.config
-RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db\"" >> ./nextflow.config
+RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db/minikraken2_v1_8GB/\"" >> ./nextflow.config
 
 CMD /bin/bash
