@@ -14,7 +14,7 @@ jobs:
 
       # build and push Docker image
       - run: |
-          TAG=0.1.$CIRCLE_BUILD_NUM
+          TAG=$CIRCLE_BRANCH
           docker build -t aaronsfishman/bov-tb:$TAG .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
@@ -32,7 +32,7 @@ jobs:
 executors:
   nf-pipeline:
     docker:
-      - image: "aaronsfishman/bov-tb:0.1.$CIRCLE_BUILD_NUM"
+      - image: "aaronsfishman/bov-tb:$CIRCLE_BRANCH"
 
 # Orchestrates sets of jobs
 workflows:
