@@ -19,9 +19,13 @@ jobs:
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
+executors:
+  nf-pipeline:
+    docker:
+      - image: "aaronsfishman/bov-tb:0.1.$CIRCLE_BUILD_NUM"
+
 # Orchestrates sets of jobs
 workflows:
   build:
     jobs:
       - build
-
