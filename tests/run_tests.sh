@@ -1,33 +1,44 @@
 #!/bin/sh
+#
+#================================================================
+# run_tests.sh
+#================================================================
+#
+#% DESCRIPTION
+#%    Runs integration tests
+#%    Each test should be defined as a bash script and appended in the JOBS variable below
 
 JOBS=(
     minimal-pipeline.bash
 )
 
+IMAGE=bov-tb:test
 BASEDIR=$(dirname "$0")
 
+# Build docker image
 echo ==========================
-echo $i
+echo Build
 echo ==========================
-bash -e build.bash 
 
-# All other jobs
+bash -e -c "docker build -t $IMAGE $BASEDIR/../"
+
+# Integration Tests
 for i in "${JOBS[@]}"
 do
-
     echo ==========================
     echo $i
     echo ==========================
 
-    bash -e $BASEDIR/jobs/$i
+    # Run job in docker
+    sudo docker run -v $BASEDIR/jobs:/jobs/ --rm $IMAGE /bin/bash/ -e /jobs/$i
     exitcode=$?
 
+    # Handle exit code
     if [ $exitcode -ne 0 ]; then
-        echo ***JOB FAILED*** 
-        echo $i
+        echo *** JOB FAILED: $i ***
         exit 1
     else
-        echo --- $i PASSED ---
+        echo --- JOB PASSED: $i ---
     fi
 done
 
