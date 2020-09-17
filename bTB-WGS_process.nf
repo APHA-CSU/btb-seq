@@ -57,7 +57,7 @@ rptmask = file(params.rptmask)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
-descrimPos = file(params.descrimPos)
+discrimPos = file(params.discrimPos)
 
 pypath = file(params.pypath)
 dependpath = file(params.dependPath)
@@ -295,8 +295,8 @@ process AssignClusterCSS{
 
 	"""
 	bcftools index ${pair_id}.norm.vcf.gz
-	bcftools view -R ${descrimPos} -O v -o ${pair_id}.descrimPos.vcf ${pair_id}.norm.vcf.gz
-	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.descrimPos.vcf
+	bcftools view -R ${discrimPos} -O v -o ${pair_id}.discrimPos.vcf ${pair_id}.norm.vcf.gz
+	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
 	mv _stage1.csv ${pair_id}_stage1.csv
 	"""
 }
