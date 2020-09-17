@@ -21,8 +21,10 @@ jobs:
 
   minimal-reads:
     executor: nf-pipeline
+    working_directory: /BovTB-nf/
     steps:
       - run: |
+          echo PWD $PWD 
           mkdir /results/
           ln -s $PWD/tests/minimal-read-pair/ /reads
           nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
