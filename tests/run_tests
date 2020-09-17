@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 #
 #================================================================
-# run_tests.sh
+# run_tests
 #================================================================
 #
 #% DESCRIPTION
@@ -12,15 +12,19 @@ JOBS=(
     minimal-pipeline.bash
 )
 
-IMAGE=bov-tb:test
-BASEDIR=$(dirname "$0")
+IMAGE=bov-tb-test
+BASEDIR=$PWD/$(dirname "$0")
 
 # Build docker image
 echo ==========================
 echo Build
 echo ==========================
 
-bash -e -c "docker build -t $IMAGE $BASEDIR/../"
+sudo docker build -t $IMAGE $BASEDIR/../
+if [ $? -ne 0 ]; then
+    echo *** BUILD FAILED JOB ***
+    exit 1
+fi
 
 # Integration Tests
 for i in "${JOBS[@]}"
@@ -30,15 +34,19 @@ do
     echo ==========================
 
     # Run job in docker
-    sudo docker run -v $BASEDIR/jobs:/jobs/ --rm $IMAGE /bin/bash/ -e /jobs/$i
+    sudo docker run -v $BASEDIR/jobs:/jobs/ --rm $IMAGE /bin/bash -e /jobs/$i
     exitcode=$?
 
     # Handle exit code
     if [ $exitcode -ne 0 ]; then
+        echo
         echo *** JOB FAILED: $i ***
+        echo
         exit 1
     else
+        echo
         echo --- JOB PASSED: $i ---
+        echo
     fi
 done
 
