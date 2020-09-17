@@ -12,7 +12,7 @@
 # Set paths
 cd /BovTB-nf/
 mkdir /results/
-ln -s $PWD/tests/minimal-read-pair/ /reads
+ln -s $PWD/tests/data/minimal-read-pair/ /reads
 
 # Run nextflow
 nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
