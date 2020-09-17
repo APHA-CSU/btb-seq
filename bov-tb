@@ -17,4 +17,4 @@ READS=$1
 RESULTS=$2
 IMAGE=${3:-aaronsfishman/bov-tb:latest}
 
-echo sudo docker run --rm -it -v $READS:/reads/ -v $RESULTS:/results/ $IMAGE
+sudo docker run --rm -it -v $READS:/reads/ -v $RESULTS:/results/ $IMAGE
