@@ -33,12 +33,7 @@ If required, there is simple script for installing the dependancies (helpfully c
 
 Alternatively, the pipeline can run in a docker ubuntu image. 
 
-Pull the latest (master) image from docker hub:
-```
-docker pull aaronsfishman/bov-tb:latest
-``` 
-
-Then pull the latest image (only downloads if it's not already fetched) and run the nextflow container on data:
+To pull the latest image (only downloads if it's not already fetched) and run the nextflow container on data:
 ```
 ./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
 ```
@@ -51,7 +46,7 @@ docker build /PATH/TO/REPO/ -t my-bov-tb
 
 # Tests
 
-Integration tests can be run locally on a machine using the local `Dockerfile`
+Integration tests can execute in a local container built from the local `Dockerfile`
 ```
 chmod +x tests/run_tests
 ./tests/run_tests
