@@ -159,7 +159,7 @@ process VarCall {
 
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.norm.vcf.gz'
 
-	maxForks 2
+	maxForks 3
 
 	input:
 	set pair_id, file("${pair_id}.mapped.sorted.bam") from mapped_bam
