@@ -24,12 +24,11 @@ jobs:
     working_directory: /BovTB-nf/
     steps:
       - run: |
-          echo PWD $PWD 
           mkdir /results/
           ln -s $PWD/tests/minimal-read-pair/ /reads
           nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
-          WGS_CLUSTER_CSV=/results/`sh tests/print_todays_wgs_cluster.sh`
-          python tests/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome InsufficientData
+          WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`
+          python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome InsufficientData
 
 executors:
   nf-pipeline:
