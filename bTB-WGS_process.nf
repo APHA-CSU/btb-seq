@@ -57,6 +57,7 @@ rptmask = file(params.rptmask)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
+descrimPos = file(params.descrimPos)
 
 pypath = file(params.pypath)
 dependpath = file(params.dependPath)
@@ -282,7 +283,7 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'finish'
     tag "$pair_id"
-	memory '2 GB'
+	
 
 	maxForks 1
 
@@ -293,8 +294,9 @@ process AssignClusterCSS{
 	file("${pair_id}_stage1.csv") into AssignCluster
 
 	"""
-	gunzip -c ${pair_id}.norm.vcf.gz > ${pair_id}.pileup.vcf
-	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.pileup.vcf
+	bcftools index ${pair_id}.norm.vcf.gz
+	bcftools view -R ${descrimPos} -O v -o ${pair_id}.descrimPos.vcf ${pair_id}.norm.vcf.gz
+	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.descrimPos.vcf
 	mv _stage1.csv ${pair_id}_stage1.csv
 	"""
 }
