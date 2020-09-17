@@ -127,6 +127,7 @@ COPY install_nextflow-20.7.1.bash ./install_nextflow.bash
 RUN cat ./install_nextflow.bash | bash
 RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 
+
 ################## ENTRY ######################
 
 WORKDIR $BOVTB_PATH
