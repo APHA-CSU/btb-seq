@@ -282,6 +282,7 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'finish'
     tag "$pair_id"
+	memory '2 GB'
 
 	maxForks 1
 
