@@ -23,7 +23,7 @@ jobs:
     executor: nf-pipeline
     working_directory: /BovTB-nf/
     steps:
-      - run: "bash -e tests/jobs/minmal-pipeline.bash"
+      - run: "bash -e tests/jobs/minimal-pipeline.bash"
       - store_artifacts:
           path: /results/report.html
           destination: report.html
