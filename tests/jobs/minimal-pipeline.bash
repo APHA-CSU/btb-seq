@@ -18,8 +18,7 @@ ln -s $PWD/tests/data/minimal-read-pair/ /reads
 nextflow run bTB-WGS_process.nf \
 --outdir "/results/" \
 --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
--with-report "/results/report.html" \
---kraken2db "/biotools/Kraken2/db/16S_SILVA138_k2db/"
+-with-report "/results/report.html"
 
 # Check results
 WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`
