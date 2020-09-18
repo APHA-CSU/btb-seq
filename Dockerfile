@@ -111,15 +111,15 @@ RUN wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_20190
     tar xvf minikraken2_v1_8GB_201904.tgz -C Kraken2/db/ && \
     rm -f minikraken2_v1_8GB_201904.tgz
 
-RUN wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/16S_Silva138_20200326.tgz && \
+RUN wget https://genome-idx.s3.amazonaws.com/kraken/16S_Silva138_20200326.tgz && \
     tar xvf 16S_Silva138_20200326.tgz -C Kraken2/db/ && \
     rm -f 16S_Silva138_20200326.tgz
 
 # bracken
-RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.5.3.tar.gz && \
-    tar xzf v2.5.3.tar.gz && \
-    rm -f v2.5.3.tar.gz && \
-    cd Bracken-2.5.3 && \
+RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
+    tar xzf v2.6.0.tar.gz && \
+    rm -f v2.6.0.tar.gz && \
+    cd Bracken-2.6.0 && \
     sh ./install_bracken.sh ../bracken && \
     cd ..
 

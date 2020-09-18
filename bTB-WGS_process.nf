@@ -330,9 +330,9 @@ process IDnonbovis{
 	outcome=\$(cat outcome.txt)
 	if [ \$outcome != "Pass" ]; then
 	$dependpath/Kraken2/kraken2 --threads 2 --quick $lowmem --db $kraken2db --output - --report ${pair_id}_"\$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
-	$dependpath/Bracken-2.5.3/bracken -d $kraken2db -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
+	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
 	sed 1d ${pair_id}_"\$outcome"_bracken.out | sort -t \$'\t' -k7,7 -nr - | head -20 > ${pair_id}_"\$outcome"_brackensort.tab
-	$dependpath/Bracken-2.5.3/bracken -d $kraken2db -r150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
+	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
 	( sed -u 1q; sort -t \$'\t' -k7,7 -nr ) < ${pair_id}_"\$outcome"-S1_bracken.out > ${pair_id}_"\$outcome"-S1_brackensort.tab
 	BovPos=\$(grep 'variant bovis' ${pair_id}_"\$outcome"-S1_brackensort.tab |
 	 awk '{print \$1" "\$2" "\$3" "\$4","\$9","(\$10*100)}' || true)
