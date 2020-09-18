@@ -33,19 +33,28 @@ If required, there is simple script for installing the dependancies (helpfully c
 
 Alternatively, the pipeline can run in a docker ubuntu image. 
 
-Pull the latest (master) image from docker hub:
-> docker pull aaronsfishman/bov-tb:latest
+To pull the latest image (only downloads if it's not already fetched) and run the nextflow container on data:
+```
+./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
+```
 
-Then run the docker container in bash:
-> docker run --rm -it aaronsfishman/bov-tb:latest
+Or, build and run the image directly from source
+```
+docker build /PATH/TO/REPO/ -t my-bov-tb
+./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/ my-bov-tb
+```
 
-Or build and run the image directly from source
-> docker build /PATH/TO/REPO/ -t bov-tb
-> docker run --rm -it bov-tb
+# Tests
 
--------------
+Integration tests can execute in a local container built from the local `Dockerfile`
+```
+chmod +x tests/run_tests
+./tests/run_tests
+```
 
-## Examples
+To add a test case, add a bash script under `tests/jobs/` and update the `JOBS` variable in `tests/run_tests`. Any command that exits with a non-zero exit code results in failure. 
+
+# Examples
 
 In its simplest form just run the Nextflow process from the directory containing the fastq files:
 
