@@ -18,6 +18,7 @@ ln -s $PWD/tests/data/minimal-read-pair/ /reads
 nextflow run bTB-WGS_process.nf \
 --outdir "/results/" \
 --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
+--lowmem "--memory-map" \
 -with-report "/results/report.html"
 
 # Check results
