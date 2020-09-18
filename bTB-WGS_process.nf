@@ -57,6 +57,7 @@ rptmask = file(params.rptmask)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
+discrimPos = file(params.discrimPos)
 
 pypath = file(params.pypath)
 dependpath = file(params.dependPath)
@@ -159,7 +160,7 @@ process VarCall {
 
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.norm.vcf.gz'
 
-	maxForks 2
+	maxForks 3
 
 	input:
 	set pair_id, file("${pair_id}.mapped.sorted.bam") from mapped_bam
@@ -282,6 +283,7 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'finish'
     tag "$pair_id"
+	
 
 	maxForks 1
 
@@ -292,8 +294,9 @@ process AssignClusterCSS{
 	file("${pair_id}_stage1.csv") into AssignCluster
 
 	"""
-	gunzip -c ${pair_id}.norm.vcf.gz > ${pair_id}.pileup.vcf
-	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.pileup.vcf
+	bcftools index ${pair_id}.norm.vcf.gz
+	bcftools view -R ${discrimPos} -O v -o ${pair_id}.discrimPos.vcf ${pair_id}.norm.vcf.gz
+	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
 	mv _stage1.csv ${pair_id}_stage1.csv
 	"""
 }
