@@ -15,7 +15,11 @@ mkdir /results/
 ln -s $PWD/tests/data/minimal-read-pair/ /reads
 
 # Run nextflow
-nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
+nextflow run bTB-WGS_process.nf \
+--outdir "/results/" \
+--reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
+--lowmem '"--memory-map"' \
+-with-report "/results/report.html"
 
 # Check results
 WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`

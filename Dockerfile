@@ -39,6 +39,8 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3 \
     python3-numpy \
     python3-pip \
+    vim \
+    nano \
     && \
     apt-get clean && \
     apt-get purge && \
@@ -105,18 +107,17 @@ RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
     ./install_kraken2.sh ../Kraken2 && \
     cd ..
 
-RUN mkdir Kraken2/db && \
-    cd Kraken2/db && \
-    wget ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_201904.tgz && \
-    tar xvf minikraken2_v1_8GB_201904.tgz && \
-    rm -f minikraken2_v1_8GB_201904.tgz && \
-    cd ../..
+RUN mkdir Kraken2/db
+
+RUN wget https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v1_8GB_201904.tgz && \
+    tar xvf minikraken2_v1_8GB_201904.tgz -C Kraken2/db/ && \
+    rm -f minikraken2_v1_8GB_201904.tgz
 
 # bracken
-RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.5.3.tar.gz && \
-    tar xzf v2.5.3.tar.gz && \
-    rm -f v2.5.3.tar.gz && \
-    cd Bracken-2.5.3 && \
+RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
+    tar xzf v2.6.0.tar.gz && \
+    rm -f v2.6.0.tar.gz && \
+    cd Bracken-2.6.0 && \
     sh ./install_bracken.sh ../bracken && \
     cd ..
 
@@ -139,4 +140,4 @@ COPY ./ ./
 RUN echo "params.dependPath = \"$BIOTOOLS_PATH\"" >> ./nextflow.config
 RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db/minikraken2_v1_8GB/\"" >> ./nextflow.config
 
-CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz"
+CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
