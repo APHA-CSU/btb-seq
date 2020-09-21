@@ -49,7 +49,6 @@
 params.lowmem = ""
 params.reads = "$PWD/*_{S*_R1,S*_R2}*.fastq.gz"
 params.outdir = "$PWD"
-lowmem = Channel.value(params.lowmem)
 
 ref = file(params.ref)
 refgbk = file(params.refgbk)
@@ -323,7 +322,6 @@ process IDnonbovis{
 
 	input:
 	set pair_id, file('outcome.txt'), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from IDdata
-	val lowmem from lowmem
 
 	output:
 	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
@@ -332,7 +330,7 @@ process IDnonbovis{
 	"""
 	outcome=\$(cat outcome.txt)
 	if [ \$outcome != "Pass" ]; then
-	$dependpath/Kraken2/kraken2 --threads 2 --quick $lowmem --db $kraken2db --output - --report ${pair_id}_"\$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
+	$dependpath/Kraken2/kraken2 --threads 2 --quick $params.lowmem --db $kraken2db --output - --report ${pair_id}_"\$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
 	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
 	sed 1d ${pair_id}_"\$outcome"_bracken.out | sort -t \$'\t' -k7,7 -nr - | head -20 > ${pair_id}_"\$outcome"_brackensort.tab
 	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
