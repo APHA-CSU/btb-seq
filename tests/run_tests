@@ -16,6 +16,11 @@ JOBS=(
 IMAGE=bov-tb-test
 BASEDIR=$PWD/$(dirname "$0")
 
+# Run a single job if defined on command line
+if [ -z ${1+x} ]; then 
+    JOBS=($1)
+fi
+
 # Build docker image
 echo ==========================
 echo Build
