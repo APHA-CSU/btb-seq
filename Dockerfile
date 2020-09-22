@@ -41,6 +41,7 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-pip \
     vim \
     nano \
+    bc \
     && \
     apt-get clean && \
     apt-get purge && \
