@@ -8,6 +8,8 @@
 
 #  Define inputs - sample name
 
+set -e
+
 pair_id=$1
 
 # Count reads in each catagory, using '+' as the only character on a line (^+$) as a proxy in fastq files 
