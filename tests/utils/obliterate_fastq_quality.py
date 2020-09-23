@@ -14,6 +14,7 @@ def obliterate_quality(filepath_in, filepath_out):
     original_fastq = SeqIO.parse(filepath_in, "fastq")
 
     # Obliterate quality
+    badq_fastq = []
     for line in original_fastq:
         new_qualities = [0]*len(line._per_letter_annotations["phred_quality"])
         line._per_letter_annotations["phred_quality"] = new_qualities
