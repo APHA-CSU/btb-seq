@@ -1,3 +1,4 @@
 .nextflow.log*
 .nextflow/
 .DS_Store
+temp/
