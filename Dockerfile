@@ -19,6 +19,7 @@ ARG BIOTOOLS_PATH="/biotools/"
 
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-11-jdk \
+    bc \
     sudo \
     wget \
     make \
