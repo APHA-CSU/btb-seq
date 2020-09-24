@@ -331,6 +331,11 @@ process IDnonbovis{
 	outcome=\$(cat outcome.txt)
 	if [ \$outcome != "Pass" ]; then
 	$dependpath/Kraken2/kraken2 --threads 2 --quick $params.lowmem --db $kraken2db --output - --report ${pair_id}_"\$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
+	
+	# HACK: (AF) Ignore Bracken errors. Better to handle output from Kraken and have unit tests, 
+	# but easier let the pipeline pass while we are setting up validation tests.. 
+	set +e
+
 	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
 	sed 1d ${pair_id}_"\$outcome"_bracken.out | sort -t \$'\t' -k7,7 -nr - | head -20 > ${pair_id}_"\$outcome"_brackensort.tab
 	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
@@ -339,6 +344,10 @@ process IDnonbovis{
 	 awk '{print \$1" "\$2" "\$3" "\$4","\$9","(\$10*100)}' || true)
 	echo "Sample,ID,TotalReads,Abundance" > ${pair_id}_bovis.csv
 	echo "${pair_id},"\$BovPos"" >> ${pair_id}_bovis.csv
+	
+	# HACK: see above
+	set -e
+
 	else
 	echo "ID not required"
 	fi
