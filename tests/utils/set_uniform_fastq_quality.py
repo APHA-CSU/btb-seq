@@ -9,27 +9,30 @@ import argparse
 
 from Bio import SeqIO
 
-def obliterate_quality(filepath_in, filepath_out):
+def set_uniform_fastq_quality(filepath_in, filepath_out, quality):
     # Parse
     original_fastq = SeqIO.parse(filepath_in, "fastq")
 
     # Obliterate quality
-    badq_fastq = []
-    for line in original_fastq:
-        new_qualities = [0]*len(line._per_letter_annotations["phred_quality"])
+    new_fastq = []
+    for i, line in enumerate(original_fastq):
+        num_reads = len(line._per_letter_annotations["phred_quality"])
+        new_qualities = [quality]*num_reads
         line._per_letter_annotations["phred_quality"] = new_qualities
-        badq_fastq.append(line)
+        
+        new_fastq.append(line)
 
     # Write
-    SeqIO.write(badq_fastq, filepath_out, "fastq")
+    SeqIO.write(new_fastq, filepath_out, "fastq")
 
 if __name__ == '__main__':
     # Parse
     parser = argparse.ArgumentParser(description="Copy a fastq to a new file with the worst possible quality")
+    parser.add_argument('quality', type=int, help="Phred quality score that all bases are set to")
     parser.add_argument('filepath_in', help="Filepath to original fastq file")
     parser.add_argument('filepath_out', help="Output filepath")
 
     args = parser.parse_args()
 
     # Run
-    obliterate_quality(**vars(args))
+    set_uniform_fastq_quality(**vars(args))
