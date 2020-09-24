@@ -8,13 +8,10 @@
 #% DESCRIPTION
 #%    Checks the pipeline response against bad and good quality reads
 
-
 function test_quality {
     quality=$1
     field=$2
     value=$3
-
-    cd /BovTB-nf/
     
     # Set paths
     reads=/reads/$quality/
@@ -24,17 +21,26 @@ function test_quality {
     mkdir -p /results/$quality/
 
     # Download
+    read1=B6-16_R1_26.fastq
+    read2=B6-16_R2_26.fastq
+    wget https://github.com/afishman/gitlfs/raw/master/lfs/$read1.gz
+    wget https://github.com/afishman/gitlfs/raw/master/lfs/$read2.gz
 
     # Unzip
-    gunzip /reads/$quality/...  /reads/$quality/...
+    gunzip -f ${read1}.gz ${read2}.gz
 
     # Change quality
-    python tests/set_uniform_fastq_quality.py $quality X Y
-    python tests/set_uniform_fastq_quality.py $quality X Y
+    echo pwd $PWD
+    ls tests/utils/
+    python tests/utils/set_uniform_fastq_quality.py $quality $read1 $read1
+    python tests/utils/set_uniform_fastq_quality.py $quality $read2 $read2
+
+    # Move over
+    mv $read1 $reads/quality-${quality}_S1_R1_001.fastq
+    mv $read2 $reads/quality-${quality}_S1_R2_001.fastq
 
     # Zip 
-    gzip X
-    gzip Y
+    gzip -f $reads/*
 
     # Run nextflow
     nextflow run bTB-WGS_process.nf \
