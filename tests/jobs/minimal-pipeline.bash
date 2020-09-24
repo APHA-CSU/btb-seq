@@ -22,5 +22,5 @@ nextflow run bTB-WGS_process.nf \
 -with-report "/results/report.html"
 
 # Check results
-WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`
+WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh MRP`
 python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome InsufficientData

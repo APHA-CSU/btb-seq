@@ -8,7 +8,7 @@ import pandas as pd
 import argparse
 
 def assert_first_csv_row(filename, field, value):
-	df = pd.read_csv(filename)
+	df = pd.read_csv(filename, dtype=str, keep_default_na=False)
 
 	if field not in df:
 		raise Exception('CSV does not contain field: %s (%s)'%(field, filename))
@@ -17,7 +17,7 @@ def assert_first_csv_row(filename, field, value):
 		raise Exception('No rows found in %s'%filename)
 
 	if not df[field][0] == value:
-		raise Exception("First entry in %s field mismatch (Got: %s \t Expected: %s)" % (field, df[field][0], value))
+		raise Exception("First entry in %s field mismatch \nGot: %s \nExpected: %s" % (field, df[field][0], value))
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description="""

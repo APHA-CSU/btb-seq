@@ -9,10 +9,12 @@
 #%    Checks the pipeline response against bad and good quality reads
 
 function test_quality {
+    # Args
     quality=$1
-    field=$2
-    value=$3
-    
+    outcome=$2
+    flag=$3
+    group=$4
+
     # Set paths
     reads=/reads/$quality/
     mkdir -p $reads
@@ -30,30 +32,31 @@ function test_quality {
     gunzip -f ${read1}.gz ${read2}.gz
 
     # Change quality
-    echo pwd $PWD
-    ls tests/utils/
     python tests/utils/set_uniform_fastq_quality.py $quality $read1 $read1
     python tests/utils/set_uniform_fastq_quality.py $quality $read2 $read2
 
     # Move over
-    mv $read1 $reads/quality-${quality}_S1_R1_001.fastq
-    mv $read2 $reads/quality-${quality}_S1_R2_001.fastq
+    name=quality-${quality}
+    mv $read1 $reads/${name}_S1_R1_001.fastq
+    mv $read2 $reads/${name}_S1_R2_001.fastq
 
     # Zip 
-    gzip -f $reads/*
+    gzip -f $reads/*.fastq
 
     # Run nextflow
     nextflow run bTB-WGS_process.nf \
     --outdir "$results/" \
     --reads "$reads/*_{S*_R1,S*_R2}*.fastq.gz" \
     --lowmem '"--memory-map"' \
-    -with-report "/results/report-$quality.html"
+    -with-report "/results/reports/report-$quality.html"
     
     # Check results
-    WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`
-    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV $field $value
+    WGS_CLUSTER_CSV=$results/`sh tests/utils/print_todays_wgs_cluster.sh $quality`
+    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome "$outcome"
+    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV flag "$flag"
+    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV group "$group"
 }
 
 # Check the two quality scores
-test_quality 19 Outcome Pass
-test_quality 20 Outcome CheckRequired
+test_quality 19 CheckRequired LowCoverage NA
+test_quality 20 "Pass" "BritishbTB" "B6-16"
