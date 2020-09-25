@@ -15,48 +15,52 @@ It has been built to run using nextflow, using standard bioinformatic tools for 
 -	Kraken2 (and database)
 -	Bracken
 
-## Installation
 
-Of course Nextflow itself is a prerequisite and should be installed as described in the [Nextflow Documentation](https://www.nextflow.io/docs/latest/getstarted.html)
+## Run pipeline in Docker
 
-If you have the dependancies installed the pipeline can run by simply typing: 
+We recommend running the pipeline with our docker image. 
 
-	nextflow run ellisrichardj/BovTB-nf
-
-Alternatively, clone the repository:
-
-	git clone https://github.com/ellisrichardj/BovTB-nf.git
-
-If required, there is simple script for installing the dependancies (helpfully called Install_dependancies.sh), which will also update the nextflow config file with their locations.
-
-# Docker build
-
-Alternatively, the pipeline can run in a docker ubuntu image. 
-
-To pull the latest image (only downloads if it's not already fetched) and run the nextflow container on data:
+To pull the latest image (if it's not already fetched) and run the nextflow container on data:
 ```
 ./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
 ```
 
-Or, build and run the image directly from source
+The `/PATH/TO/READS/` directory should contain fastq files named with the `*_{S*_R1,S*_R2}*.fastq.gz` pattern. For example, a directory with `bovis_S1_R1.fastq.gz` and `bovis_S1_R2.fastq.gz` contains a single pair of reads
+
+
+### Build image from source 
+
+You can also build and run the image directly from source
 ```
 docker build /PATH/TO/REPO/ -t my-bov-tb
 ./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/ my-bov-tb
 ```
 
-# Tests
 
-Integration tests can execute in a local container built from the local `Dockerfile`
-```
-chmod +x tests/run_tests
-./tests/run_tests
-```
+## Validation
 
-To add a test case, add a bash script under `tests/jobs/` and update the `JOBS` variable in `tests/run_tests`. Any command that exits with a non-zero exit code results in failure. 
+The pipeline is validated against real-world biological samples sequenced with Illumina NextSeq machines at APHA. The test code for the validation tests is stored under `tests/jobs/`. A summary of each test is detailed below
 
-# Examples
 
-In its simplest form just run the Nextflow process from the directory containing the fastq files:
+### Quality Test
 
-	cd /path/to/Data
-	nextflow run BovTB-nf
+Low quality bases are removed from the sequence using `Trimmomatic`. This program uses a sliding window to delete reads from the sequence when the average base quality drops below 20. A summary of expected results is shown below:
+
+| Base Quality | Outcome | group | flag |
+| 19   | CheckRequired | LowCoverage | NA |
+| 20   | Pass | BritishbTB | B6-16 |
+
+
+# Local Installation
+
+Of course Nextflow itself is a prerequisite and should be installed as described in the [Nextflow Documentation](https://www.nextflow.io/docs/latest/getstarted.html)
+
+If you have the dependancies installed the pipeline can run by simply typing: 
+
+    nextflow run ellisrichardj/BovTB-nf
+
+Alternatively, clone the repository:
+
+    git clone https://github.com/ellisrichardj/BovTB-nf.git
+
+If required, there is simple script for installing the dependancies (helpfully called Install_dependancies.sh), which will also update the nextflow config file with their locations.

@@ -1,6 +1,7 @@
 version: 2.1
 
 commands:
+  # Run tests under BovTB-nf/tests/jobs/ and store artifacts
   run-test:
     parameters:
       testname:
@@ -16,6 +17,7 @@ commands:
       - store_artifacts:
           path: /artifacts/
 
+# Run tests under BovTB-nf/tests/jobs/ and store artifacts
 jobs:
   # Docker image containing the nextflow pipeline
   build:
@@ -44,12 +46,13 @@ jobs:
       - run-test:
           testname: "quality"
 
+# Run a job on the current branch's Dockerfile
 executors:
   nf-pipeline:
     docker:
       - image: "aaronsfishman/bov-tb:$CIRCLE_BRANCH"
 
-# Orchestrates sets of jobs
+# Orchestrates the validation tests 
 workflows:
   validation:
     jobs:

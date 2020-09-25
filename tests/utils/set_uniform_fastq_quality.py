@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-""" obliterate_fastq_quality.py: 
+""" set_uniform_fastq_quality.py: 
         Copy a fastq to a new file with the worst possible quality
 """
 
@@ -9,7 +9,10 @@ import argparse
 
 from Bio import SeqIO
 
-def set_uniform_fastq_quality(filepath_in, filepath_out, quality):
+def set_uniform_fastq_quality(quality, filepath_in, filepath_out):
+    """
+        Copy a fastq file to a new file with uniform quality
+    """
     # Parse
     original_fastq = SeqIO.parse(filepath_in, "fastq")
 
