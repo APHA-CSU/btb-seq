@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 """ set_uniform_fastq_quality.py: 
-        Copy a fastq to a new file with the worst possible quality
+        Copy a fastq to a new file with uniform base quality
 """
 
 import sys
@@ -11,7 +11,7 @@ from Bio import SeqIO
 
 def set_uniform_fastq_quality(quality, filepath_in, filepath_out):
     """
-        Copy a fastq file to a new file with uniform quality
+        Copy a fastq file to a new file with uniform base quality
     """
     # Parse
     original_fastq = SeqIO.parse(filepath_in, "fastq")
