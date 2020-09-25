@@ -45,7 +45,7 @@ The pipeline is validated against real-world biological samples sequenced with I
 Low quality bases are removed from the sequence using `Trimmomatic`. This program uses a sliding window to delete reads from the sequence when the average base quality drops below 20. A summary of expected results is shown below:
 
 
-| Base Quality | Outcome | group | flag |
+| Base Quality | Outcome | flag | group |
 | ------------- | ------------- | ------------- | ------------- | 
 | 19   | CheckRequired | LowCoverage | NA |
 | 20   | Pass | BritishbTB | B6-16 |
