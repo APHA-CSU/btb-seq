@@ -2,7 +2,7 @@
 #!/bin/sh
 #
 #================================================================
-# minimal-pipeline.sh
+# tiny-reads-test.bash
 #================================================================
 #
 #% DESCRIPTION
@@ -11,16 +11,16 @@
 
 # Set paths
 mkdir -p /results/
-mkdir -p /reads/MRP/
-cp -r $PWD/tests/data/minimal-read-pair/* /reads/MRP/
+mkdir -p /reads/tinyreads/
+cp -r $PWD/tests/data/tinyreads/* /reads/tinyreads/
 
 # Run nextflow
 nextflow run bTB-WGS_process.nf \
 --outdir "/results/" \
 --reads "/reads/MRP/*_{S*_R1,S*_R2}*.fastq.gz" \
 --lowmem '"--memory-map"' \
--with-report "/results/reports/report.html"
+-with-report "/artifacts/report.html"
 
 # Check results
-WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh MRP`
+WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh tinyreads`
 python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome InsufficientData

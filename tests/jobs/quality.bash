@@ -2,11 +2,11 @@
 #!/bin/sh
 #
 #================================================================
-# quality-test.bash
+# quality.bash
 #================================================================
 #
 #% DESCRIPTION
-#%    Checks the pipeline response against bad and good quality reads
+#%    Checks the pipeline response against good and bad quality reads
 
 function test_quality {
     # Args
@@ -20,18 +20,19 @@ function test_quality {
     mkdir -p $reads
 
     results=/results/$quality/
-    mkdir -p /results/$quality/
+    mkdir -p $results
 
     # Download
     read1=B6-16_R1_26.fastq
     read2=B6-16_R2_26.fastq
-    wget https://github.com/afishman/gitlfs/raw/master/lfs/$read1.gz
-    wget https://github.com/afishman/gitlfs/raw/master/lfs/$read2.gz
+    root=https://github.com/afishman/gitlfs/raw/master/lfs
+    wget $root/$read1.gz
+    wget $root/$read2.gz
 
     # Unzip
     gunzip -f ${read1}.gz ${read2}.gz
 
-    # Change quality
+    # Set quality
     python tests/utils/set_uniform_fastq_quality.py $quality $read1 $read1
     python tests/utils/set_uniform_fastq_quality.py $quality $read2 $read2
 
@@ -48,7 +49,7 @@ function test_quality {
     --outdir "$results/" \
     --reads "$reads/*_{S*_R1,S*_R2}*.fastq.gz" \
     --lowmem '"--memory-map"' \
-    -with-report "/results/reports/report-$quality.html"
+    -with-report "/artifacts/report-Q${quality}.html"
     
     # Check results
     WGS_CLUSTER_CSV=$results/`sh tests/utils/print_todays_wgs_cluster.sh $quality`
@@ -58,5 +59,5 @@ function test_quality {
 }
 
 # Check the two quality scores
-test_quality 19 CheckRequired LowCoverage NA
+test_quality 19 "CheckRequired" "LowCoverage" "NA"
 test_quality 20 "Pass" "BritishbTB" "B6-16"
