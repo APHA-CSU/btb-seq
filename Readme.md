@@ -42,10 +42,10 @@ The pipeline is validated against real-world biological samples sequenced with I
 
 ### Quality Test
 
-Low quality bases are removed from the sequence using `Trimmomatic`. This program uses a sliding window to delete reads from the sequence when the average base quality drops below 20. A summary of expected results is shown below:
-
+The quality test ensures that low quality reads (<20) are not considered for variant calling and genotyping. This is performed by setting uniform quality values to a real-world *M. bovis* sample and asserting output. Low quality bases are removed from the sequence using `Trimmomatic`, which uses a sliding window that deletes reads when the average base quality drops below 20. A table of expected results is shown below.
 
 | Base Quality | Outcome | flag | group |
 | ------------- | ------------- | ------------- | ------------- | 
 | 19   | CheckRequired | LowCoverage | NA |
 | 20   | Pass | BritishbTB | B6-16 |
+
