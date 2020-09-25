@@ -1,11 +1,12 @@
 #!/bin/bash
 #
 #================================================================
-# tiny-reads-test.bash
+# tiny-reads.bash
 #================================================================
 #
 #% DESCRIPTION
-#%    Tests the nextflow pipeline on a minimal dataset
+#%    Tests the nextflow pipeline on a tiny dataset. 
+#%    Asserts the Outcome is Insufficient Data
 
 
 # Set paths
