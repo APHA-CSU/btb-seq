@@ -5,7 +5,8 @@
 #================================================================
 #
 #% DESCRIPTION
-#%    Checks the pipeline response against good and bad quality reads
+#%    Checks the pipeline response against good or bad quality reads
+#%    Input argument should be either 'low' or 'adequate'
 
 # Import
 source tests/utils/aliases.bash

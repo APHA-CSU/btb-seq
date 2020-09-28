@@ -1,3 +1,13 @@
+#!/bin/bash
+#
+#================================================================
+# aliases.bash
+#================================================================
+#
+#% DESCRIPTION
+#%    A number of aliases useful for testing
+
+
 alias nextflowtest="nextflow run bTB-WGS_process.nf \
 --outdir "/results/" \
 --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
