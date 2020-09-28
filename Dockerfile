@@ -19,6 +19,7 @@ ARG BIOTOOLS_PATH="/biotools/"
 
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-11-jdk \
+    bc \
     sudo \
     wget \
     make \
@@ -136,9 +137,5 @@ WORKDIR $BOVTB_PATH
 
 # Copy repository
 COPY ./ ./
-
-# Add locations to nextflow.config
-RUN echo "params.dependPath = \"$BIOTOOLS_PATH\"" >> ./nextflow.config
-RUN echo "params.kraken2db = \"$BIOTOOLS_PATH/Kraken2/db/minikraken2_v1_8GB/\"" >> ./nextflow.config
 
 CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"

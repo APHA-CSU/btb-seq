@@ -1,5 +1,23 @@
 version: 2.1
 
+commands:
+  # Run tests under BovTB-nf/tests/jobs/ and store artifacts
+  run-test:
+    parameters:
+      testname:
+        description: Runs a test specified under tests/jobs/<< testname >>.bash
+        type: string
+
+    steps:
+      - run: |
+          cd /BovTB-nf/
+          mkdir -p /artifacts/
+          bash -e tests/jobs/<< parameters.testname >>.bash
+
+      - store_artifacts:
+          path: /artifacts/
+
+# Run tests under BovTB-nf/tests/jobs/ and store artifacts
 jobs:
   # Docker image containing the nextflow pipeline
   build:
@@ -9,35 +27,39 @@ jobs:
 
     steps:
       - checkout
-
       - setup_remote_docker
-
-      # build and push Docker image
       - run: |
           TAG=$CIRCLE_BRANCH
           docker build -t aaronsfishman/bov-tb:$TAG .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
-  minimal-reads:
+  tinyreads:
     executor: nf-pipeline
-    working_directory: /BovTB-nf/
     steps:
-      - run: "bash -e tests/jobs/minimal-pipeline.bash"
-      - store_artifacts:
-          path: /results/report.html
-          destination: report.html
+      - run-test:
+          testname: "tinyreads"
 
+  quality:
+    executor: nf-pipeline
+    steps:
+      - run-test:
+          testname: "quality"
+
+# Run a job on the current branch's Dockerfile
 executors:
   nf-pipeline:
     docker:
       - image: "aaronsfishman/bov-tb:$CIRCLE_BRANCH"
 
-# Orchestrates sets of jobs
+# Orchestrates the validation tests 
 workflows:
   validation:
     jobs:
       - build
-      - minimal-reads:
+      - tinyreads:
           requires:
             - build
+      - quality:
+          requires:
+            - tinyreads

@@ -1,3 +1,6 @@
 .nextflow.log*
 .nextflow/
 .DS_Store
+temp/
+work/
+Results*

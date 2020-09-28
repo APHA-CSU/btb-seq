@@ -11,6 +11,7 @@
 JOBS=(
     minimal-pipeline.bash
     inclusivity.bash
+    quality-test.bash
 )
 
 IMAGE=bov-tb-test
