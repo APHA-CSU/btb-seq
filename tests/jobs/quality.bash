@@ -44,11 +44,10 @@ wget $root/$read1.gz $root/$read2.gz -P /reads/
 gunzip -f /reads/*
 
 # Set quality
-python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read1
-python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read2
+python tests/utils/set_uniform_fastq_quality.py $quality /reads/*
 
 # Zip 
-gzip -f /reads/*.fastq
+gzip -f /reads/*
 
 # Run nextflow
 nextflow run bTB-WGS_process.nf \

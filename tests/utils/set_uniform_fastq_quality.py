@@ -4,7 +4,6 @@
         Overwrite a fastq with uniform base quality
 """
 
-import sys
 import argparse
 
 from Bio import SeqIO
@@ -33,9 +32,10 @@ if __name__ == '__main__':
     # Parse
     parser = argparse.ArgumentParser(description="Overwrite a fastq to with a uniform quality")
     parser.add_argument('quality', type=int, help="Phred quality score that all bases are set to")
-    parser.add_argument('filepath', help="Filepath to fastq file")
+    parser.add_argument('filepath', nargs="+", help="Filepath(s) to fastq file")
 
     args = parser.parse_args()
 
     # Run
-    set_uniform_fastq_quality(**vars(args))
+    for filepath in args.filepath:
+        set_uniform_fastq_quality(args.quality, args.filepath)
