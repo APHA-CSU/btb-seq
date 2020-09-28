@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 """ set_uniform_fastq_quality.py: 
-        Copy a fastq to a new file with uniform base quality
+        Overwrite a fastq with uniform base quality
 """
 
 import sys
@@ -9,12 +9,12 @@ import argparse
 
 from Bio import SeqIO
 
-def set_uniform_fastq_quality(quality, filepath_in, filepath_out):
+def set_uniform_fastq_quality(quality, filepath):
     """
-        Copy a fastq file to a new file with uniform base quality
+        Overwrite a fastq file to a new file with uniform base quality
     """
     # Parse
-    original_fastq = SeqIO.parse(filepath_in, "fastq")
+    original_fastq = SeqIO.parse(filepath, "fastq")
 
     # Obliterate quality
     new_fastq = []
@@ -26,14 +26,14 @@ def set_uniform_fastq_quality(quality, filepath_in, filepath_out):
         new_fastq.append(line)
 
     # Write
-    SeqIO.write(new_fastq, filepath_out, "fastq")
+    SeqIO.write(new_fastq, filepath, "fastq")
+
 
 if __name__ == '__main__':
     # Parse
-    parser = argparse.ArgumentParser(description="Copy a fastq to a new file with the worst possible quality")
+    parser = argparse.ArgumentParser(description="Overwrite a fastq to with a uniform quality")
     parser.add_argument('quality', type=int, help="Phred quality score that all bases are set to")
-    parser.add_argument('filepath_in', help="Filepath to original fastq file")
-    parser.add_argument('filepath_out', help="Output filepath")
+    parser.add_argument('filepath', help="Filepath to fastq file")
 
     args = parser.parse_args()
 

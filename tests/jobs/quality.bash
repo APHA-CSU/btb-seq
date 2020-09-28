@@ -28,9 +28,9 @@ elif [ "$TESTCASE" == "adequate" ]; then
     group="B6-16"
 
 else
-
     echo Unknown testcase: $TESTCASE
     exit 1
+
 fi
 
 # Download
@@ -44,8 +44,8 @@ wget $root/$read1.gz $root/$read2.gz -P /reads/
 gunzip -f /reads/*
 
 # Set quality
-python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read1 /reads/$read1
-python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read2 /reads/$read2
+python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read1
+python tests/utils/set_uniform_fastq_quality.py $quality /reads/$read2
 
 # Zip 
 gzip -f /reads/*.fastq
