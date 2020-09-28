@@ -11,7 +11,7 @@ commands:
     steps:
       - run: |
           cd /BovTB-nf/
-          mkdir -p /artifacts/
+          mkdir /reads/ /results/ /artifacts/
           bash -e tests/jobs/<< parameters.testname >>.bash
 
       - store_artifacts:
