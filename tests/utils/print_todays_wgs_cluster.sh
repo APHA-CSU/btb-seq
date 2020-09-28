@@ -10,4 +10,4 @@
 name=$1
 
 TODAY=`date +%d%b%y`
-echo Results_${name}_${TODAY}/${name}_AssignedWGSCluster_${TODAY}.csv
+echo /results/Results_${name}_${TODAY}/${name}_AssignedWGSCluster_${TODAY}.csv
