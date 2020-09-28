@@ -15,12 +15,11 @@ def set_uniform_fastq_quality(quality, filepath):
     # Parse
     original_fastq = SeqIO.parse(filepath, "fastq")
 
-    # Obliterate quality
+    # Set quality
     new_fastq = []
     for i, line in enumerate(original_fastq):
         num_reads = len(line._per_letter_annotations["phred_quality"])
-        new_qualities = [quality]*num_reads
-        line._per_letter_annotations["phred_quality"] = new_qualities
+        line._per_letter_annotations["phred_quality"] = [quality]*num_reads
         
         new_fastq.append(line)
 
