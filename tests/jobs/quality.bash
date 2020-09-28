@@ -34,11 +34,11 @@ else
 fi
 
 # Download
+name="B6-16"
 read1=B6-16_R1_26.fastq
 read2=B6-16_R2_26.fastq
 root=https://github.com/afishman/gitlfs/raw/master/lfs
-wget $root/$read1.gz -P /reads/
-wget $root/$read2.gz -P /reads/
+wget $root/$read1.gz $root/$read2.gz -P /reads/
 
 # Unzip
 gunzip -f /reads/*
@@ -58,7 +58,7 @@ nextflow run bTB-WGS_process.nf \
 -with-report "/artifacts/report.html"
 
 # Check results
-WGS_CLUSTER_CSV=$(sh tests/utils/print_todays_wgs_cluster.sh $quality)
+WGS_CLUSTER_CSV=$(sh tests/utils/print_todays_wgs_cluster.sh $name)
 python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome "$outcome"
 python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV flag "$flag"
 python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV group "$group"
