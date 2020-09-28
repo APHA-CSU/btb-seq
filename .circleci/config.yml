@@ -4,15 +4,15 @@ commands:
   # Run tests under BovTB-nf/tests/jobs/ and store artifacts
   run-test:
     parameters:
-      testname:
-        description: Runs a test specified under tests/jobs/<< testname >>.bash
+      script:
+        description: This test calls 'bash -e tests/jobs/<< script >>'
         type: string
 
     steps:
       - run: |
           cd /BovTB-nf/
           mkdir /reads/ /results/ /artifacts/
-          bash -e tests/jobs/<< parameters.testname >>.bash
+          bash -e tests/jobs/<< parameters.script >>
 
       - store_artifacts:
           path: /artifacts/
@@ -38,13 +38,16 @@ jobs:
     executor: nf-pipeline
     steps:
       - run-test:
-          testname: "tinyreads"
+          script: "tinyreads.bash"
 
   quality:
     executor: nf-pipeline
+    parameters:
+      case:
+        type: string
     steps:
       - run-test:
-          testname: "quality"
+          script: "quality.bash << parameters.case >>"
 
 # Run a job on the current branch's Dockerfile
 executors:
@@ -61,5 +64,11 @@ workflows:
           requires:
             - build
       - quality:
+          case: low
           requires:
             - tinyreads
+      - quality:
+          case: adequate
+          requires:
+            - tinyreads
+
