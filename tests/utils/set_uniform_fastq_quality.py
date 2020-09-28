@@ -37,4 +37,4 @@ if __name__ == '__main__':
 
     # Run
     for filepath in args.filepath:
-        set_uniform_fastq_quality(args.quality, args.filepath)
+        set_uniform_fastq_quality(args.quality, filepath)

@@ -12,6 +12,7 @@
 source tests/utils/aliases.bash
 
 TESTCASE=$1
+echo if
 
 # Test Case
 if [ "$TESTCASE" == "low" ]; then
@@ -38,10 +39,10 @@ fi
 
 # Download
 name="B6-16"
-read1=B6-16_R1_26.fastq
-read2=B6-16_R2_26.fastq
+read1=B6-16_SX_R1_26.fastq.gz
+read2=B6-16_SX_R2_26.fastq.gz
 root=https://github.com/afishman/gitlfs/raw/master/lfs
-wget $root/$read1.gz $root/$read2.gz -P /reads/
+wget $root/$read1 $root/$read2 -P /reads/
 
 # Unzip
 gunzip -f /reads/*
