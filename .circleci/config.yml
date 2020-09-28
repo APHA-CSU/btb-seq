@@ -60,15 +60,14 @@ workflows:
   validation:
     jobs:
       - build
+
       - tinyreads:
           requires:
             - build
+            
       - quality:
-          case: low
           requires:
             - tinyreads
-      - quality:
-          case: adequate
-          requires:
-            - tinyreads
-
+          matrix:
+            parameters:
+              case: ["low", "adequate"]
