@@ -18,6 +18,6 @@ cp -r $PWD/tests/data/tinyreads/* /reads/
 nextflowtest
 
 # Check results
-WGS_CLUSTER_CSV=$(sh tests/utils/print_todays_wgs_cluster.sh tinyreads)
+WGS_CLUSTER_CSV=$(print_todays_wgs_cluster tinyreads)
 assert_first_csv_row $WGS_CLUSTER_CSV \
     Outcome InsufficientData

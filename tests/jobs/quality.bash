@@ -56,7 +56,7 @@ gzip -f /reads/*
 nextflowtest
 
 # Check results
-WGS_CLUSTER_CSV=$(sh tests/utils/print_todays_wgs_cluster.sh $name)
+WGS_CLUSTER_CSV=$(print_todays_wgs_cluster $name)
 assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "$outcome"
 assert_first_csv_row $WGS_CLUSTER_CSV "flag" "$flag"
 assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"

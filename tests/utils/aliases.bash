@@ -14,4 +14,6 @@ alias nextflowtest="nextflow run bTB-WGS_process.nf \
 --lowmem '"--memory-map"' \
 -with-report /artifacts/report.html"
 
+alias print_todays_wgs_cluster="sh tests/utils/print_todays_wgs_cluster.sh"
+
 alias assert_first_csv_row="python tests/utils/assert_first_csv_row.py"
