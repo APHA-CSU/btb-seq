@@ -30,7 +30,7 @@ jobs:
       - setup_remote_docker
       - run: |
           TAG=$CIRCLE_BRANCH
-          docker build -t aaronsfishman/bov-tb:$TAG ./docker/
+          docker build -t aaronsfishman/bov-tb:$TAG -f ./docker/Dockerfile .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
