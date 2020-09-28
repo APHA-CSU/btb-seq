@@ -7,6 +7,8 @@
 #% DESCRIPTION
 #%    Checks the pipeline response against good and bad quality reads
 
+# Import
+source tests/utils/aliases.bash
 
 TESTCASE=$1
 
@@ -50,14 +52,10 @@ python tests/utils/set_uniform_fastq_quality.py $quality /reads/*
 gzip -f /reads/*
 
 # Run nextflow
-nextflow run bTB-WGS_process.nf \
---outdir "/results/" \
---reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
---lowmem '"--memory-map"' \
--with-report "/artifacts/report.html"
+nextflowtest
 
 # Check results
 WGS_CLUSTER_CSV=$(sh tests/utils/print_todays_wgs_cluster.sh $name)
-python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome "$outcome"
-python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV flag "$flag"
-python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV group "$group"
+assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "$outcome"
+assert_first_csv_row $WGS_CLUSTER_CSV "flag" "$flag"
+assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"
