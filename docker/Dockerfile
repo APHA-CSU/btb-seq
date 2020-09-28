@@ -123,9 +123,7 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
     cd ..
 
 # Install nextflow.
-# ENV line required to set jvm memory and cpu limits to docker. 
-# see: https://github.com/nextflow-io/nextflow/blob/v20.07.1/docker/Dockerfile
-COPY install_nextflow-20.7.1.bash ./install_nextflow.bash
+COPY ./docker/install_nextflow-20.7.1.bash ./install_nextflow.bash
 RUN cat ./install_nextflow.bash | bash
 RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 
