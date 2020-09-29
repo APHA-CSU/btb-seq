@@ -5,58 +5,59 @@
 #================================================================
 #
 #% DESCRIPTION
-#%    Checks the pipeline response against good and bad quality reads
+#%    Checks the pipeline response against good or bad quality reads
+#%    Input argument should be either 'low' or 'adequate'
 
-function test_quality {
-    # Args
-    quality=$1
-    outcome=$2
-    flag=$3
-    group=$4
+# Import
+source tests/utils/aliases.bash
 
-    # Set paths
-    reads=/reads/$quality/
-    mkdir -p $reads
+TESTCASE=$1
+echo if
 
-    results=/results/$quality/
-    mkdir -p $results
+# Test Case
+if [ "$TESTCASE" == "low" ]; then
+    echo Low quality test selected
 
-    # Download
-    read1=B6-16_R1_26.fastq
-    read2=B6-16_R2_26.fastq
-    root=https://github.com/afishman/gitlfs/raw/master/lfs
-    wget $root/$read1.gz
-    wget $root/$read2.gz
+    quality="19"
+    outcome="CheckRequired"
+    flag="LowCoverage"
+    group="NA"
 
-    # Unzip
-    gunzip -f ${read1}.gz ${read2}.gz
+elif [ "$TESTCASE" == "adequate" ]; then
+    echo Adequate quality test selected
 
-    # Set quality
-    python tests/utils/set_uniform_fastq_quality.py $quality $read1 $read1
-    python tests/utils/set_uniform_fastq_quality.py $quality $read2 $read2
+    quality="20"
+    outcome="Pass"
+    flag="BritishbTB"
+    group="B6-16"
 
-    # Move over
-    name=quality-${quality}
-    mv $read1 $reads/${name}_S1_R1_001.fastq
-    mv $read2 $reads/${name}_S1_R2_001.fastq
+else
+    echo Unknown testcase: $TESTCASE
+    exit 1
 
-    # Zip 
-    gzip -f $reads/*.fastq
+fi
 
-    # Run nextflow
-    nextflow run bTB-WGS_process.nf \
-    --outdir "$results/" \
-    --reads "$reads/*_{S*_R1,S*_R2}*.fastq.gz" \
-    --lowmem '"--memory-map"' \
-    -with-report "/artifacts/report-Q${quality}.html"
-    
-    # Check results
-    WGS_CLUSTER_CSV=$results/`sh tests/utils/print_todays_wgs_cluster.sh $quality`
-    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome "$outcome"
-    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV flag "$flag"
-    python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV group "$group"
-}
+# Download
+name="B6-16"
+read1=B6-16_SX_R1_26.fastq.gz
+read2=B6-16_SX_R2_26.fastq.gz
+root=https://github.com/afishman/gitlfs/raw/master/lfs
+wget $root/$read1 $root/$read2 -P /reads/
 
-# Check the two quality scores
-test_quality 19 "CheckRequired" "LowCoverage" "NA"
-test_quality 20 "Pass" "BritishbTB" "B6-16"
+# Unzip
+gunzip -f /reads/*
+
+# Set quality
+python tests/utils/set_uniform_fastq_quality.py $quality /reads/*
+
+# Zip 
+gzip -f /reads/*
+
+# Run nextflow
+nextflowtest
+
+# Check results
+WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
+assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "$outcome"
+assert_first_csv_row $WGS_CLUSTER_CSV "flag" "$flag"
+assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"

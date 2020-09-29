@@ -4,15 +4,15 @@ commands:
   # Run tests under BovTB-nf/tests/jobs/ and store artifacts
   run-test:
     parameters:
-      testname:
-        description: Runs a test specified under tests/jobs/<< testname >>.bash
+      script:
+        description: This test calls 'bash -e tests/jobs/<< script >>'
         type: string
 
     steps:
       - run: |
           cd /BovTB-nf/
-          mkdir -p /artifacts/
-          bash -e tests/jobs/<< parameters.testname >>.bash
+          mkdir /reads/ /results/ /artifacts/
+          bash -e tests/jobs/<< parameters.script >>
 
       - store_artifacts:
           path: /artifacts/
@@ -30,7 +30,7 @@ jobs:
       - setup_remote_docker
       - run: |
           TAG=$CIRCLE_BRANCH
-          docker build -t aaronsfishman/bov-tb:$TAG .
+          docker build -t aaronsfishman/bov-tb:$TAG -f ./docker/Dockerfile .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
@@ -38,13 +38,16 @@ jobs:
     executor: nf-pipeline
     steps:
       - run-test:
-          testname: "tinyreads"
+          script: "tinyreads.bash"
 
   quality:
     executor: nf-pipeline
+    parameters:
+      case:
+        type: string
     steps:
       - run-test:
-          testname: "quality"
+          script: "quality.bash << parameters.case >>"
 
 # Run a job on the current branch's Dockerfile
 executors:
@@ -57,9 +60,14 @@ workflows:
   validation:
     jobs:
       - build
+
       - tinyreads:
           requires:
             - build
+            
       - quality:
           requires:
             - tinyreads
+          matrix:
+            parameters:
+              case: ["low", "adequate"]
