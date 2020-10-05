@@ -41,7 +41,7 @@ pair_id=$1
     mindepth=10 # require an average of at least 10 reads per site 
     minpc=60 # require at least 60% of data maps to genome
     minreads=600000 # require at least 600,000 raw reads per sample
-    minafttrim=80
+    minafttrim=80 # require at least 80% reads to pass quality filtering steps
 
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
