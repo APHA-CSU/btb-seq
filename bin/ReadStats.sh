@@ -41,10 +41,12 @@ pair_id=$1
     mindepth=10 # require an average of at least 10 reads per site 
     minpc=60 # require at least 60% of data maps to genome
     minreads=600000 # require at least 600,000 raw reads per sample
-    
+    minafttrim=80
+
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
     if [ ${avg_depth%%.*} -ge $mindepth ] && [ ${pc_mapped%%.*} -gt $minpc ]; then flag="Pass"
+        elif [ ${pc_aft_trim%%.*} -lt $minafttrim ]; then flag="LowQualData"
         elif [ ${avg_depth%%.*} -lt $mindepth ] && [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="Comtaminated"
         elif [ ${avg_depth%%.*} -lt $mindepth ] && [ $num_trim -lt $minreads ]; then flag="InsufficientData"
 #        elif [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="q_OtherMycobact"
