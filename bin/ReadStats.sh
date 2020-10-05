@@ -46,9 +46,9 @@ pair_id=$1
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
     if [ ${avg_depth%%.*} -ge $mindepth ] && [ ${pc_mapped%%.*} -gt $minpc ]; then flag="Pass"
-        elif [ ${pc_aft_trim%%.*} -lt $minafttrim ]; then flag="LowQualData"
+        elif [ ${pc_aft_trim%%.*} -lt $minafttrim ] && [ ${avg_depth%%.*} -lt $mindepth ]; then flag="LowQualData"
         elif [ ${avg_depth%%.*} -lt $mindepth ] && [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="Comtaminated"
-        elif [ ${avg_depth%%.*} -lt $mindepth ] && [ $num_trim -lt $minreads ]; then flag="InsufficientData"
+        elif [ ${avg_depth%%.*} -lt $mindepth ] && [ $num_trim -lt $minreads ]; then flag="Insufficient_Data"
 #        elif [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="q_OtherMycobact"
         else flag="CheckRequired"
     fi
