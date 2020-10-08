@@ -49,6 +49,15 @@ jobs:
       - run-test:
           script: "quality.bash << parameters.case >>"
 
+  lod:
+    executor: nf-pipeline
+    parameters:
+      case:
+        type: string
+    steps:
+      - run-test:
+          script: "lod.bash << parameters.case >>"
+
 # Run a job on the current branch's Dockerfile
 executors:
   nf-pipeline:
@@ -71,3 +80,10 @@ workflows:
           matrix:
             parameters:
               case: ["low", "adequate"]
+
+      - lod:
+          requires:
+            - tinyreads
+          matrix:
+            parameters:
+              case: ["0", "1", "2", "3"]
