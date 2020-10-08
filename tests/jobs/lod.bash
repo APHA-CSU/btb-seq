@@ -13,7 +13,7 @@ source tests/utils/aliases.bash
 
 # Params
 total_num_reads=6.5e5
-outcomes=("Pass" "Pass" "CheckRequired" "CheckRequired")
+outcomes=("Pass" "Pass" "CheckRequired" "Comtaminated")
 props=("1.0" "0.55" "0.45" "0.0")
 
 # Args
@@ -23,17 +23,14 @@ prop=${props[$TESTCASE]}
 
 # Download files
 mkdir -p fastq
-bovine_read1=ref-genome-sample_SX_R1_001.fastq.gz
-bovine_read2=ref-genome-sample_SX_R2_001.fastq.gz
 
-avium_read1=SRR10541896_1.fastq.gz
-avium_read2=SRR10541896_2.fastq.gz
-
-bovine_read1=SRR10541896_1.fastq.gz
-bovine_read2=SRR10541896_2.fastq.gz
+bovine_root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/005/ERR4586795/
+bovine_read1=ERR4586795_1.fastq.gz
+bovine_read2=ERR4586795_2.fastq.gz
 
 avium_root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR105/096/SRR10541896/
-bovine_root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR105/096/SRR10541896/
+avium_read1=SRR10541896_1.fastq.gz
+avium_read2=SRR10541896_2.fastq.gz
 
 wget -P fastq \
   $bovine_root/$bovine_read1 \
@@ -41,7 +38,7 @@ wget -P fastq \
   $avium_root/$avium_read1 \
   $avium_root/$avium_read2
 
-# TODO: Combine
+# Combine
 echo combining..
 name=lod-bovine-${prop}
 combine_fastq --seed 1 \
