@@ -12,15 +12,13 @@
 source tests/utils/aliases.bash
 
 TESTCASE=$1
-echo if
 
 # Test Case
 if [ "$TESTCASE" == "low" ]; then
     echo Low quality test selected
 
     quality="19"
-    outcome="CheckRequired"
-    flag="LowCoverage"
+    outcome="LowQualData"
     group="NA"
 
 elif [ "$TESTCASE" == "adequate" ]; then
@@ -28,7 +26,6 @@ elif [ "$TESTCASE" == "adequate" ]; then
 
     quality="20"
     outcome="Pass"
-    flag="BritishbTB"
     group="B6-16"
 
 else
@@ -38,11 +35,11 @@ else
 fi
 
 # Download
-name="B6-16"
-read1=B6-16_SX_R1_26.fastq.gz
-read2=B6-16_SX_R2_26.fastq.gz
-root=https://github.com/afishman/gitlfs/raw/master/lfs
-wget $root/$read1 $root/$read2 -P /reads/
+read1=ERR4586795_1.fastq.gz
+read2=ERR4586795_2.fastq.gz
+root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/005/ERR4586795/
+wget $root/$read1 -O /reads/QT_S1_R1_001.fastq.gz
+wget $root/$read2 -O /reads/QT_S1_R2_001.fastq.gz
 
 # Unzip
 gunzip -f /reads/*
@@ -59,5 +56,4 @@ nextflowtest
 # Check results
 WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
 assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "$outcome"
-assert_first_csv_row $WGS_CLUSTER_CSV "flag" "$flag"
 assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"
