@@ -49,3 +49,15 @@ The quality test ensures that low quality reads (<20) are not considered for var
 | 19   | CheckRequired | LowCoverage | NA |
 | 20   | Pass | BritishbTB | B6-16 |
 
+### Limit of Detection (LoD)
+
+The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying proportions give the correct Outcome. This is performed by taking random reads from reference samples of M. Bovis and M. Avium.
+
+
+| M. Bovis (%) | M. Avium (%) | Outcome |
+| ------------- | ------------- | ------------- | 
+| 100%   | 0% | Pass | 
+| 65%   | 35% | BritishbTB | 
+| 60%   | 40% | CheckRequired | 
+| 0%   | 100% | Comtaminated | 
+
