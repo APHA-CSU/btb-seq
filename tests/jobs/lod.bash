@@ -14,7 +14,7 @@ source tests/utils/aliases.bash
 # Params
 total_num_reads=6.5e5
 outcomes=("Pass" "Pass" "CheckRequired" "Comtaminated")
-props=("1.0" "0.55" "0.45" "0.0")
+props=("1.0" "0.65" "0.50" "0.0")
 
 # Args
 TESTCASE=$1
