@@ -9,19 +9,21 @@
 #%    Tests the nextflow pipeline on a minimal dataset
 
 
-# Set paths
-cd /BovTB-nf/
-mkdir /results/
-ln -s $PWD/00090/* /reads
+# Import
+source tests/utils/aliases.bash
+
+bovine_root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/005/ERR4586795/
+bovine_read1=ERR4586795_1.fastq.gz
+bovine_read2=ERR4586795_2.fastq.gz
+
+wget $bovine_root/$bovine_read1 -O /reads/inclusivity-test_S1_R1_001.fastq.gz
+wget $bovine_root/$bovine_read2 -O /reads/inclusivity-test_S1_R2_001.fastq.gz
 
 # Run nextflow
-nextflow run bTB-WGS_process.nf \
---outdir "/results/" \
---reas "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
---lowmem '"--memory-map"' \
--with-report "/results/report.html"
+nextflowtest
 
 # Check results
-WGS_CLUSTER_CSV=/results/`sh tests/utils/print_todays_wgs_cluster.sh`
-python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV Outcome Pass
-python tests/utils/assert_first_csv_row.py $WGS_CLUSTER_CSV group B6-16
+WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
+assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "Pass"
+assert_first_csv_row $WGS_CLUSTER_CSV "group" "B6-16"
+
