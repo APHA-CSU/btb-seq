@@ -8,16 +8,19 @@
 #% DESCRIPTION
 #%    Tests the nextflow pipeline on a minimal dataset
 
-
 # Import
 source tests/utils/aliases.bash
 
-bovine_root=ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR458/005/ERR4586795/
-bovine_read1=ERR4586795_1.fastq.gz
-bovine_read2=ERR4586795_2.fastq.gz
+# Args
+TESTCASE=$1
 
-wget $bovine_root/$bovine_read1 -O /reads/inclusivity-test_S1_R1_001.fastq.gz
-wget $bovine_root/$bovine_read2 -O /reads/inclusivity-test_S1_R2_001.fastq.gz
+group=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE group)
+bovine_read1=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE ftp_R1)
+bovine_read2=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE ftp_R2)
+
+
+wget $bovine_read1 -O /reads/inclusivity-${group}_S1_R1_001.fastq.gz
+wget $bovine_read2 -O /reads/inclusivity-${group}_S1_R2_001.fastq.gz
 
 # Run nextflow
 nextflowtest
@@ -25,5 +28,4 @@ nextflowtest
 # Check results
 WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
 assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "Pass"
-assert_first_csv_row $WGS_CLUSTER_CSV "group" "B6-16"
-
+assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"
