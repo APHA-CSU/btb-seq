@@ -38,7 +38,7 @@ jobs:
   build:
     docker:
       # Circleci base ubuntu image
-      - image: cimg/base:2020.01
+      - image: &build_img cimg/base:2020.01
 
     steps:
       - build-and-push:
@@ -47,7 +47,7 @@ jobs:
   deploy: 
     docker:
       # Circleci base ubuntu image
-      - image: cimg/base:2020.01
+      - image: *build_img
 
     steps:
       - build-and-push:
