@@ -41,8 +41,6 @@ jobs:
       - image: cimg/base:2020.01
 
     steps:
-      - checkout
-      - setup_remote_docker
       - build-and-push:
           tag: $CIRCLE_BRANCH
 
@@ -52,8 +50,6 @@ jobs:
       - image: cimg/base:2020.01
 
     steps:
-      - checkout
-      - setup_remote_docker
       - build-and-push:
           tag: latest
 
@@ -92,6 +88,13 @@ workflows:
   validation:
     jobs:
       - build
+
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
       - tinyreads:
           requires:
