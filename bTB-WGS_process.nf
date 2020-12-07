@@ -62,6 +62,8 @@ pypath = file(params.pypath)
 dependpath = file(params.dependPath)
 kraken2db = file(params.kraken2db)
 
+processDir = "${workflow.projectDir}/processes/"
+
 /*	Collect pairs of fastq files and infer sample names
 Define the input raw sequening data files */
 Channel
@@ -94,12 +96,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	gunzip -c ${pair_id}_*_R1_*.fastq.gz > ${pair_id}_R1.fastq 
-	gunzip -c ${pair_id}_*_R2_*.fastq.gz > ${pair_id}_R2.fastq
-	echo '${pair_id}_R1.fastq\n${pair_id}_R2.fastq' > fqin.lst
-	$dependpath/FastUniq/source/fastuniq -i fqin.lst -o ${pair_id}_uniq_R1.fastq -p ${pair_id}_uniq_R2.fastq
-	rm ${pair_id}_R1.fastq
-	rm ${pair_id}_R2.fastq
+	sh  ${processDir}/deduplicate.sh $params.dependPath ${pair_id}
 	"""
 }	
 
