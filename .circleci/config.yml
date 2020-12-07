@@ -17,22 +17,41 @@ commands:
       - store_artifacts:
           path: /artifacts/
 
-# Run tests under BovTB-nf/tests/jobs/ and store artifacts
-jobs:
-  # Docker image containing the nextflow pipeline
-  build:
-    docker:
-      # Circleci base ubuntu image
-      - image: cimg/base:2020.01
+  build-and-push:
+    parameters:
+      tag:
+        description: Tag to push built docker image to
+        type: string
 
     steps:
       - checkout
       - setup_remote_docker
       - run: |
-          TAG=$CIRCLE_BRANCH
+          TAG=<< parameters.tag >>
           docker build -t aaronsfishman/bov-tb:$TAG -f ./docker/Dockerfile .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
+
+# Run tests under BovTB-nf/tests/jobs/ and store artifacts
+jobs:
+  # Docker image containing the nextflow pipeline $CIRCLE_BRANCH
+  build:
+    docker:
+      # Circleci base ubuntu image
+      - image: &build_img cimg/base:2020.01
+
+    steps:
+      - build-and-push:
+          tag: $CIRCLE_BRANCH
+
+  deploy: 
+    docker:
+      # Circleci base ubuntu image
+      - image: *build_img
+
+    steps:
+      - build-and-push:
+          tag: latest
 
   tinyreads:
     executor: nf-pipeline
@@ -78,6 +97,13 @@ workflows:
   validation:
     jobs:
       - build
+
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
       - tinyreads:
           requires:
