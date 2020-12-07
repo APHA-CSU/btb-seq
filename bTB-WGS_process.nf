@@ -117,9 +117,7 @@ process Trim {
 	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
 	
 	"""
-	java -jar $dependpath/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 2 -phred33 ${pair_id}_uniq_R1.fastq ${pair_id}_uniq_R2.fastq  ${pair_id}_trim_R1.fastq ${pair_id}_fail1.fastq ${pair_id}_trim_R2.fastq ${pair_id}_fail2.fastq ILLUMINACLIP:$adapters:2:30:10 SLIDINGWINDOW:10:20 MINLEN:36
-	rm ${pair_id}_fail1.fastq
-	rm ${pair_id}_fail2.fastq
+	${processDir}/trim.bash $params.dependPath ${pair_id}
 	"""
 }
 
