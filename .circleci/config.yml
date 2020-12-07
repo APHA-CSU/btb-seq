@@ -125,7 +125,7 @@ workflows:
 
       - inclusivity:
           requires:
-            - tinyreads
+            - quality
           matrix:
             parameters:
               case: ["0", "1", "2", "3"]
