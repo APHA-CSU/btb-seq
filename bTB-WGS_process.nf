@@ -166,11 +166,7 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-       $dependpath/samtools-1.10/samtools index ${pair_id}.mapped.sorted.bam
-       bcftools mpileup -Q 10 -Ou -f $ref ${pair_id}.mapped.sorted.bam |
-        bcftools call --ploidy 1 -cf GQ - -Ou |
-        bcftools norm -f $ref - -Oz -o ${pair_id}.norm.vcf.gz
-
+	${processDir}/varCall.bash $params.dependPath $pair_id $ref
 	"""
 }
 
