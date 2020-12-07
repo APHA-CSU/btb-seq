@@ -96,7 +96,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	sh  ${processDir}/deduplicate.sh $params.dependPath ${pair_id}
+	${processDir}/deduplicate.bash $params.dependPath ${pair_id}
 	"""
 }	
 
@@ -166,10 +166,11 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-	$dependpath/samtools-1.10/samtools index ${pair_id}.mapped.sorted.bam
-	bcftools mpileup -Q 10 -Ou -f $ref ${pair_id}.mapped.sorted.bam |
-	 bcftools call --ploidy 1 -cf GQ - -Ou |
-	 bcftools norm -f $ref - -Oz -o ${pair_id}.norm.vcf.gz
+       $dependpath/samtools-1.10/samtools index ${pair_id}.mapped.sorted.bam
+       bcftools mpileup -Q 10 -Ou -f $ref ${pair_id}.mapped.sorted.bam |
+        bcftools call --ploidy 1 -cf GQ - -Ou |
+        bcftools norm -f $ref - -Oz -o ${pair_id}.norm.vcf.gz
+
 	"""
 }
 
