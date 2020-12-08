@@ -118,14 +118,14 @@ workflows:
 
       - lod:
           requires:
-            - tinyreads
+            - quality
           matrix:
             parameters:
               case: ["0", "1", "2", "3"]
 
       - inclusivity:
           requires:
-            - quality
+            - lod
           matrix:
             parameters:
               case: ["0", "1", "2", "3"]
