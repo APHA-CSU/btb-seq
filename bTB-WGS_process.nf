@@ -274,10 +274,16 @@ process AssignClusterCSS{
 	file("${pair_id}_stage1.csv") into AssignCluster
 
 	"""
-	bcftools index ${pair_id}.norm.vcf.gz
-	bcftools view -R ${discrimPos} -O v -o ${pair_id}.discrimPos.vcf ${pair_id}.norm.vcf.gz
-	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
-	mv _stage1.csv ${pair_id}_stage1.csv
+	${processDir}/assignClusterCss.bash $pair_id \
+		$discrimPos \
+		$stage1pat \
+		$min_mean_cov \
+		$min_cov_snp \
+		$alt_prop_snp \
+		$min_qual_snp \
+		$min_qual_nonsnp \
+		$pypath \
+		$ref
 	"""
 }
 
