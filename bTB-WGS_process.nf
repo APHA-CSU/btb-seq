@@ -211,7 +211,6 @@ process VCF2Consensus {
 
 	"""
 	${processDir}/vcf2Consensus.bash $pair_id $ref
-
 	"""
 }
 
@@ -247,7 +246,7 @@ process ReadStats{
 	set pair_id, file('outcome.txt') into Outcome
 
     """
-    ReadStats.sh "$pair_id"
+    ${processDir}/readStats.bash "$pair_id"
     """
 }
 
