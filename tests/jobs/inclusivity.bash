@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/sh
 #
 #================================================================
 # inclusivity.bash
@@ -15,12 +14,17 @@ source tests/utils/aliases.bash
 TESTCASE=$1
 
 group=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE group)
-bovine_read1=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE ftp_R1)
-bovine_read2=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE ftp_R2)
+accession=$(print_csv_value './tests/data/inclusivity_cases.csv' $TESTCASE accession)
 
+# Fetch SRA Data
+prefetch $accession -O ./
+fasterq-dump ./$accession
+rm ./$accession/*.sra
+rm -r ./$accession
 
-wget $bovine_read1 -O /reads/inclusivity-${group}_S1_R1_001.fastq.gz
-wget $bovine_read2 -O /reads/inclusivity-${group}_S1_R2_001.fastq.gz
+gzip ${accession}_1.fastq ${accession}_2.fastq
+mv ${accession}_1.fastq.gz /reads/${accession}_S1_R1_001.fastq.gz
+mv ${accession}_2.fastq.gz /reads/${accession}_S1_R2_001.fastq.gz
 
 # Run nextflow
 nextflowtest
