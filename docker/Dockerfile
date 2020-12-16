@@ -133,9 +133,9 @@ RUN ln -s $PWD/nextflow /usr/local/bin/nextflow
 RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.10.8/sratoolkit.2.10.8-ubuntu64.tar.gz && \
     tar -vxzf sratoolkit.2.10.8-ubuntu64.tar.gz && \
     rm sratoolkit.2.10.8-ubuntu64.tar.gz && \
-    echo "q" | ./sratoolkit.2.10.8-ubuntu64/bin/vdb-config -i > /dev/null 2>&1; exit 0 && \
-    ln -s $BIOTOOLS_PATH/sratoolkit.2.10.8-ubuntu64/bin/fasterq-dump /usr/local/bin/fasterq-dump && \
-    ln -s $BIOTOOLS_PATH/sratoolkit.2.10.8-ubuntu64/bin/prefetch /usr/local/bin/prefetch
+    echo "q" | ./sratoolkit.2.10.8-ubuntu64/bin/vdb-config -i > /dev/null 2>&1; exit 0
+RUN ln -s $BIOTOOLS_PATH/sratoolkit.2.10.8-ubuntu64/bin/fasterq-dump /usr/local/bin/fasterq-dump
+RUN ln -s $BIOTOOLS_PATH/sratoolkit.2.10.8-ubuntu64/bin/prefetch /usr/local/bin/prefetch
 
 ################## ENTRY ######################
 
