@@ -8,6 +8,7 @@
 
 #  Define inputs - sample name
 
+
 pair_id=$1
 
 # Count reads in each catagory, using '+' as the only character on a line (^+$) as a proxy in fastq files 
@@ -26,6 +27,8 @@ pair_id=$1
     sites=$(awk '{++count} END {print count}' depth.txt)
     rm depth.txt
     
+
+
 # Caluclate values and percentages
 
     num_raw=$(($raw_R1*2))
@@ -36,12 +39,14 @@ pair_id=$1
     pc_mapped=$(echo "scale=2; ($num_map*100/$num_trim)" |bc)
     genome_cov=$(echo "scale=2; (100-($zero_cov*100/$sites))" |bc)
 
+
 # Define thresholds for flag assignment
 
     mindepth=10 # require an average of at least 10 reads per site 
     minpc=60 # require at least 60% of data maps to genome
     minreads=600000 # require at least 600,000 raw reads per sample
     minafttrim=60 # require at least 60% reads to pass quality filtering steps
+
 
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
@@ -52,6 +57,7 @@ pair_id=$1
 #        elif [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="q_OtherMycobact"
         else flag="CheckRequired"
     fi
+
 
 # Write values to csv file
 
