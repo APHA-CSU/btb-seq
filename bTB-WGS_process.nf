@@ -62,8 +62,6 @@ pypath = file(params.pypath)
 dependpath = file(params.dependPath)
 kraken2db = file(params.kraken2db)
 
-processDir = "${workflow.projectDir}/processes/"
-
 /*	Collect pairs of fastq files and infer sample names
 Define the input raw sequening data files */
 Channel
@@ -96,7 +94,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	${processDir}/deduplicate.bash $params.dependPath ${pair_id}
+	deduplicate.bash $params.dependPath ${pair_id}
 	"""
 }	
 
@@ -117,7 +115,7 @@ process Trim {
 	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
 	
 	"""
-	${processDir}/trim.bash $params.dependPath ${pair_id}
+	trim.bash $params.dependPath ${pair_id}
 	"""
 }
 
@@ -140,7 +138,7 @@ process Map2Ref {
 	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
 
 	"""
-	${processDir}/map2Ref.bash $params.dependPath ${pair_id} $ref
+	map2Ref.bash $params.dependPath ${pair_id} $ref
 	"""
 }
 
@@ -162,7 +160,7 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-	${processDir}/varCall.bash $params.dependPath $pair_id $ref
+	varCall.bash $params.dependPath $pair_id $ref
 	"""
 }
 
@@ -181,7 +179,7 @@ process Mask {
 	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
 
 	"""
-	${processDir}/mask.bash $params.dependPath $pair_id $rptmask
+	mask.bash $params.dependPath $pair_id $rptmask
 	"""
 }
 
@@ -210,7 +208,7 @@ process VCF2Consensus {
 	set pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	${processDir}/vcf2Consensus.bash $pair_id $ref
+	vcf2Consensus.bash $pair_id $ref
 	"""
 }
 
@@ -246,7 +244,7 @@ process ReadStats{
 	set pair_id, file('outcome.txt') into Outcome
 
     """
-    ${processDir}/readStats.bash "$pair_id"
+    readStats.bash "$pair_id"
     """
 }
 
@@ -274,7 +272,7 @@ process AssignClusterCSS{
 	file("${pair_id}_stage1.csv") into AssignCluster
 
 	"""
-	${processDir}/assignClusterCss.bash $pair_id \
+	assignClusterCss.bash $pair_id \
 		$discrimPos \
 		$stage1pat \
 		$min_mean_cov \
@@ -315,7 +313,7 @@ process IDnonbovis{
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
-	${processDir}/idNonBovis.bash $pair_id $params.dependPath
+	idNonBovis.bash $pair_id $params.dependPath
 	"""
 }
 
