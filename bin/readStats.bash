@@ -21,7 +21,7 @@ pair_id=$1
     num_map=$(samtools view -c ${pair_id}.mapped.sorted.bam) # samtools counts the number of mapped reads
     samtools depth -a ${pair_id}.mapped.sorted.bam > depth.txt # samtools outputs depth at each position
     avg_depth=$(awk '{sum+=$3} END { print sum/NR}' depth.txt)
-    zero_cov=$(awk '$3<1 {++count} END {print count}' depth.txt)
+    zero_cov=$(awk 'BEGIN (count=0) $3<1 {++count} END {print count}' depth.txt)
     sites=$(awk '{++count} END {print count}' depth.txt)
     rm depth.txt
     
