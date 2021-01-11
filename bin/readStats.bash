@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#  ReadStats.sh
-#  
+#  readStats.bash
 #
 #  Created by ellisrichardj on 10/10/2019.
 #  
@@ -11,15 +10,14 @@
 
 pair_id=$1
 
-# Count reads in each catagory, using '+' as the only character on a line (^+$) as a proxy in fastq files 
-# In fastq format '+' appears on the line between basecalls and quality scores for a given read
+# Count reads in each catagory; in fastq files each read consists of four lines
 
-    raw_R1=$(zgrep -c "^+$" ${pair_id}_*_R1_*.fastq.gz) # counts number of reads in file
+    raw_R1=$(( $(zcat ${pair_id}_*_R1_*.fastq.gz | wc -l) / 4 )) # counts number of reads in file
     rm ${pair_id}_*_R1_*.fastq.gz
     rm ${pair_id}_*_R2_*.fastq.gz
-    uniq_R1=$(grep -c "^+$" ${pair_id}_uniq_R1.fastq) # counts number of reads in file
+    uniq_R1=$(( $(cat ${pair_id}_uniq_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     rm `readlink ${pair_id}_uniq_R2.fastq`
-    trim_R1=$(grep -c "^+$" ${pair_id}_trim_R1.fastq) # counts number of reads in file
+    trim_R1=$(( $(cat ${pair_id}_trim_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     num_map=$(samtools view -c ${pair_id}.mapped.sorted.bam) # samtools counts the number of mapped reads
     samtools depth -a ${pair_id}.mapped.sorted.bam > depth.txt # samtools outputs depth at each position
     avg_depth=$(awk '{sum+=$3} END { print sum/NR}' depth.txt)
