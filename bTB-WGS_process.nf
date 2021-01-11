@@ -94,12 +94,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	gunzip -c ${pair_id}_*_R1_*.fastq.gz > ${pair_id}_R1.fastq 
-	gunzip -c ${pair_id}_*_R2_*.fastq.gz > ${pair_id}_R2.fastq
-	echo '${pair_id}_R1.fastq\n${pair_id}_R2.fastq' > fqin.lst
-	$dependpath/FastUniq/source/fastuniq -i fqin.lst -o ${pair_id}_uniq_R1.fastq -p ${pair_id}_uniq_R2.fastq
-	rm ${pair_id}_R1.fastq
-	rm ${pair_id}_R2.fastq
+	deduplicate.bash $params.dependPath ${pair_id}
 	"""
 }	
 
@@ -120,9 +115,7 @@ process Trim {
 	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
 	
 	"""
-	java -jar $dependpath/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 2 -phred33 ${pair_id}_uniq_R1.fastq ${pair_id}_uniq_R2.fastq  ${pair_id}_trim_R1.fastq ${pair_id}_fail1.fastq ${pair_id}_trim_R2.fastq ${pair_id}_fail2.fastq ILLUMINACLIP:$adapters:2:30:10 SLIDINGWINDOW:10:20 MINLEN:36
-	rm ${pair_id}_fail1.fastq
-	rm ${pair_id}_fail2.fastq
+	trim.bash $params.dependPath ${pair_id}
 	"""
 }
 
@@ -145,9 +138,7 @@ process Map2Ref {
 	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
 
 	"""
-	$dependpath/bwa/bwa mem -M -t2 $ref  ${pair_id}_trim_R1.fastq ${pair_id}_trim_R2.fastq |
-	 $dependpath/samtools-1.10/samtools view -@2 -ShuF 2308 - |
-	 $dependpath/samtools-1.10/samtools sort -@2 - -o ${pair_id}.mapped.sorted.bam
+	map2Ref.bash $params.dependPath ${pair_id} $ref
 	"""
 }
 
@@ -169,10 +160,7 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-	$dependpath/samtools-1.10/samtools index ${pair_id}.mapped.sorted.bam
-	bcftools mpileup -Q 10 -Ou -f $ref ${pair_id}.mapped.sorted.bam |
-	 bcftools call --ploidy 1 -cf GQ - -Ou |
-	 bcftools norm -f $ref - -Oz -o ${pair_id}.norm.vcf.gz
+	varCall.bash $params.dependPath $pair_id $ref
 	"""
 }
 
@@ -191,10 +179,7 @@ process Mask {
 	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
 
 	"""
-	$dependpath/bedtools2/bin/bedtools genomecov -bga -ibam ${pair_id}.mapped.sorted.bam |
-	 grep -w "0\$" | cat > ${pair_id}_zerocov.bed
-	cat ${pair_id}_zerocov.bed $rptmask | sort -k1,1 -k2,2n |
-	 $dependpath/bedtools2/bin/bedtools merge > ${pair_id}_RptZeroMask.bed
+	mask.bash $params.dependPath $pair_id $rptmask
 	"""
 }
 
@@ -223,13 +208,7 @@ process VCF2Consensus {
 	set pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	bcftools filter --IndelGap 5 -e 'DP<5 && AF<0.8' ${pair_id}.norm.vcf.gz -Ob -o ${pair_id}.norm-flt.bcf
-	bcftools index ${pair_id}.norm-flt.bcf
-	bcftools consensus -f $ref -e 'TYPE="indel"' -m ${pair_id}_RptZeroMask.bed ${pair_id}.norm-flt.bcf |
-	 sed '/^>/ s/.*/>${pair_id}/' > ${pair_id}_consensus.fas
-	echo "CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE" > ${pair_id}_snps.tab
-	bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' ${pair_id}.norm-flt.bcf |
-	 awk -F, '{print \$1"\t"\$2"\t"\$3"\t"\$4"\t"\$5"\t"\$5":"\$8+\$9" "\$4":"\$6+\$7}' >> ${pair_id}_snps.tab
+	vcf2Consensus.bash $pair_id $ref
 	"""
 }
 
@@ -265,7 +244,7 @@ process ReadStats{
 	set pair_id, file('outcome.txt') into Outcome
 
     """
-    ReadStats.sh "$pair_id"
+    readStats.bash "$pair_id"
     """
 }
 
@@ -293,10 +272,16 @@ process AssignClusterCSS{
 	file("${pair_id}_stage1.csv") into AssignCluster
 
 	"""
-	bcftools index ${pair_id}.norm.vcf.gz
-	bcftools view -R ${discrimPos} -O v -o ${pair_id}.discrimPos.vcf ${pair_id}.norm.vcf.gz
-	python3 $pypath/Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
-	mv _stage1.csv ${pair_id}_stage1.csv
+	assignClusterCss.bash $pair_id \
+		$discrimPos \
+		$stage1pat \
+		$min_mean_cov \
+		$min_cov_snp \
+		$alt_prop_snp \
+		$min_qual_snp \
+		$min_qual_nonsnp \
+		$pypath \
+		$ref
 	"""
 }
 
@@ -328,31 +313,7 @@ process IDnonbovis{
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
-	outcome=\$(cat outcome.txt)
-	if [ \$outcome != "Pass" ]; then
-	$dependpath/Kraken2/kraken2 --threads 2 --quick $params.lowmem --db $kraken2db --output - --report ${pair_id}_"\$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
-	
-	# HACK: (AF) Ignore Bracken errors. Better to handle output from Kraken and have unit tests, 
-	# but easier let the pipeline pass while we are setting up validation tests.. 
-	set +e
-
-	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
-	sed 1d ${pair_id}_"\$outcome"_bracken.out | sort -t \$'\t' -k7,7 -nr - | head -20 > ${pair_id}_"\$outcome"_brackensort.tab
-	$dependpath/Bracken-2.6.0/bracken -d $kraken2db -r150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
-	( sed -u 1q; sort -t \$'\t' -k7,7 -nr ) < ${pair_id}_"\$outcome"-S1_bracken.out > ${pair_id}_"\$outcome"-S1_brackensort.tab
-	BovPos=\$(grep 'variant bovis' ${pair_id}_"\$outcome"-S1_brackensort.tab |
-	 awk '{print \$1" "\$2" "\$3" "\$4","\$9","(\$10*100)}' || true)
-	echo "Sample,ID,TotalReads,Abundance" > ${pair_id}_bovis.csv
-	echo "${pair_id},"\$BovPos"" >> ${pair_id}_bovis.csv
-	
-	# HACK: see above
-	set -e
-
-	else
-	echo "ID not required"
-	fi
-	rm `readlink ${pair_id}_trim_R1.fastq`
-	rm `readlink ${pair_id}_trim_R2.fastq`
+	idNonBovis.bash $pair_id $params.dependPath
 	"""
 }
 
