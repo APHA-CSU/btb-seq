@@ -12,13 +12,13 @@ import subprocess
 class TestPipeline(unittest.TestCase):
     def test_deduplicate(self):
         """
-            This introductory unit test asserts the deduplicate prcocess works on tinyreads.
-            It currently fails because the depend_path is wrong.
+            This introductory unit test asserts the deduplicate process completes on tinyreads without errors.
+            It currently fails on line 23 because the depend_path arg is not supplied.
+            In a future PR, I would like to fix this by putting FastUniq on the Linux search path.
         """
-        depend_path = './'
         pair_id = 'tests/data/tinyreads/tinyreads'
 
-        return_code = subprocess.run(['bash', '-e', './bin/deduplicate.bash', depend_path, pair_id]).returncode
+        return_code = subprocess.run(['bash', '-e', './bin/deduplicate.bash', pair_id]).returncode
 
         self.assertEqual(return_code, 0)
 
