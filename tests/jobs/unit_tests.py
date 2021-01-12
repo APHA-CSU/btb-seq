@@ -2,8 +2,8 @@
 
 """ unit_tests.py: 
 		This file runs unit tests for the pipeline. 
-		Each unit test should be quick to run (ie. less than second). 
-		Tests that have a long run time should be an .circleci job.
+		Each unit test should be quick to run (ie. milliseconds typically, but certainly less than second) 
+		Tests that have a long run time should simplified, mocked, or be a .circleci job.
 """
 
 import unittest
