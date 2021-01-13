@@ -101,7 +101,8 @@ RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.29.0/bedtools-2
     rm -f bedtools-2.29.0.tar.gz && \
     cd bedtools2 && \
     make && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/bedtools2/bin/bedtools /usr/local/bin/bedtools
 
 # kraken2 and associated database
 RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
