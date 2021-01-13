@@ -1,9 +1,8 @@
 # Masking known repeats regions and sites with zero coverage
 # Ensure that consensus only includes regions of the genome where there is high confidence */
 
-dependpath=$1
-pair_id=$2
-rptmask=$3
+pair_id=$1
+rptmask=$2
 
 $dependpath/bedtools2/bin/bedtools genomecov -bga -ibam ${pair_id}.mapped.sorted.bam |
 grep -w "0\$" | cat > ${pair_id}_zerocov.bed

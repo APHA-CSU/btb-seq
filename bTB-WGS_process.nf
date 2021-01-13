@@ -179,7 +179,7 @@ process Mask {
 	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
 
 	"""
-	mask.bash $params.dependPath $pair_id $rptmask
+	mask.bash $pair_id $rptmask
 	"""
 }
 
