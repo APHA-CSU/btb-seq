@@ -138,7 +138,7 @@ process Map2Ref {
 	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
 
 	"""
-	map2Ref.bash $params.dependPath ${pair_id} $ref
+	map2Ref.bash ${pair_id} $ref
 	"""
 }
 
