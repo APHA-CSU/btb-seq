@@ -94,7 +94,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	deduplicate.bash $params.dependPath ${pair_id}
+	deduplicate.bash ${pair_id}
 	"""
 }	
 
@@ -115,7 +115,7 @@ process Trim {
 	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
 	
 	"""
-	trim.bash $params.dependPath ${pair_id}
+	trim.bash ${pair_id}
 	"""
 }
 
