@@ -59,7 +59,6 @@ adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
 pypath = file(params.pypath)
-dependpath = file(params.dependPath)
 kraken2db = file(params.kraken2db)
 
 /*	Collect pairs of fastq files and infer sample names
@@ -313,7 +312,7 @@ process IDnonbovis{
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
-	idNonBovis.bash $pair_id $params.dependPath
+	idNonBovis.bash $pair_id
 	"""
 }
 
