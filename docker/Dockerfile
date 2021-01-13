@@ -110,7 +110,8 @@ RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
     rm -f v2.0.8-beta.tar.gz && \
     cd kraken2-2.0.8-beta && \
     ./install_kraken2.sh ../Kraken2 && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/Kraken2/kraken2 /usr/local/bin/kraken2
 
 RUN mkdir Kraken2/db
 
@@ -124,7 +125,9 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
     rm -f v2.6.0.tar.gz && \
     cd Bracken-2.6.0 && \
     sh ./install_bracken.sh ../bracken && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/Bracken-2.6.0/bracken /usr/local/bin/bracken
+
 
 # Install nextflow.
 COPY ./docker/install_nextflow-20.7.1.bash ./install_nextflow.bash
