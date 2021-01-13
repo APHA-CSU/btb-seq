@@ -68,7 +68,7 @@ RUN wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz && 
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip && \
     unzip Trimmomatic-0.38.zip && \
     rm -f Trimmomatic-0.38.zip && \
-    ln -s /biotools/Trimmomatic-0.38/trimmomatic-0.38.jar /usr/local/bin/trimmomatic.jar
+    ln -s $BIOTOOLS_PATH/Trimmomatic-0.38/trimmomatic-0.38.jar /usr/local/bin/trimmomatic.jar
 
 # bwa
 RUN git clone https://github.com/lh3/bwa.git && \
