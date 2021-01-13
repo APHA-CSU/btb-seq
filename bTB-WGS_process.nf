@@ -59,7 +59,6 @@ adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
 pypath = file(params.pypath)
-dependpath = file(params.dependPath)
 kraken2db = file(params.kraken2db)
 
 /*	Collect pairs of fastq files and infer sample names
@@ -94,7 +93,7 @@ process Deduplicate {
 	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
 
 	"""
-	deduplicate.bash $params.dependPath ${pair_id}
+	deduplicate.bash ${pair_id}
 	"""
 }	
 
@@ -115,7 +114,7 @@ process Trim {
 	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
 	
 	"""
-	trim.bash $params.dependPath ${pair_id}
+	trim.bash ${pair_id}
 	"""
 }
 
@@ -138,7 +137,7 @@ process Map2Ref {
 	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
 
 	"""
-	map2Ref.bash $params.dependPath ${pair_id} $ref
+	map2Ref.bash ${pair_id} $ref
 	"""
 }
 
@@ -160,7 +159,7 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-	varCall.bash $params.dependPath $pair_id $ref
+	varCall.bash $pair_id $ref
 	"""
 }
 
@@ -179,7 +178,7 @@ process Mask {
 	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
 
 	"""
-	mask.bash $params.dependPath $pair_id $rptmask
+	mask.bash $pair_id $rptmask
 	"""
 }
 
@@ -313,7 +312,7 @@ process IDnonbovis{
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
-	idNonBovis.bash $pair_id $params.dependPath
+	idNonBovis.bash $pair_id
 	"""
 }
 
