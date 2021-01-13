@@ -74,7 +74,8 @@ RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmoma
 RUN git clone https://github.com/lh3/bwa.git && \
     cd bwa && \
     make && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/bwa/bwa /usr/local/bin/bwa
 
 # samtools
 RUN wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 && \
