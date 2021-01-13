@@ -160,7 +160,7 @@ process VarCall {
 	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
 
 	"""
-	varCall.bash $params.dependPath $pair_id $ref
+	varCall.bash $pair_id $ref
 	"""
 }
 
