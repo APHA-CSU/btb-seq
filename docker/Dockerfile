@@ -61,18 +61,21 @@ RUN wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz && 
     tar xzf FastUniq-1.1.tar.gz && rm -f FastUniq-1.1.tar.gz && \
     cd FastUniq/source && \
     make && \
-    cd ../..
+    cd ../.. && \
+    ln -s $BIOTOOLS_PATH/FastUniq/source/fastuniq /usr/local/bin/fastuniq
 
 # Trimmomatic
 RUN wget http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip && \
     unzip Trimmomatic-0.38.zip && \
-    rm -f Trimmomatic-0.38.zip
+    rm -f Trimmomatic-0.38.zip && \
+    ln -s $BIOTOOLS_PATH/Trimmomatic-0.38/trimmomatic-0.38.jar /usr/local/bin/trimmomatic.jar
 
 # bwa
 RUN git clone https://github.com/lh3/bwa.git && \
     cd bwa && \
     make && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/bwa/bwa /usr/local/bin/bwa
 
 # samtools
 RUN wget https://github.com/samtools/samtools/releases/download/1.10/samtools-1.10.tar.bz2 && \
@@ -98,7 +101,8 @@ RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.29.0/bedtools-2
     rm -f bedtools-2.29.0.tar.gz && \
     cd bedtools2 && \
     make && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/bedtools2/bin/bedtools /usr/local/bin/bedtools
 
 # kraken2 and associated database
 RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
@@ -106,7 +110,8 @@ RUN wget http://github.com/DerrickWood/kraken2/archive/v2.0.8-beta.tar.gz && \
     rm -f v2.0.8-beta.tar.gz && \
     cd kraken2-2.0.8-beta && \
     ./install_kraken2.sh ../Kraken2 && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/Kraken2/kraken2 /usr/local/bin/kraken2
 
 RUN mkdir Kraken2/db
 
@@ -120,7 +125,9 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
     rm -f v2.6.0.tar.gz && \
     cd Bracken-2.6.0 && \
     sh ./install_bracken.sh ../bracken && \
-    cd ..
+    cd .. && \
+    ln -s $BIOTOOLS_PATH/Bracken-2.6.0/bracken /usr/local/bin/bracken
+
 
 # Install nextflow.
 COPY ./docker/install_nextflow-20.7.1.bash ./install_nextflow.bash
