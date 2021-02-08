@@ -10,6 +10,8 @@ import unittest
 import subprocess
 import tempfile
 import os
+import shutil
+import glob
 
 class TestPipeline(unittest.TestCase):
     def setUp(self):
@@ -17,7 +19,7 @@ class TestPipeline(unittest.TestCase):
             Create new temporary directory
         """
         self.temp_dir = tempfile.TemporaryDirectory()
-        self.temp_dirname = self.temp_dir.__enter__()
+        self.temp_dirname = self.temp_dir.__enter__() + '/'
 
     def tearDown(self):
         """
@@ -34,7 +36,8 @@ class TestPipeline(unittest.TestCase):
 
         pair_id = self.temp_dirname + 'tinyreads'
 
-        os.path.copy('tests/data/tinyreads/*', self.temp_dirname)
+        for file in glob.glob(r'./tests/data/tinyreads/*'):
+            shutil.copy(file, self.temp_dirname)
 
         return_code = subprocess.run(['bash', '-e', './bin/deduplicate.bash', pair_id]).returncode
 
