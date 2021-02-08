@@ -43,5 +43,20 @@ class TestPipeline(unittest.TestCase):
 
         self.assertEqual(return_code, 0)
 
+    def test_mask(self):
+        in_filepath = './tests/data/dummy.sam'
+
+        # Convert to SAM
+        cmd = ['samtools', 'view', '-S', '-b', in_filepath]
+        
+        print(cmd)
+
+        with open(self.temp_dirname+'test.bam', 'w') as f:
+            subprocess.call(cmd, stdout=f)
+
+        # Test it
+
+        pass
+
 if __name__ == '__main__':
     unittest.main()
