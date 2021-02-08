@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python3
 
 # Merge the csv output files and determine whether samples are M.bovis positive or not, based on predetemined 
 # thresholds for number and proportion of M.bovis reads.
