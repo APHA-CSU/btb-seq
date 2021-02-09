@@ -21,6 +21,8 @@ class TestPipeline(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.temp_dirname = self.temp_dir.__enter__() + '/'
 
+        print("Temporary Directory setup: " + self.temp_dirname)
+
     def tearDown(self):
         """
             Cleanup temporary directory.
