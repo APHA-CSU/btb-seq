@@ -20,8 +20,8 @@ pair_id=$1
     trim_R1=$(( $(cat ${pair_id}_trim_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     num_map=$(samtools view -c ${pair_id}.mapped.sorted.bam) # samtools counts the number of mapped reads
     samtools depth -a ${pair_id}.mapped.sorted.bam > depth.txt # samtools outputs depth at each position
-    avg_depth=$(awk '{sum+=$3} END { print sum/NR}' depth.txt)
-    zero_cov=$(awk 'BEGIN (count=0) $3<1 {++count} END {print count}' depth.txt)
+    avg_depth=$(awk '{sum+=$3} END { printf "%.3f", sum/NR}' depth.txt)
+    zero_cov=$(awk 'BEGIN {count=0} $3<1 {++count} END {print count}' depth.txt)
     sites=$(awk '{++count} END {print count}' depth.txt)
     rm depth.txt
     
