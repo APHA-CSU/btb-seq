@@ -312,7 +312,7 @@ process IDnonbovis{
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
-	idNonBovis.bash $pair_id
+	idNonBovis.bash $pair_id $kraken2db $params.lowmem
 	"""
 }
 
