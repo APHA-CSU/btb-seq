@@ -64,5 +64,15 @@ class TestPipeline(unittest.TestCase):
         # Test
         self.assertBashScript(0, ['./bin/mask.bash', pair_id, rpt_mask])
 
+    def test_combinecsv(self):
+        """
+            This unit test checks the correct merging of CSV files and intepretation of thresholds
+        """
+        csv1 = 'tests/data/assigned-test1.csv'
+        csv2 = 'tests/data/bovpos_test2.csv'
+
+        return_code = subprocess.run(['bash', '-e', './bin/CombineCsv.py', csv1, csv2]).returncode
+        self.assertEqual(return_code, 0)
+
 if __name__ == '__main__':
     unittest.main()
