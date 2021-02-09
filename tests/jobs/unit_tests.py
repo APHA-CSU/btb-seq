@@ -27,6 +27,18 @@ class TestPipeline(unittest.TestCase):
         """
         self.temp_dir.__exit__(None, None, None)
 
+    def assertBashScript(self, expected_exit_code, cmd):
+        """
+            Runs a bash script with exit on error (set -e) and throws an exception if the exit code doesn't match the expected 
+            
+            Inputs: 
+                error_code <int>
+                cmd <list> The command as a list of strings. eg ['hello-world.bash', '-name', 'Aaron']
+        """
+
+        actual_exit_code = subprocess.run(['bash', '-e'] + cmd).returncode
+        self.assertEqual(expected_exit_code, actual_exit_code)
+
     def test_deduplicate(self):
         """
             This introductory unit test asserts the deduplicate process completes on tinyreads without errors.
@@ -44,19 +56,16 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(return_code, 0)
 
     def test_mask(self):
-        in_filepath = './tests/data/dummy.sam'
+        pair_id = self.temp_dirname+'test'
+        sam_filepath = './tests/data/dummy.sam'
+        rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
 
-        # Convert to SAM
-        cmd = ['samtools', 'view', '-S', '-b', in_filepath]
-        
-        print(cmd)
-
-        with open(self.temp_dirname+'test.bam', 'w') as f:
-            subprocess.call(cmd, stdout=f)
-
+        # Convert to SAM to BAM
+        with open(pair_id + '.mapped.sorted.bam', 'w') as f:
+            subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
+       
         # Test it
-
-        pass
+        self.assertBashScript(0, ['./bin/mask.bash', pair_id, rpt_mask])
 
 if __name__ == '__main__':
     unittest.main()
