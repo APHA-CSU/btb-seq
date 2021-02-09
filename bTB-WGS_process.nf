@@ -337,7 +337,7 @@ process CombineOutput {
 	file '*.csv' into FinalOut
 
 	"""
-	CombineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
 	"""
 }
 
