@@ -1,0 +1,3 @@
+@HD	VN:1.0	SO:unsorted
+@SQ	SN:test_ref	LN:3
+read_name	16	test_ref	1	255	3M	*	0	0	AAA	EEE
