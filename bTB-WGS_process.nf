@@ -320,9 +320,26 @@ process IDnonbovis{
 
 AssignCluster
 	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.set {Assigned}
 
 QueryBovis
 	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.set {Qbovis}
+
+process CombineOutput {
+	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
+	
+	input:
+	file('Assigned.csv') from Assigned
+	file('Qbovis.csv') from Qbovis
+
+	output:
+	file '*.csv' into FinalOut
+
+	"""
+	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	"""
+}
 
 workflow.onComplete {
 		log.info "Completed sucessfully:	$workflow.success"		
