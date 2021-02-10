@@ -21,6 +21,8 @@ class TestPipeline(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.temp_dirname = self.temp_dir.__enter__() + '/'
 
+        self.temp_dirname = './'
+
         print("Temporary Directory setup: " + self.temp_dirname)
 
     def tearDown(self):
@@ -59,7 +61,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_mask(self):
         pair_id = self.temp_dirname+'test'
-        sam_filepath = './tests/data/dummy.sam'
+        sam_filepath = './tests/data/tinymatch.sam'
         rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
 
         # Convert to SAM to BAM
