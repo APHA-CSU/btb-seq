@@ -17,6 +17,7 @@ ARG BIOTOOLS_PATH="/biotools/"
 
 ################## DEPENDENCIES ######################
 
+# TODO: Remove all except sudo
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-11-jdk \
     sudo \
