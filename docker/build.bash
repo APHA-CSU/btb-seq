@@ -1,4 +1,4 @@
-BIOTOOLS_PATH="/biotools/"
+BIOTOOLS_PATH="~/biotools/"
 
 
 ################## DEPENDENCIES ######################
@@ -36,7 +36,7 @@ ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################
 
-WORKDIR $BIOTOOLS_PATH
+mkdir -p $BIOTOOLS_PATH
 
 # FastUniq
 wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz
