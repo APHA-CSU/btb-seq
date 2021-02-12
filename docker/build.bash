@@ -1,3 +1,5 @@
+################## ARGS ##############################
+
 BIOTOOLS_PATH="~/biotools/"
 
 
@@ -30,12 +32,13 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 # python 
 pip3 install biopython pandas
-ln -s /usr/bin/python3 /usr/bin/python
+sudo ln -s /usr/bin/python3 /usr/bin/python
 
 
 ################## BIOTOOLS ######################
 
 mkdir -p $BIOTOOLS_PATH
+cp ./docker/install-*.sh $BIOTOOLS_PATH
 cd $BIOTOOLS_PATH
 
 sh install-FastUniq.sh
@@ -48,6 +51,3 @@ sh install-Kraken2.sh
 sh install-bracken.sh
 sh install-nextflow.sh
 sh install-sra-toolkit.sh
-
-#### TODO: is this good?
-chmod +x ./bin/*
