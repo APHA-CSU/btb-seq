@@ -1,3 +1,5 @@
+set -e
+
 ################## ARGS ##############################
 
 BIOTOOLS_PATH=~/biotools/
@@ -41,13 +43,13 @@ mkdir -p $BIOTOOLS_PATH
 cp ./install*.sh $BIOTOOLS_PATH
 cd $BIOTOOLS_PATH
 
-sh -e install-FastUniq.sh
-sh -e install-Trimmomatic.sh
-sh -e install-bwa.sh
-sh -e install-samtools.sh
-sh -e install-bcftools.sh
-sh -e install-bedtools.sh
-sh -e install-Kraken2.sh
-sh -e install-bracken.sh
-sh -e install-nextflow.sh
-sh -e install-sra-toolkit.sh
+bash -e install-FastUniq.sh
+bash -e install-Trimmomatic.sh
+bash -e install-bwa.sh
+bash -e install-samtools.sh
+bash -e install-bcftools.sh
+bash -e install-bedtools.sh
+bash -e install-Kraken2.sh
+bash -e install-bracken.sh
+bash -e install-nextflow.sh
+bash -e install-sra-toolkit.sh

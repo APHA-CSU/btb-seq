@@ -2,6 +2,4 @@
 
 chmod +x ./bin/*
 cd docker
-echo PWD $PWD
-ls
-bash -e build.bash
+bash install-all-dependancies.bash
