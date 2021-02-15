@@ -120,6 +120,8 @@ RUN wget https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v1_8GB_201904.tg
     rm -f minikraken2_v1_8GB_201904.tgz
 
 # bracken
+# Need to look at alternate solutions running bracken. This works, and is the suggested approach, 
+# but there must be a better solution than adding a symlink to the bracken src/ directory
 RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
     tar xzf v2.6.0.tar.gz && \
     rm -f v2.6.0.tar.gz && \
@@ -128,7 +130,6 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/v2.6.0.tar.gz && \
     cd .. && \
     ln -s $BIOTOOLS_PATH/Bracken-2.6.0/bracken /usr/local/bin/bracken && \
     ln -s $BIOTOOLS_PATH/Bracken-2.6.0/src /usr/local/bin/src
-
 
 # Install nextflow.
 COPY ./docker/install_nextflow-20.7.1.bash ./install_nextflow.bash
