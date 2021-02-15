@@ -2,4 +2,6 @@
 
 chmod +x ./bin/*
 cd docker
-bash buid.bash
+echo PWD $PWD
+ls
+bash -e build.bash

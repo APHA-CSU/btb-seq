@@ -36,20 +36,10 @@ sudo ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################
 
-echo BIOTOOLS $BIOTOOLS_PATH
 
 mkdir -p $BIOTOOLS_PATH
-
-echo mkdir
-
 cp ./install*.sh $BIOTOOLS_PATH
-
-echo cp
-
 cd $BIOTOOLS_PATH
-
-echo cd
-
 
 sh -e install-FastUniq.sh
 sh -e install-Trimmomatic.sh
