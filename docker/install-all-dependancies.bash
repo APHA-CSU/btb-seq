@@ -40,7 +40,7 @@ sudo ln -s /usr/bin/python3 /usr/bin/python
 
 
 mkdir -p $BIOTOOLS_PATH
-cp ./install*.sh $BIOTOOLS_PATH
+cp ./install*.*sh $BIOTOOLS_PATH
 cd $BIOTOOLS_PATH
 
 bash -e install-FastUniq.sh
