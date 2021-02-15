@@ -85,10 +85,10 @@ class TestPipeline(unittest.TestCase):
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
 
-    def test_read_stats(self):
-        fastq_1 = './tests/data/tinyreads/tinyreads_S1_R1_X.fastq.gz'
-        fastq_2 = './tests/data/tinyreads/tinyreads_S1_R2_X.fastq.gz'
-        pair_id = self.temp_dirname+'tinyreads'
+    def readStatsTest(self, reads_path, name):
+        fastq_1 = reads_path+'_S1_R1_X.fastq.gz'
+        fastq_2 = reads_path+'_S1_R2_X.fastq.gz'
+        pair_id = self.temp_dirname + name
 
         # Copy over 
         shutil.copy(fastq_1, self.temp_dirname)
@@ -107,7 +107,14 @@ class TestPipeline(unittest.TestCase):
         self.sam_to_bam('./tests/data/tinymatch.sam', pair_id+'.mapped.sorted.bam')
 
         # Test
-        self.assertBashScript(0, ['./bin/readStats.bash', pair_id])
+        self.assertBashScript(0, ['./bin/readStats.bash', pair_id])            
+
+    def test_read_stats_tinyreads(self):
+        self.readStatsTest('./tests/data/tinyreads/tinyreads', 'tinyreads')
+
+    def test_read_stats_tinysra(self):
+        self.readStatsTest('./tests/data/tinysra/tinysra', 'tinysra')
+
 
 if __name__ == '__main__':
     unittest.main()
