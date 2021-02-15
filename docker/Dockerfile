@@ -16,17 +16,18 @@ ARG BOVTB_PATH="/BovTB-nf/"
 
 ################## DEPENDENCIES ######################
 
+# Copy repository
+WORKDIR $BOVTB_PATH
+COPY ./ ./
+RUN chmod +x ./bin/*
+
+# Sudo
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 
+# Biotools
 RUN ./docker/install-all-dependancies.bash
 
 
 ################## ENTRY ######################
-
-WORKDIR $BOVTB_PATH
-
-# Copy repository
-COPY ./ ./
-RUN chmod +x ./bin/*
 
 CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
