@@ -1,6 +1,6 @@
 ################## ARGS ##############################
 
-BIOTOOLS_PATH="~/biotools/"
+BIOTOOLS_PATH=~/biotools/
 
 
 ################## DEPENDENCIES ######################
@@ -34,20 +34,30 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 pip3 install biopython pandas
 sudo ln -s /usr/bin/python3 /usr/bin/python
 
-
 ################## BIOTOOLS ######################
 
+echo BIOTOOLS $BIOTOOLS_PATH
+
 mkdir -p $BIOTOOLS_PATH
-cp ./docker/install-*.sh $BIOTOOLS_PATH
+
+echo mkdir
+
+cp ./install*.sh $BIOTOOLS_PATH
+
+echo cp
+
 cd $BIOTOOLS_PATH
 
-sh install-FastUniq.sh
-sh install-Trimmomatic.sh
-sh install-bwa.sh
-sh install-samtools.sh
-sh install-bcftools.sh
-sh install-bedtools.sh
-sh install-Kraken2.sh
-sh install-bracken.sh
-sh install-nextflow.sh
-sh install-sra-toolkit.sh
+echo cd
+
+
+sh -e install-FastUniq.sh
+sh -e install-Trimmomatic.sh
+sh -e install-bwa.sh
+sh -e install-samtools.sh
+sh -e install-bcftools.sh
+sh -e install-bedtools.sh
+sh -e install-Kraken2.sh
+sh -e install-bracken.sh
+sh -e install-nextflow.sh
+sh -e install-sra-toolkit.sh
