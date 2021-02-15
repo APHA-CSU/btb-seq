@@ -46,7 +46,7 @@ class TestPipeline(unittest.TestCase):
                 cmd <list> The command as a list of strings. eg ['hello-world.bash', '-name', 'Aaron']
         """
 
-        actual_exit_code = subprocess.run(['bash', '-e'] + cmd).returncode
+        actual_exit_code = subprocess.run(['bash', '-eE', '-o', 'functrace'] + cmd).returncode
         self.assertEqual(expected_exit_code, actual_exit_code)
 
     def test_deduplicate(self):
@@ -79,6 +79,35 @@ class TestPipeline(unittest.TestCase):
        
         # Test
         self.assertBashScript(0, ['./bin/mask.bash', pair_id, rpt_mask])
+
+    def sam_to_bam(self, sam_filepath, bam_filepath):
+        # Convert to SAM to BAM
+        with open(bam_filepath, 'w') as f:
+            subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
+
+    def test_read_stats(self):
+        fastq_1 = './tests/data/tinyreads/tinyreads_S1_R1_X.fastq.gz'
+        fastq_2 = './tests/data/tinyreads/tinyreads_S1_R2_X.fastq.gz'
+        pair_id = self.temp_dirname+'tinyreads'
+
+        # Copy over 
+        shutil.copy(fastq_1, self.temp_dirname)
+        shutil.copy(fastq_2, self.temp_dirname)
+
+        # Unzip
+        fastq_files = glob.glob(self.temp_dirname + '*.gz')
+        subprocess.run(['gunzip', '-k'] + fastq_files, cwd=self.temp_dirname)
+
+        fastq_file = fastq_files[0][:-3]
+
+        subprocess.run(['ln', '-s', fastq_file, pair_id+'_uniq_R1.fastq'])
+        subprocess.run(['ln', '-s', fastq_file, pair_id+'_uniq_R2.fastq'])
+        shutil.copy(fastq_file, pair_id+'_trim_R1.fastq')
+
+        self.sam_to_bam('./tests/data/tinymatch.sam', pair_id+'.mapped.sorted.bam')
+
+        # Test
+        self.assertBashScript(0, ['./bin/readStats.bash', pair_id])
 
 if __name__ == '__main__':
     unittest.main()
