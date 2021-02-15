@@ -12,6 +12,7 @@ import tempfile
 import os
 import shutil
 import glob
+import argparse
 
 class TestPipeline(unittest.TestCase):
     
@@ -20,6 +21,21 @@ class TestPipeline(unittest.TestCase):
     #     in a branch called unit_test_setup_and_teardown, but it's cumbersome for debugging
     #     To make things easier, I would like to make a build script so I can run things from VSCode (without Docker)
     temp_dirname = './'    
+
+    def setUp(self):
+        """
+            Create new temporary directory
+        """
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dirname = self.temp_dir.__enter__() + '/'
+
+        print('Temp Dir: ' + self.temp_dirname)
+
+    def tearDown(self):
+        """
+            Cleanup temporary directory.
+        """
+        self.temp_dir.__exit__(None, None, None)
 
     def assertBashScript(self, expected_exit_code, cmd):
         """
