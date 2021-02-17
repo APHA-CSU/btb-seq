@@ -46,7 +46,7 @@ class TestPipeline(unittest.TestCase):
                 cmd <list> The command as a list of strings. eg ['hello-world.bash', '-name', 'Aaron']
         """
 
-        actual_exit_code = subprocess.run(['bash', '-eE', '-o', 'functrace'] + cmd).returncode
+        actual_exit_code = subprocess.run(['bash', '-e', 'functrace'] + cmd).returncode
         self.assertEqual(expected_exit_code, actual_exit_code)
 
     def test_deduplicate(self):
