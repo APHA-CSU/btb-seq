@@ -46,7 +46,7 @@ class TestPipeline(unittest.TestCase):
                 cmd <list> The command as a list of strings. eg ['hello-world.bash', '-name', 'Aaron']
         """
 
-        actual_exit_code = subprocess.run(['bash', '-e', 'functrace'] + cmd).returncode
+        actual_exit_code = subprocess.run(['bash', '-e'] + cmd).returncode
         self.assertEqual(expected_exit_code, actual_exit_code)
 
     def test_deduplicate(self):
@@ -85,7 +85,11 @@ class TestPipeline(unittest.TestCase):
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
 
-    def readStatsTest(self, reads_path, name):
+    def assertReadStats(self, reads_path, name):
+        """
+            Asserts read stats returns a 0 exit code for the supplied test reads
+            TODO: Neaten test code when readStats.bash has input args for all input data
+        """
         fastq_1 = reads_path+'_S1_R1_X.fastq.gz'
         fastq_2 = reads_path+'_S1_R2_X.fastq.gz'
         pair_id = self.temp_dirname + name
@@ -110,10 +114,10 @@ class TestPipeline(unittest.TestCase):
         self.assertBashScript(0, ['./bin/readStats.bash', pair_id])            
 
     def test_read_stats_tinyreads(self):
-        self.readStatsTest('./tests/data/tinyreads/tinyreads', 'tinyreads')
+        self.assertReadStats('./tests/data/tinyreads/tinyreads', 'tinyreads')
 
     def test_read_stats_tinysra(self):
-        self.readStatsTest('./tests/data/tinysra/tinysra', 'tinysra')
+        self.assertReadStats('./tests/data/tinysra/tinysra', 'tinysra')
 
 
 if __name__ == '__main__':
