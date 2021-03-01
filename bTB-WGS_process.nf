@@ -337,12 +337,12 @@ process CombineOutput {
 	file '*.csv' into FinalOut
 
 	"""
-	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir} ${workflow.userName} ${workflow.commitId}
 	"""
 }
 
 workflow.onComplete {
-		log.info "Completed sucessfully:	$workflow.success"		
+		log.info "Completed sucessfully:	$workflow.success"
 		log.info "Nextflow Version:	$workflow.nextflow.version"
 		log.info "Duration:		$workflow.duration"
 		log.info "Output Directory:	$params.outdir/Results_${params.DataDir}_${params.today}"
