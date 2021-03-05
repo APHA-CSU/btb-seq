@@ -13,7 +13,7 @@ source tests/utils/aliases.bash
 
 # Params
 total_num_reads=6.5e5
-outcomes=("Pass" "Pass" "CheckRequired" "Comtaminated")
+outcomes=("Pass" "Pass" "CheckRequired" "Contaminated")
 props=("1.0" "0.65" "0.60" "0.0")
 
 # Args
