@@ -337,7 +337,7 @@ process CombineOutput {
 	file '*.csv' into FinalOut
 
 	"""
-	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir} ${workflow.userName} ${workflow.commitId}
+	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
 	"""
 }
 
