@@ -5,11 +5,18 @@
 
 import pandas as pd
 import argparse
+import getpass
+import git
+import os
 from datetime import datetime, date
 
-def combine(assigned_csv, bovis_csv, seq_run, user, commit, read_threshold, abundance_threshold):
+def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshold):
 
     date_out = date.today().strftime('%d%b%y')
+    user = getpass.getuser()
+    scriptpath = os.path.dirname(os.path.abspath(__file__))
+    repo = git.Repo(scriptpath, search_parent_directories=True)
+    commit = repo.head.object.__str__()
 
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
@@ -40,7 +47,7 @@ def combine(assigned_csv, bovis_csv, seq_run, user, commit, read_threshold, abun
 
     #Append log info
     with open("{}_FinalOut_{}.csv".format(seq_run, date_out), "a") as outFile:
-        outFile.write("# Operator: " +user +"\n" +"# Pipeline commit: " +commit)
+        outFile.write("# Operator: " +user +"\n" +"# BovTB-nf commit: " +commit)
         outFile.close
 
 if __name__ == '__main__':
@@ -48,8 +55,6 @@ if __name__ == '__main__':
     parser.add_argument('assigned_csv', help='path to AssignedWGSClade.csv')
     parser.add_argument('bovis_csv', help='path to Bovis.csv')
     parser.add_argument('seq_run', help='Unique sequencer run number')
-    parser.add_argument('user', help='User name')
-    parser.add_argument('commit', help='pipeline commit id')
     parser.add_argument('--read_threshold', type=int, default=500, help='threshold for number of M.bovis reads')
     parser.add_argument('--abundance_threshold', type=int, default=1, help='threshold for M.bovis abundance')
 
