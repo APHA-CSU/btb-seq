@@ -50,7 +50,7 @@ pair_id=$1
     
     if [[ ${pc_aft_trim%%.*} -lt $minafttrim ]]; then flag="LowQualData"
         elif [[ ${avg_depth%%.*} -ge $mindepth ]] && [[ ${pc_mapped%%.*} -gt $minpc ]]; then flag="Pass"
-        elif [[ ${avg_depth%%.*} -lt $mindepth ]] && [[ ${pc_mapped%%.*} -lt $minpc ]] && [[ $num_trim -gt $minreads ]]; then flag="Comtaminated"
+        elif [[ ${avg_depth%%.*} -lt $mindepth ]] && [[ ${pc_mapped%%.*} -lt $minpc ]] && [[ $num_trim -gt $minreads ]]; then flag="Contaminated"
         elif [[ ${avg_depth%%.*} -lt $mindepth ]] && [[ $num_trim -lt $minreads ]]; then flag="InsufficientData"
 #        elif [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="q_OtherMycobact"
         else flag="CheckRequired"

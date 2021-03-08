@@ -5,11 +5,18 @@
 
 import pandas as pd
 import argparse
+import getpass
+import git
+import os
 from datetime import datetime, date
 
 def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshold):
 
     date_out = date.today().strftime('%d%b%y')
+    user = getpass.getuser()
+    scriptpath = os.path.dirname(os.path.abspath(__file__))
+    repo = git.Repo(scriptpath, search_parent_directories=True)
+    commit = repo.head.object.__str__()
 
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
@@ -37,6 +44,11 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
 
     #Write to csv
     finalout_df.to_csv("{}_FinalOut_{}.csv".format(seq_run, date_out))
+
+    #Append log info
+    with open("{}_FinalOut_{}.csv".format(seq_run, date_out), "a") as outFile:
+        outFile.write("# Operator: " +user +"\n" +"# BovTB-nf commit: " +commit)
+        outFile.close
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
