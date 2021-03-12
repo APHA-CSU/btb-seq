@@ -20,13 +20,15 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
 
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
+    assignedround_df = assigned_df.round(2)
 
     # Read BovPos csv and change ID to either 'Negative' or 'Mycobacterium bovis',
     # depending on number and relative abundance of M.bovis reads.
     # Thresholds set by comparison with output from spoligotyping.
     # Fill empty value cells with zero 
     # TODO: Potential that not all scenarios are covered by the options below, so need to add default ID outcome
-    qbovis_df = pd.read_csv(bovis_csv)
+    bovis_df = pd.read_csv(bovis_csv)
+    qbovis_df = bovis_df.round(2)
     qbovis_df.loc[(qbovis_df['TotalReads'] >= read_threshold) & (qbovis_df['Abundance'] >= abundance_threshold), 'ID'] = 'Mycobacterium bovis'
     qbovis_df.loc[(qbovis_df['TotalReads'] < read_threshold) & (qbovis_df['Abundance'] < abundance_threshold), 'ID'] = 'Negative'
     qbovis_df.loc[(qbovis_df['TotalReads'] < read_threshold) & (qbovis_df['Abundance'] > abundance_threshold), 'ID'] = 'Inconclusive'
@@ -36,7 +38,7 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
     qbovis_df['ID'].fillna('Negative', inplace = True)
 
     #Merge dataframes and fill ID with M bovis if Pass, then any remaining blank cells with 'NA'
-    finalout_df = pd.merge(assigned_df, qbovis_df, on = 'Sample', how = 'outer')
+    finalout_df = pd.merge(assignedround_df, qbovis_df, on = 'Sample', how = 'outer')
     finalout_df['ID'].fillna('Mycobacterium bovis', inplace = True)
     finalout_df.fillna('NA', inplace = True)
     finalout_df.set_index('Sample', inplace = True)
