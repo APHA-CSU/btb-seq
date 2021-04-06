@@ -2,7 +2,7 @@
 
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/btb-seq.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
-`btb-seq` is the Whole Genome Sequencing Pipeline for APHA's processing of raw *Mycobacterium bovis* WGS data. This pipeline is designed to process a batch (1 or more samples) of paired-end `fastq.gz` files generated on an Illumina sequencer using [nextflow](https://www.nextflow.io/docs/latest/getstarted.html). 
+`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline is designed to process a batch (1 or more samples) of paired-end `fastq.gz` files generated on an Illumina sequencer using [nextflow](https://www.nextflow.io/docs/latest/getstarted.html). 
 
 ## Installation
 
@@ -41,21 +41,24 @@ To run a batch from the terminal
 
 ### Run from docker
 
-To run the pipeline from ther terminal call
-```
-TODO
-```
-This will pull the latest image (if it's not already fetched) and run the nextflow container on data.
+**Note:** While running from the terminal is the easiest method for developers and data analysts, the pipeline can also be run from docker. This method has the benefit of working across platforms while guaranteeing consistency with our automated tests (see below). 
 
-### Build image from source 
+A docker image containing all required dependancies is provided [here](https://hub.docker.com/r/aaronsfishman/bov-tb). 
 
-You can also build your own experimental docker fom source
+This pull the latest image (if it's not already fetched) from dockerhub and run the container on data
+```
+sudo docker run --rm -it -v /ABS/PATH/TO/READS/:/reads/ -v /ABS/PATH/TO/RESULTS/:/results/ aaronsfishman/bov-tb
+```
+
+#### Build docker image from source 
+
+You can also build your own experimental docker image from source
 ```
 docker build ./docker/ -t my-bov-tb
 ./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/ my-bov-tb
 ```
 
-## How it works
+## Algorithm
 
 The pipelines processes data in three stages, as shown below. During the preprocessing stage; duplicate reads, low quality bases and adapter sequences are removed from the fastq sample file. Following this, the alignment stage aligns preprocessed reads to a reference genome (*M. bovis* AF2122), performs variant call, masks repeat regions and computes the consensus at each base. The final postprocessing stage assigns an `Outcome` to each sample by analysing data gathered during the preprocessing and alignment stages. The following Outcomes are used to signify subsequent lab processing steps:
 
@@ -67,14 +70,40 @@ The pipelines processes data in three stages, as shown below. During the preproc
 ![pipeline](https://user-images.githubusercontent.com/6979169/113730676-ffecef00-96ef-11eb-8670-9fae5e175701.png)
 
 
+## Validation
+
+This pipeline has been internally validated, tested and approved against a dataset in excess of 10,000 samples that have been sequenced by APHA. 
 
 
 ## Automated Tests
 
-This pipeline contains a number of automated tests that ensure the software is running as expected. If you make changes to the algorithm, it is reccomended that you run these tests to verify performance. 
+This codebase contains a number of automated tests that ensure the software is running as expected. If you make changes to the algorithm, it is reccomended that you run these tests to verify the pipeline is behaving as intended. The tests are also automatically run by `.circleci` on each pull-request. 
 
-The pipeline is validated against real-world biological samples sequenced with Illumina NextSeq machines at APHA. The test code for the validation tests is stored under `tests/jobs/`. A summary of each test is described below
+### How to run tests
 
+To run a test
+```
+bash tests/jobs/NAME_OF_TEST.bash
+```
+
+### Unit Tests
+
+A number of small tests that assert the functionality of individual components
+
+### Inclusivity Tests
+
+Asserts the `Outcome` and `WGS_CLUSTER` against samples uploaded by APHA to [ENA](https://www.ebi.ac.uk/ena/browser/view/PRJEB40340). 
+
+### Limit of Detection (LoD)
+
+The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying proportions give the correct Outcome. This is performed by taking random reads from reference samples of M. Bovis and M. Avium.
+
+| M. Bovis (%) | M. Avium (%) | Outcome |
+| ------------- | ------------- | ------------- | 
+| 100%   | 0% | Pass | 
+| 65%   | 35% | BritishbTB | 
+| 60%   | 40% | CheckRequired | 
+| 0%   | 100% | Comtaminated | 
 
 ### Quality Test
 
@@ -96,8 +125,3 @@ The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying
 | 65%   | 35% | BritishbTB | 
 | 60%   | 40% | CheckRequired | 
 | 0%   | 100% | Comtaminated | 
-
-
-## Validation
-
-This pipeline has been internally validated, tested and approved against a large dataset in excess of 10,000 samples
