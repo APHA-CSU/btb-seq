@@ -15,4 +15,4 @@
 READS=$1
 RESULTS=$2
 
-nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
+nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
