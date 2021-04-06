@@ -1,0 +1,18 @@
+#!/bin/sh
+#================================================================
+# btb-seq
+#================================================================
+#% SYNOPSIS
+#+    bov-tb reads_dir results_dir
+#%
+#% DESCRIPTION
+#%    Run the pipeline on a batch of samples.
+#%
+#% INPUTS
+#%    reads        filepath to directory of .fastq.gz read pairs
+#%    results      filepath to where nextflow results will be stored
+
+READS=$1
+RESULTS=$2
+
+nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
