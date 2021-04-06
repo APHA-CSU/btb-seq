@@ -1,8 +1,8 @@
-# **BovTB-nf**
+# **btb-seq**
 
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/BovTB-nf.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
-This is the updated pipeline for APHA's processing of *Mycobacterium bovis* WGS data. BovTB-nf is designed to process a batch (1 or more samples) of paired-end fastq files generated on an Illumina sequencer. It will first remove duplicate reads from the dataset (FastUniq) and then trim the unique reads based on base-call quality and the presence of adapters (Trimmomatic). Reads are then mapped to the *M. bovis* AF2122 reference genome and variants called (bwa/samtools/bcftools).
+`btb-seq` is the Whole Genome Sequencing Pipeline for APHA's processing of *Mycobacterium bovis* WGS data. This pipeline is designed to process a batch (1 or more samples) of paired-end fastq files generated on an Illumina sequencer. It firsts remove duplicate reads from the dataset using `FastUniq` and then trims the unique reads based on base-call quality and the presence of adapters with `Trimmomatic`. Reads are then mapped to the *M. bovis* AF2122 reference genome and variants called (`bwa`/`samtools`/`bcftools`).
 
 It has been built to run using [nextflow](https://www.nextflow.io/docs/latest/getstarted.html), using standard bioinformatic tools for the most part. The external dependancies are:
 -	FastUniq
