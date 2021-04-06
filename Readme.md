@@ -47,13 +47,6 @@ TODO
 ```
 This will pull the latest image (if it's not already fetched) and run the nextflow container on data.
 
-### Run from docker
-
-```
-./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
-```
-
-
 ### Build image from source 
 
 You can also build your own experimental docker fom source
@@ -64,10 +57,21 @@ docker build ./docker/ -t my-bov-tb
 
 ## How it works
 
-Duplicate reads are removed from the dataset using `FastUniq` and then trims the unique reads based on base-call quality and the presence of adapters with `Trimmomatic`. Reads are then mapped to the *M. bovis* AF2122 reference genome and variants called (`bwa`/`samtools`/`bcftools`).
+The pipelines processes data in three stages, as shown below. During the preprocessing stage; duplicate reads, low quality bases and adapter sequences are removed from the fastq sample file. Following this, the alignment stage aligns preprocessed reads to a reference genome (*M. bovis* AF2122), performs variant call, masks repeat regions and computes the consensus at each base. The final postprocessing stage assigns an `Outcome` to each sample by analysing data gathered during the preprocessing and alignment stages. The following Outcomes are used to signify subsequent lab processing steps:
+
+- **Pass**: The sample contains a known M. Bovis WGS Cluster.
+- **Contaminated**: The sample contains contaminants
+- **Insufficient Data**: The sample contains insufficient data volumes for sequencing 
+- **Check Required**: Further scrutiny of the output is needed as quality thresholds fall below certain criteria, but is likely to contain M.bovis.  
+
+![pipeline](https://user-images.githubusercontent.com/6979169/113730676-ffecef00-96ef-11eb-8670-9fae5e175701.png)
 
 
-## Validation
+
+
+## Automated Tests
+
+This pipeline contains a number of automated tests that ensure the software is running as expected. If you make changes to the algorithm, it is reccomended that you run these tests to verify performance. 
 
 The pipeline is validated against real-world biological samples sequenced with Illumina NextSeq machines at APHA. The test code for the validation tests is stored under `tests/jobs/`. A summary of each test is described below
 
@@ -81,10 +85,10 @@ The quality test ensures that low quality reads (<20) are not considered for var
 | 19   | CheckRequired | LowCoverage | NA |
 | 20   | Pass | BritishbTB | B6-16 |
 
+
 ### Limit of Detection (LoD)
 
 The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying proportions give the correct Outcome. This is performed by taking random reads from reference samples of M. Bovis and M. Avium.
-
 
 | M. Bovis (%) | M. Avium (%) | Outcome |
 | ------------- | ------------- | ------------- | 
@@ -93,3 +97,7 @@ The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying
 | 60%   | 40% | CheckRequired | 
 | 0%   | 100% | Comtaminated | 
 
+
+## Validation
+
+This pipeline has been internally validated, tested and approved against a large dataset in excess of 10,000 samples
