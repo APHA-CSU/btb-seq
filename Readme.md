@@ -2,7 +2,7 @@
 
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/btb-seq.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
-`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline is designed to process a batch (1 or more samples) of paired-end `fastq.gz` files generated on an Illumina sequencer using [nextflow](https://www.nextflow.io/docs/latest/getstarted.html). 
+`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process a batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
 
 ## Installation
 
@@ -26,11 +26,11 @@ This script installs the following dependancies and adds symlinks to the `$PATH`
 To run the pipeline on a batch a samples, a directory containing raw `.fastq.gz` files is required. Each read-pair sample is represented by a pair of files named `*_R1.fastq.gz` and `*_R2.fastq.gz`. For example, to batch two samples named `bovis_a` and `bovis_b`, a directory containing `bovis_a_R1.fastq.gz`, `bovis_a_R2.fastq.gz`,  `bovis_b_R1.fastq.gz` and `bovis_b_R2.fastq.gz`, needs to be defined.
 
 Pipeline output is stored in a results directory that contains
-- Consensus `fasta`
+- A summary csv file (`AssignedWGSCluster.csv`)
+- Consensus `fasta` files
 - `.bam` files
-- Kraken metagenomics `.tab`
-- A summary csv file
-- ... 
+- `.vcf` files
+- Metagenomics classification of *non-M. Bovis* contaminents
 
 ### Run from terminal
 
@@ -60,7 +60,7 @@ docker build ./docker/ -t my-bov-tb
 
 ## Algorithm
 
-The pipelines processes data in three stages, as shown below. During the preprocessing stage; duplicate reads, low quality bases and adapter sequences are removed from the fastq sample file. Following this, the alignment stage aligns preprocessed reads to a reference genome (*M. bovis* AF2122), performs variant call, masks repeat regions and computes the consensus at each base. The final postprocessing stage assigns an `Outcome` to each sample by analysing data gathered during the preprocessing and alignment stages. The following Outcomes are used to signify subsequent lab processing steps:
+The pipelines processes data in three stages, as shown below. During the preprocessing stage; duplicate reads, low quality bases and adapter sequences are removed from the fastq sample file. Following this, the alignment stage aligns preprocessed reads to a reference genome (*M. bovis* AF2122), performs variant call, masks repeat regions and computes the consensus at each base. The final postprocessing stage assigns an `Outcome` to each sample by analysing data gathered during the preprocessing and alignment stages. The following `Outcome`s are used to signify subsequent lab processing steps:
 
 - **Pass**: The sample contains a known M. Bovis WGS Cluster.
 - **Contaminated**: The sample contains contaminants
