@@ -26,7 +26,7 @@ This script installs the following dependancies and adds symlinks to the `$PATH`
 To run the pipeline on a batch a samples, a directory containing raw `.fastq.gz` files is required. Each read-pair sample is represented by a pair of files named `*_R1.fastq.gz` and `*_R2.fastq.gz`. For example, to batch two samples named `bovis_a` and `bovis_b`, a directory containing `bovis_a_R1.fastq.gz`, `bovis_a_R2.fastq.gz`,  `bovis_b_R1.fastq.gz` and `bovis_b_R2.fastq.gz`, needs to be defined.
 
 Pipeline output is stored in a results directory that contains
-- A summary csv file (`AssignedWGSCluster.csv`)
+- A summary csv file (`AssignedWGSCluster.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
 - Consensus `fasta` files
 - `.bam` files
 - `.vcf` files
@@ -41,7 +41,7 @@ To run a batch from the terminal
 
 ### Run from docker
 
-**Note:** While running from the terminal is the easiest method for developers and data analysts, the pipeline can also be run from docker. This method has the benefit of working across platforms while guaranteeing consistency with our automated tests (see below). 
+**Note:** While running from the terminal is the easiest method for developers and data analysts, the pipeline can also be run from docker. This method has the benefit of working across platforms while guaranteeing consistency with automated tests (see below). 
 
 A docker image containing all required dependancies is provided [here](https://hub.docker.com/r/aaronsfishman/bov-tb). 
 
@@ -77,7 +77,7 @@ This pipeline has been internally validated, tested and approved against a datas
 
 ## Automated Tests
 
-This codebase contains a number of automated tests that ensure the software is running as expected. If you make changes to the algorithm, it is reccomended that you run these tests to verify the pipeline is behaving as intended. The tests are also automatically run by `.circleci` on each pull-request. 
+The automated tests provided here ensure the software runs as expected. If you make changes to the algorithm, it is **strongly** reccomended that you run these tests to verify the pipeline is behaving as intended. The tests are also automatically run by `.circleci` on each pull-request. 
 
 ### How to run tests
 
@@ -92,7 +92,7 @@ A number of small tests that assert the functionality of individual components
 
 ### Inclusivity Tests
 
-Asserts the `Outcome` and `WGS_CLUSTER` against samples uploaded by APHA to [ENA](https://www.ebi.ac.uk/ena/browser/view/PRJEB40340). 
+Asserts the `Outcome` and `WGS_CLUSTER` (clade) against samples uploaded by APHA to [ENA](https://www.ebi.ac.uk/ena/browser/view/PRJEB40340). 
 
 ### Limit of Detection (LoD)
 
@@ -101,18 +101,18 @@ The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying
 | M. Bovis (%) | M. Avium (%) | Outcome |
 | ------------- | ------------- | ------------- | 
 | 100%   | 0% | Pass | 
-| 65%   | 35% | BritishbTB | 
+| 65%   | 35% | Pass | 
 | 60%   | 40% | CheckRequired | 
-| 0%   | 100% | Comtaminated | 
+| 0%   | 100% | Contaminated | 
 
 ### Quality Test
 
 The quality test ensures that low quality reads (<20) are not considered for variant calling and genotyping. This is performed by setting uniform quality values to a real-world *M. bovis* sample and asserting output. Low quality bases are removed from the sequence using `Trimmomatic`, which uses a sliding window that deletes reads when the average base quality drops below 20. A table of expected results is shown below.
 
-| Base Quality | Outcome | flag | group |
-| ------------- | ------------- | ------------- | ------------- | 
-| 19   | CheckRequired | LowCoverage | NA |
-| 20   | Pass | BritishbTB | B6-16 |
+| Base Quality | Outcome | 
+| ------------- | ------------- | 
+| 19   | LowQualData | 
+| 20   | Pass | 
 
 
 ### Limit of Detection (LoD)
