@@ -2,7 +2,7 @@
 
 [![APHA-CSU](https://circleci.com/gh/APHA-CSU/btb-seq.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
-`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process a batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
+`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
 
 ## Installation
 
@@ -26,7 +26,7 @@ This script installs the following dependancies and adds symlinks to the `$PATH`
 To run the pipeline on a batch a samples, a directory containing raw `.fastq.gz` files is required. Each read-pair sample is represented by a pair of files named `*_R1.fastq.gz` and `*_R2.fastq.gz`. For example, to batch two samples named `bovis_a` and `bovis_b`, a directory containing `bovis_a_R1.fastq.gz`, `bovis_a_R2.fastq.gz`,  `bovis_b_R1.fastq.gz` and `bovis_b_R2.fastq.gz`, needs to be defined.
 
 Pipeline output is stored in a results directory that contains
-- A summary csv file (`AssignedWGSCluster.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
+- A summary csv file (`FinalOut.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
 - Consensus `fasta` files
 - `.bam` files
 - `.vcf` files
