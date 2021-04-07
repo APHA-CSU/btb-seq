@@ -1,58 +1,123 @@
-# **BovTB-nf**
+# **btb-seq**
 
-[![APHA-CSU](https://circleci.com/gh/APHA-CSU/BovTB-nf.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
+[![APHA-CSU](https://circleci.com/gh/APHA-CSU/btb-seq.svg?style=svg)](https://app.circleci.com/pipelines/github/APHA-CSU)
 
-This is the updated pipeline for APHA's processing of *Mycobacterium bovis* WGS data. BovTB-nf is designed to process a batch (1 or more samples) of paired-end fastq files generated on an Illumina sequencer. It will first remove duplicate reads from the dataset (FastUniq) and then trim the unique reads based on base-call quality and the presence of adapters (Trimmomatic). Reads are then mapped to the *M. bovis* AF2122 reference genome and variants called (bwa/samtools/bcftools).
+`btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
 
-It has been built to run using [nextflow](https://www.nextflow.io/docs/latest/getstarted.html), using standard bioinformatic tools for the most part. The external dependancies are:
--	FastUniq
--	Trimmomatic
--	bwa
--	samtools and bcftools
--	bedtools
--	Kraken2 (and database)
--	Bracken
+## Installation
 
-
-## Run pipeline in Docker
-
-We recommend running the pipeline with our docker image. 
-
-To pull the latest image (if it's not already fetched) and run the nextflow container on data:
+To install the software in ubuntu, run
 ```
-./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
+bash install.bash
 ```
 
-The `/PATH/TO/READS/` directory should contain fastq files named with the `*_{S*_R1,S*_R2}*.fastq.gz` pattern. For example, a directory with `bovis_S1_R1.fastq.gz` and `bovis_S1_R2.fastq.gz` contains a single pair of reads
+This script installs the following dependancies and adds symlinks to the `$PATH`: 
+-	`nextflow`
+-	`FastUniq`
+-	`Trimmomatic`
+-	`bwa`
+-	`samtools` and `bcftools`
+-	`bedtools`
+-	`Kraken2` (and database)
+-	`Bracken`
 
+## Running the pipeline
 
-### Build image from source 
+To run the pipeline on a batch a samples, a directory containing raw `.fastq.gz` files is required. Each read-pair sample is represented by a pair of files named `*_R1.fastq.gz` and `*_R2.fastq.gz`. For example, to batch two samples named `bovis_a` and `bovis_b`, a directory containing `bovis_a_R1.fastq.gz`, `bovis_a_R2.fastq.gz`,  `bovis_b_R1.fastq.gz` and `bovis_b_R2.fastq.gz`, needs to be defined.
 
-You can also build and run the image directly from source
+Pipeline output is stored in a results directory that contains
+- A summary csv file (`FinalOut.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
+- Consensus `fasta` files
+- `.bam` files
+- `.vcf` files
+- Metagenomics classification of *non-M. Bovis* contaminents
+
+### Run from terminal
+
+To run a batch from the terminal
 ```
-docker build /PATH/TO/REPO/ -t my-bov-tb
+./btb-seq /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/
+```
+
+### Run from docker
+
+**Note:** While running from the terminal is the easiest method for developers and data analysts, the pipeline can also be run from docker. This method has the benefit of working across platforms while guaranteeing consistency with automated tests (see below). 
+
+A docker image containing all required dependancies is provided [here](https://hub.docker.com/r/aaronsfishman/bov-tb). 
+
+This pull the latest image (if it's not already fetched) from dockerhub and run the container on data
+```
+sudo docker run --rm -it -v /ABS/PATH/TO/READS/:/reads/ -v /ABS/PATH/TO/RESULTS/:/results/ aaronsfishman/bov-tb
+```
+
+#### Build docker image from source 
+
+You can also build your own experimental docker image from source
+```
+docker build ./docker/ -t my-bov-tb
 ./bov-tb /PATH/TO/READS/ /PATH/TO/OUTPUT/RESULTS/ my-bov-tb
 ```
+
+## Algorithm
+
+The pipelines processes data in three stages, as shown below. During the preprocessing stage; duplicate reads, low quality bases and adapter sequences are removed from the fastq sample file. Following this, the alignment stage aligns preprocessed reads to a reference genome (*M. bovis* AF2122), performs variant call, masks repeat regions and computes the consensus at each base. The final postprocessing stage assigns an `Outcome` to each sample by analysing data gathered during the preprocessing and alignment stages. The following `Outcome`s are used to signify subsequent lab processing steps:
+
+- **Pass**: The sample contains a known M. Bovis WGS Cluster.
+- **Contaminated**: The sample contains contaminants
+- **Insufficient Data**: The sample contains insufficient data volumes for sequencing 
+- **Check Required**: Further scrutiny of the output is needed as quality thresholds fall below certain criteria, but is likely to contain M.bovis.  
+
+![pipeline](https://user-images.githubusercontent.com/6979169/113730676-ffecef00-96ef-11eb-8670-9fae5e175701.png)
 
 
 ## Validation
 
-The pipeline is validated against real-world biological samples sequenced with Illumina NextSeq machines at APHA. The test code for the validation tests is stored under `tests/jobs/`. A summary of each test is described below
+This pipeline has been internally validated, tested and approved against a dataset in excess of 10,000 samples that have been sequenced by APHA. 
 
 
-### Quality Test
+## Automated Tests
 
-The quality test ensures that low quality reads (<20) are not considered for variant calling and genotyping. This is performed by setting uniform quality values to a real-world *M. bovis* sample and asserting output. Low quality bases are removed from the sequence using `Trimmomatic`, which uses a sliding window that deletes reads when the average base quality drops below 20. A table of expected results is shown below.
+The automated tests provided here ensure the software runs as expected. If you make changes to the algorithm, it is **strongly** reccomended that you run these tests to verify the pipeline is behaving as intended. The tests are also automatically run by `.circleci` on each pull-request. 
 
-| Base Quality | Outcome | flag | group |
-| ------------- | ------------- | ------------- | ------------- | 
-| 19   | CheckRequired | LowCoverage | NA |
-| 20   | Pass | BritishbTB | B6-16 |
+### How to run tests
+
+To run a test
+```
+bash tests/jobs/NAME_OF_TEST.bash
+```
+
+### Unit Tests
+
+A number of small tests that assert the functionality of individual components
+
+### Inclusivity Tests
+
+Asserts the `Outcome` and `WGS_CLUSTER` (clade) against samples uploaded by APHA to [ENA](https://www.ebi.ac.uk/ena/browser/view/PRJEB40340). 
 
 ### Limit of Detection (LoD)
 
 The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying proportions give the correct Outcome. This is performed by taking random reads from reference samples of M. Bovis and M. Avium.
 
+| M. Bovis (%) | M. Avium (%) | Outcome |
+| ------------- | ------------- | ------------- | 
+| 100%   | 0% | Pass | 
+| 65%   | 35% | Pass | 
+| 60%   | 40% | CheckRequired | 
+| 0%   | 100% | Contaminated | 
+
+### Quality Test
+
+The quality test ensures that low quality reads (<20) are not considered for variant calling and genotyping. This is performed by setting uniform quality values to a real-world *M. bovis* sample and asserting output. Low quality bases are removed from the sequence using `Trimmomatic`, which uses a sliding window that deletes reads when the average base quality drops below 20. A table of expected results is shown below.
+
+| Base Quality | Outcome | 
+| ------------- | ------------- | 
+| 19   | LowQualData | 
+| 20   | Pass | 
+
+
+### Limit of Detection (LoD)
+
+The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying proportions give the correct Outcome. This is performed by taking random reads from reference samples of M. Bovis and M. Avium.
 
 | M. Bovis (%) | M. Avium (%) | Outcome |
 | ------------- | ------------- | ------------- | 
@@ -60,4 +125,3 @@ The limit of detection test ensures mixtures of M. Avium and M. Bovis at varying
 | 65%   | 35% | BritishbTB | 
 | 60%   | 40% | CheckRequired | 
 | 0%   | 100% | Comtaminated | 
-
