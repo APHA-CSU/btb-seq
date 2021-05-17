@@ -258,7 +258,7 @@ vcf
 Compares SNPs identified in vcf file to lists in reference table */
 
 process AssignClusterCSS{
-	errorStrategy 'finish'
+	errorStrategy 'ignore'
     tag "$pair_id"
 	
 
