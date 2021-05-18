@@ -5,5 +5,5 @@ ref=$2
 
 samtools index ${pair_id}.mapped.sorted.bam
 bcftools mpileup -Q 10 -Ou -f $ref "${pair_id}.mapped.sorted.bam" |
-bcftools call --ploidy 1 -cf GQ - -Ou |
+bcftools call -mf GQ - -Ou |
 bcftools norm -f $ref - -Oz -o "${pair_id}.norm.vcf.gz"
