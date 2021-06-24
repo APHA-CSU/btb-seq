@@ -1,8 +1,8 @@
-from pipeline_test import TestPipeline
+from btb_tests import BtbTests
 import glob
 import shutil
 
-class DeduplicateTests(TestPipeline):
+class DeduplicateTests(BtbTests):
     def test_deduplicate(self):
         """
             This introductory unit test asserts the deduplicate process completes on tinyreads without errors.

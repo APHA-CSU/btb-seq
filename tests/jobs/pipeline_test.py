@@ -2,7 +2,9 @@ import unittest
 import subprocess
 import tempfile
 
-class TestPipeline(unittest.TestCase):
+from btb_tests import BtbTests
+
+class TestPipeline(BtbTests):
     """
         TODO: break this out into individual classes for each nextflow process.
     """

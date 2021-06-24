@@ -1,7 +1,7 @@
-from pipeline_test import TestPipeline
+from btb_tests import BtbTests
 import subprocess
 
-class MaskTests(TestPipeline):
+class MaskTests(BtbTests):
     def test_mask(self):
         """
             Asserts mask.bash completes without errors when 

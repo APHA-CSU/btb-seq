@@ -1,8 +1,10 @@
-from pipeline_test import TestPipeline
 import subprocess
 import shutil
+import glob
 
-class MaskTests(TestPipeline):
+from btb_tests import BtbTests
+
+class ReadStatsTests(BtbTests):
     def assertReadStats(self, reads_path, name):
         """
             Asserts read stats returns a 0 exit code for the supplied test reads
