@@ -6,7 +6,8 @@ from btb_tests import BtbTests
 
 class TestPipeline(BtbTests):
     """
-        TODO: break this out into individual classes for each nextflow process.
+        Base class for btb-seq unit tests. 
+        Contains tools that make running tests on individual nextflow easier
     """
     def setUp(self):
         """
