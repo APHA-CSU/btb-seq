@@ -3,7 +3,7 @@
 # Deduplicate
 #================================================================
 #% SYNOPSIS
-#+    bov-tb reads_dir results_dir
+#+    Deduplicate.bash pair_1 pair_2 deduplicated_1 deduplicated_2
 #%
 #% DESCRIPTION
 #%    Removes potential duplicate data (sequencing and optical replcaites from the raw data set) from a pair of .fastq.gz files using FastUniq
