@@ -86,14 +86,14 @@ process Deduplicate {
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz") from read_pairs
+	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into dedup_read_pairs
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
+	tuple pair_id, file("deduplicated_1.fastq"), file("deduplicated_2.fastq") into dedup_read_pairs
+	tuple pair_id, file("deduplicated_1.fastq"), file("deduplicated_2.fastq") into uniq_reads
 
 	"""
-	deduplicate.bash ${pair_id}
+	deduplicate.bash $pair_1 $pair_2 deduplicated_1.fastq deduplicated_2.fastq
 	"""
 }	
 
