@@ -58,7 +58,7 @@ jobs:
     steps:
       - run: |
           cd /BovTB-nf/
-          python tests/jobs/unit_tests.py
+          python tests/unit_tests/unit_tests.py
 
   tinyreads:
     executor: nf-pipeline
