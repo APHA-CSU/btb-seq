@@ -16,6 +16,9 @@ class DeduplicateTests(BtbTests):
 
         # Test the script
         self.assertBashScript(0, ['./bin/deduplicate.bash', reads[0], reads[1], outputs[0], outputs[1]])
+        self.assertFileExists(outputs[0])
+        self.assertFileExists(outputs[1])
+
 
 if __name__ == '__main__':
     unittest.main()
