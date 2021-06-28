@@ -89,11 +89,10 @@ process Deduplicate {
 	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	tuple pair_id, file("deduplicated_1.fastq"), file("deduplicated_2.fastq") into dedup_read_pairs
-	tuple pair_id, file("deduplicated_1.fastq"), file("deduplicated_2.fastq") into uniq_reads
+	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
 
 	"""
-	deduplicate.bash $pair_1 $pair_2 deduplicated_1.fastq deduplicated_2.fastq
+	deduplicate.bash $pair_1 $pair_2 dedup_1.fastq dedup_2.fastq
 	"""
 }	
 
