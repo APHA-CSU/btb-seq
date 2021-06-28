@@ -5,7 +5,8 @@ import os
 
 class BtbTests(unittest.TestCase):
     """
-        TODO: break this out into individual classes for each nextflow process.
+        Base class for btb-seq unit tests
+        Contains tools that make writing unit tests for nextflow processes easier
     """
     def setUp(self):
         """
