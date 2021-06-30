@@ -1,15 +1,36 @@
 #!/bin/bash
+#================================================================
+# Deduplicate
+#================================================================
+#% SYNOPSIS
+#+    Deduplicate.bash pair_1 pair_2 deduplicated_1 deduplicated_2
+#%
+#% DESCRIPTION
+#%    Removes potential duplicate data (sequencing and optical replcaites from the raw data set) from a pair of .fastq.gz files using FastUniq
+#%
+#% INPUTS
+#%    pair_1          input path to first fastq.gz read file
+#%    pair_2          input path to second fastq.gz read file
+#%    deduplicated_1  output path to first deduplicated file
+#%    deduplicated_2  output path to second deduplicated file
 
-# This process removes potential duplicate data (sequencing and optical replcaites from the raw data set
-
-
-pair_id=$1
+# Inputs
+pair_1=$1
+pair_2=$2
+deduplicated_1=$3
+deduplicated_2=$4
 
 nl=$'\n'
 
-gunzip -c ${pair_id}_*_R1_*.fastq.gz > ${pair_id}_R1.fastq 
-gunzip -c ${pair_id}_*_R2_*.fastq.gz > ${pair_id}_R2.fastq
-echo "${pair_id}_R1.fastq${nl}${pair_id}_R2.fastq" > fqin.lst
-fastuniq -i fqin.lst -o ${pair_id}_uniq_R1.fastq -p ${pair_id}_uniq_R2.fastq
-rm ${pair_id}_R1.fastq
-rm ${pair_id}_R2.fastq
+# Unzip
+gunzip -c $pair_1 > R1.fastq 
+gunzip -c $pair_2 > R2.fastq
+
+# Input List
+echo "R1.fastq${nl}R2.fastq" > fqin.lst
+
+# FastUniq
+fastuniq -i fqin.lst -o $deduplicated_1 -p $deduplicated_2
+
+# Cleanup
+rm R1.fastq R2.fastq fqin.lst

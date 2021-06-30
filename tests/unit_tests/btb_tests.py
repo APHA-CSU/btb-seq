@@ -1,10 +1,12 @@
 import unittest
 import subprocess
 import tempfile
+import os
 
 class BtbTests(unittest.TestCase):
     """
-        TODO: break this out into individual classes for each nextflow process.
+        Base class for btb-seq unit tests
+        Contains tools that make writing unit tests for nextflow processes easier
     """
     def setUp(self):
         """
@@ -32,6 +34,13 @@ class BtbTests(unittest.TestCase):
 
         actual_exit_code = subprocess.run(['bash', '-e'] + cmd).returncode
         self.assertEqual(expected_exit_code, actual_exit_code)
+
+    def assertFileExists(self, filepath):
+        """
+            Raises an exception if the file does not exist
+        """
+        if not os.path.exists(filepath):
+            raise Exception(f"File does not exist: {filepath}")
 
     def sam_to_bam(self, sam_filepath, bam_filepath):
         # Convert to SAM to BAM
