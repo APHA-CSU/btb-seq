@@ -6,6 +6,11 @@ import glob
 import shutil
 import subprocess
 
+import Bio
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 class BtbTests(unittest.TestCase):
     """
         Base class for btb-seq unit tests
@@ -69,3 +74,29 @@ class BtbTests(unittest.TestCase):
 
         # Return path to files
         return reads
+
+    def write_fastq(self, filename, seq_records):
+        """
+            Write a fastq file to the temporary directory that tests run in
+
+            filename:  (str) name of output fastq file
+            sequences: (list/str) a list of strings that represent each sequence. Can also provide just a string if there is only one sequence
+            quality:   (int) uniform phred33 quality score for each base
+        """
+        with open(filename, "w") as file:
+            Bio.SeqIO.write(seq_records, file, "fastq")
+
+    def read_fastq(self, filepath):
+        """
+            Reads a fastq file
+            Returns the sequence as a string
+        """
+        return str(SeqIO.read(filepath, "fastq").seq)
+
+    def seq_record(self, seq_str, quality=93):
+        """
+            Makes a new Seq Record with uniform quality from a string of ATCG's 
+        """
+        seq = SeqRecord(Seq(seq_str))
+        seq.letter_annotations["phred_quality"] = [quality]*len(seq)
+        return seq
