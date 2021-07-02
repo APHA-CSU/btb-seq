@@ -111,7 +111,7 @@ process Trim {
 	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
 	
 	"""
-	trim.bash read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
+	trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
 	"""
 }
 

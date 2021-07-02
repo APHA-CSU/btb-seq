@@ -7,6 +7,7 @@ class TrimTests(BtbTests):
             This introductory unit test asserts trim.bash completes on tinyreads without errors.
             And produces two fastq files
         """
+        adapter_path = './references/adapter.fasta'
 
         # Copy test data
         reads = self.copy_tinyreads(unzip=True)
@@ -18,7 +19,7 @@ class TrimTests(BtbTests):
         ]
 
         # Test the script
-        self.assertBashScript(0, ['./bin/trim.bash', reads[0], reads[1], outputs[0], outputs[1]])
+        self.assertBashScript(0, ['./bin/trim.bash', adapter_path, reads[0], reads[1], outputs[0], outputs[1]])
         self.assertFileExists(outputs[0])
         self.assertFileExists(outputs[1])
 

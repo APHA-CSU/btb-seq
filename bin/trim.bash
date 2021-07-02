@@ -10,15 +10,17 @@
 #%    Removes the adapters which are added during the lab processing and and any low quality data
 #%
 #% INPUTS
+#%    adapters        path to adapter sequence
 #%    read_1          input path to first fastq read file
 #%    read_2          input path to second fastq read file
 #%    trimmed_1       output path to first trimmed fastq file
 #%    trimmed_2       output path to second trimmed fafstq file
 
-read_1=$1
-read_2=$2
-trimmed_1=$3
-trimmed_2=$4
+adapters=$1
+read_1=$2
+read_2=$3
+trimmed_1=$4
+trimmed_2=$5
 
 java -jar /usr/local/bin/trimmomatic.jar PE \
     -threads 2 \
