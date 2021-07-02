@@ -16,11 +16,17 @@
 #%    trimmed_1       output path to first trimmed fastq file
 #%    trimmed_2       output path to second trimmed fafstq file
 
-adapters=$1
+adapter=$1
 read_1=$2
 read_2=$3
 trimmed_1=$4
 trimmed_2=$5
+
+# Error if adapter does not exist, as trimmomatic won't!
+if [[ ! -f $adapter ]]; then
+    echo $adapter does not exist
+    exit 1
+fi
 
 java -jar /usr/local/bin/trimmomatic.jar PE \
     -threads 2 \
@@ -31,7 +37,7 @@ java -jar /usr/local/bin/trimmomatic.jar PE \
     fail1.fastq \
     $trimmed_2 \
     fail2.fastq \
-    ILLUMINACLIP:$adapters:2:30:10 \
+    ILLUMINACLIP:$adapter:2:30:10 \
     SLIDINGWINDOW:10:20 \
     MINLEN:36
 
