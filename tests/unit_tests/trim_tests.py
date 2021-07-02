@@ -18,10 +18,13 @@ class TrimTests(BtbTests):
             self.temp_dirname + 'out2.fastq'
         ]
 
-        # Test the script
+        # Pass case
         self.assertBashScript(0, ['./bin/trim.bash', adapter_path, reads[0], reads[1], outputs[0], outputs[1]])
         self.assertFileExists(outputs[0])
         self.assertFileExists(outputs[1])
+
+        # Failure Case: adapter sequence file not found
+        self.assertBashScript(1, ['./bin/trim.bash', './__does__/not/exist/', reads[0], reads[1], outputs[0], outputs[1]])
 
         # TODO: Assert that adapters are indeed trimmed
 

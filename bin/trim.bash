@@ -6,7 +6,7 @@
 #+    trim.bash read_1 read_2 trimmed_1 trimmed_2
 #%
 #% DESCRIPTION
-#%    Trim adapters and low quality bases from fastq data
+#%    Trim adapter and low quality bases from fastq data
 #%    Removes the adapters which are added during the lab processing and and any low quality data
 #%
 #% INPUTS
@@ -16,14 +16,14 @@
 #%    trimmed_1       output path to first trimmed fastq file
 #%    trimmed_2       output path to second trimmed fafstq file
 
-adapter=$1
+adapters=$1
 read_1=$2
 read_2=$3
 trimmed_1=$4
 trimmed_2=$5
 
-# Error if adapter does not exist, as trimmomatic won't!
-if [[ ! -f $adapter ]]; then
+# Error if adapters file does not exist, as trimmomatic won't!
+if [[ ! -f $adapters ]]; then
     echo $adapter does not exist
     exit 1
 fi
@@ -37,7 +37,7 @@ java -jar /usr/local/bin/trimmomatic.jar PE \
     fail1.fastq \
     $trimmed_2 \
     fail2.fastq \
-    ILLUMINACLIP:$adapter:2:30:10 \
+    ILLUMINACLIP:$adapters:2:30:10 \
     SLIDINGWINDOW:10:20 \
     MINLEN:36
 
