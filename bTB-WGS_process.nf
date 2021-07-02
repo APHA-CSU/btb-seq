@@ -105,15 +105,13 @@ process Trim {
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") from dedup_read_pairs
+	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
 
 	output:
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_read_pairs
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_read_pairs2
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
+	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
 	
 	"""
-	trim.bash ${pair_id}
+	trim.bash read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
 	"""
 }
 
