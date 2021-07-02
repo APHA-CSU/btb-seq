@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import tempfile
 import os
+import glob
 
 class BtbTests(unittest.TestCase):
     """
@@ -46,3 +47,10 @@ class BtbTests(unittest.TestCase):
         # Convert to SAM to BAM
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
+
+    def copy_tinyreads(self):
+        """
+            Copies tinyreads to the temporary directory that tests run in
+        """
+        reads = glob.glob(r'./tests/data/tinyreads/*') 
+        outputs = [self.temp_dirname+'1.txt', self.temp_dirname+'2.txt']

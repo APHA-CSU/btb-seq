@@ -9,6 +9,7 @@
 import unittest
 
 from deduplicate_tests import DeduplicateTests
+from trim_tests import TrimTests
 from mask_tests import MaskTests
 from read_stats_tests import ReadStatsTests
 
@@ -16,6 +17,7 @@ def main():
     # Test List
     tests = [
         DeduplicateTests,
+        TrimTests,
         MaskTests,
         ReadStatsTests
     ]

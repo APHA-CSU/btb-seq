@@ -11,7 +11,7 @@ class DeduplicateTests(BtbTests):
             And produces two fastq files
         """
 
-        # Copy test data
+        # Copy test data 
         reads = glob.glob(r'./tests/data/tinyreads/*') 
         outputs = [self.temp_dirname+'1.txt', self.temp_dirname+'2.txt']
 
