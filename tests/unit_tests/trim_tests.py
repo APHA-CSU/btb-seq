@@ -31,18 +31,19 @@ class TrimTests(BtbTests):
         """
             Asserts that low quality reads are removed using a high quality and low quality examples
         """
+        # Test settings
         high_quality_sequence = "A"*40
         low_quality_sequence = "T"*40
-
-        # Create Test Sequences
-        high_quality = self.seq_record(high_quality_sequence, quality=93)
-        low_quality = self.seq_record(low_quality_sequence, quality=0)
 
         read_1 = self.temp_dirname+"read_1.fastq"
         read_2 = self.temp_dirname+"read_2.fastq"
 
         output_1 = self.temp_dirname+"output_1.fastq"
         output_2 = self.temp_dirname+"output_2.fastq"
+
+        # Create Test Fastq files
+        high_quality = self.seq_record(high_quality_sequence, quality=93)
+        low_quality = self.seq_record(low_quality_sequence, quality=0)
 
         self.write_fastq(read_1, [low_quality, high_quality])
         self.write_fastq(read_2, [low_quality, high_quality])

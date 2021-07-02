@@ -75,21 +75,21 @@ class BtbTests(unittest.TestCase):
         # Return path to files
         return reads
 
-    def write_fastq(self, filename, seq_records):
+    def write_fastq(self, filepath, seq_records):
         """
-            Write a fastq file to the temporary directory that tests run in
+            Write a fastq file to the filepath
 
-            filename:  (str) name of output fastq file
+            filepath:  (str) filepath of output fastq file
             sequences: (list/str) a list of strings that represent each sequence. Can also provide just a string if there is only one sequence
             quality:   (int) uniform phred33 quality score for each base
         """
-        with open(filename, "w") as file:
+        with open(filepath, "w") as file:
             Bio.SeqIO.write(seq_records, file, "fastq")
 
     def read_fastq(self, filepath):
         """
-            Reads a fastq file
-            Returns the sequence as a string
+            Reads a fastq file and returns the sequence as a string
+            Throws an exception if there is more than one record
         """
         return str(SeqIO.read(filepath, "fastq").seq)
 
