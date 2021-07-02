@@ -9,7 +9,7 @@ class TrimTests(BtbTests):
         """
 
         # Copy test data
-        reads = self.copy_tinyreads()
+        reads = self.copy_tinyreads(unzip=True)
 
         # Output Filenames
         outputs = [

@@ -3,6 +3,8 @@ import subprocess
 import tempfile
 import os
 import glob
+import shutil
+import subprocess
 
 class BtbTests(unittest.TestCase):
     """
@@ -48,9 +50,22 @@ class BtbTests(unittest.TestCase):
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
 
-    def copy_tinyreads(self):
+    def copy_tinyreads(self, unzip=False):
         """
             Copies tinyreads to the temporary directory that tests run in
         """
-        reads = glob.glob(r'./tests/data/tinyreads/*') 
-        outputs = [self.temp_dirname+'1.txt', self.temp_dirname+'2.txt']
+        for read in glob.glob(r'./tests/data/tinyreads/*.fastq.gz'):
+            shutil.copy2(read, self.temp_dirname)
+
+        reads = glob.glob(self.temp_dirname + '*.fastq.gz')
+
+        # Unzip
+        if unzip:
+            for read in reads:
+                proc = subprocess.run(['gunzip', read])
+                self.assertFalse(proc.returncode)
+
+            reads = [read[:-3] for read in reads]
+
+        # Return path to files
+        return reads
