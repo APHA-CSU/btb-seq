@@ -4,10 +4,9 @@ from btb_tests import BtbTests
 class Map2RefTests(BtbTests):
     ref_path = './references/Mycbovis-2122-97_LT708304.fas'
 
-    def test_trim(self):
+    def test_map2ref(self):
         """
-            This introductory unit test asserts trim.bash completes on tinyreads without errors.
-            And produces two fastq files
+            Asserts map2ref.bash completes on tinyreads without errors and produces a named bam file
         """        
 
         # Copy test data
