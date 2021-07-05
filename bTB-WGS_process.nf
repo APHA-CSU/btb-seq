@@ -61,6 +61,8 @@ discrimPos = file(params.discrimPos)
 pypath = file(params.pypath)
 kraken2db = file(params.kraken2db)
 
+publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
+
 /*	Collect pairs of fastq files and infer sample names
 Define the input raw sequening data files */
 Channel
@@ -121,20 +123,18 @@ process Map2Ref {
 	errorStrategy 'finish'
     tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/bam", mode: 'copy', pattern: '*.sorted.bam'
+	publishDir "$publishDir/bam", mode: 'copy', pattern: '*.bam'
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from trim_read_pairs
+	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
 
 	output:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into mapped_bam
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4stats
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
+	tuple pair_id, file("mapped.bam") into mapped_bam, bam4stats, bam4mask
 
 	"""
-	map2Ref.bash ${pair_id} $ref
+	map2Ref.bash $ref read_1.fastq read_2.fastq mapped.bam
 	"""
 }
 
