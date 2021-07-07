@@ -61,8 +61,6 @@ discrimPos = file(params.discrimPos)
 pypath = file(params.pypath)
 kraken2db = file(params.kraken2db)
 
-publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
-
 /*	Collect pairs of fastq files and infer sample names
 Define the input raw sequening data files */
 Channel
@@ -78,6 +76,8 @@ FirstFile = file( params.reads ).first()
 	TopDir = DataPath - GetTopDir
 	params.DataDir = TopDir.last()
 	params.today = new Date().format('ddMMMYY')
+
+publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
 
 /* remove duplicates from raw data
 This process removes potential duplicate data (sequencing and optical replcaites from the raw data set */
@@ -131,10 +131,10 @@ process Map2Ref {
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
 
 	output:
-	tuple pair_id, file("mapped.bam") into mapped_bam, bam4stats, bam4mask
+	tuple pair_id, file("${pair_id}.bam") into mapped_bam, bam4stats, bam4mask
 
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq mapped.bam
+	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
@@ -142,21 +142,20 @@ process Map2Ref {
 Determines where the sample differs from the reference genome */
 process VarCall {
 	errorStrategy 'finish'
-    tag "$pair_id"
+	tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.norm.vcf.gz'
+	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
 
 	maxForks 3
 
 	input:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") from mapped_bam
+	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf
-	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
 
 	"""
-	varCall.bash $pair_id $ref
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
 	"""
 }
 
