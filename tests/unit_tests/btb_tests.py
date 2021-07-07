@@ -72,13 +72,17 @@ class BtbTests(unittest.TestCase):
         # Unzip
         if unzip:
             for read in reads:
-                proc = subprocess.run(['gunzip', read])
-                self.assertFalse(proc.returncode)
+                self.unzip(read)
 
             reads = [read[:-3] for read in reads]
 
         # Return path to files
         return reads
+
+    def unzip(self, path):
+        """ Unzip a .gz file inplace """
+        proc = subprocess.run(['gunzip', path])
+        self.assertFalse(proc.returncode)
 
     def write_fastq(self, filepath, seq_records):
         """
