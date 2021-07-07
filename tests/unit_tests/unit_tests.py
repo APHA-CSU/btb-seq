@@ -13,6 +13,7 @@ from trim_tests import TrimTests
 from mask_tests import MaskTests
 from read_stats_tests import ReadStatsTests
 from map2Ref_tests import Map2RefTests
+from varCall_tests import VarCallTests
 
 def main():
     # Test List
@@ -21,7 +22,8 @@ def main():
         TrimTests,
         MaskTests,
         ReadStatsTests,
-        Map2RefTests
+        Map2RefTests,
+        VarCallTests
     ]
 
     # Load 'em up

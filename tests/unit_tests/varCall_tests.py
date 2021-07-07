@@ -2,7 +2,7 @@ import shutil
 import unittest
 from btb_tests import BtbTests
 
-class Map2RefTests(BtbTests):
+class VarCallTests(BtbTests):
     ref_path = './references/Mycbovis-2122-97_LT708304.fas'
 
     def test_varCall(self):
