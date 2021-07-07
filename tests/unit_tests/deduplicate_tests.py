@@ -12,8 +12,11 @@ class DeduplicateTests(BtbTests):
         """
 
         # Copy test data
-        reads = glob.glob(r'./tests/data/tinyreads/*') 
-        outputs = [self.temp_dirname+'1.txt', self.temp_dirname+'2.txt']
+        reads = self.copy_tinyreads()
+        outputs = [
+            self.temp_dirname + 'read_1.txt', 
+            self.temp_dirname + 'read_2.txt'
+        ]
 
         # Test the script
         self.assertBashScript(0, ['./bin/deduplicate.bash', reads[0], reads[1], outputs[0], outputs[1]])

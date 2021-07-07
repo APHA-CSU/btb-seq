@@ -2,6 +2,14 @@ import unittest
 import subprocess
 import tempfile
 import os
+import glob
+import shutil
+import subprocess
+
+import Bio
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 
 class BtbTests(unittest.TestCase):
     """
@@ -46,3 +54,49 @@ class BtbTests(unittest.TestCase):
         # Convert to SAM to BAM
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
+
+    def copy_tinyreads(self, unzip=False):
+        """
+            Copies tinyreads to the temporary directory that tests run in
+        """
+        for read in glob.glob(r'./tests/data/tinyreads/*.fastq.gz'):
+            shutil.copy2(read, self.temp_dirname)
+
+        reads = glob.glob(self.temp_dirname + '*.fastq.gz')
+
+        # Unzip
+        if unzip:
+            for read in reads:
+                proc = subprocess.run(['gunzip', read])
+                self.assertFalse(proc.returncode)
+
+            reads = [read[:-3] for read in reads]
+
+        # Return path to files
+        return reads
+
+    def write_fastq(self, filepath, seq_records):
+        """
+            Write a fastq file to the filepath
+
+            filepath:  (str) filepath of output fastq file
+            sequences: (list/str) a list of strings that represent each sequence. Can also provide just a string if there is only one sequence
+            quality:   (int) uniform phred33 quality score for each base
+        """
+        with open(filepath, "w") as file:
+            Bio.SeqIO.write(seq_records, file, "fastq")
+
+    def read_fastq(self, filepath):
+        """
+            Reads a fastq file and returns the sequence as a string
+            Throws an exception if there is more than one record
+        """
+        return str(SeqIO.read(filepath, "fastq").seq)
+
+    def seq_record(self, seq_str, quality=93):
+        """
+            Makes a new Seq Record with uniform quality from a string of ATCG's 
+        """
+        seq = SeqRecord(Seq(seq_str))
+        seq.letter_annotations["phred_quality"] = [quality]*len(seq)
+        return seq
