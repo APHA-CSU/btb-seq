@@ -28,3 +28,6 @@ cat > zero_cov.bed
 cat zero_cov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
+
+# Cleanup
+rm zero_cov.bed
