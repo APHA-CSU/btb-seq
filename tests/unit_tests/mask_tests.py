@@ -1,7 +1,10 @@
 from btb_tests import BtbTests
-import subprocess
+import shutil
+import unittest
 
 class MaskTests(BtbTests):
+    rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
+
     def test_mask(self):
         """
             Asserts mask.bash completes without errors when 
@@ -9,12 +12,18 @@ class MaskTests(BtbTests):
         """
         pair_id = self.temp_dirname + 'test'
 
-        sam_filepath = './tests/data/tinymatch.sam'
-        rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
+        # Copy data
+        sam_filepath = self.temp_dirname+'tinysam.sam'
+        bam_filepath = self.temp_dirname+'tinybam.bam'
+        mask_filepath = self.temp_dirname+'masked.bed'
+        shutil.copy('./tests/data/tinymatch.sam', sam_filepath)        
+        
+        # Convert to bam
+        self.sam_to_bam(sam_filepath, bam_filepath)
 
-        # Convert to SAM to BAM
-        with open(pair_id + '.mapped.sorted.bam', 'w') as f:
-            subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
-       
         # Test
-        self.assertBashScript(0, ['./bin/mask.bash', pair_id, rpt_mask])
+        self.assertBashScript(0, ['./bin/mask.bash', self.rpt_mask, bam_filepath, mask_filepath])
+        self.assertFileExists(mask_filepath)
+
+if __name__ == '__main__':
+    unittest.main()
