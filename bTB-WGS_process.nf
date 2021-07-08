@@ -163,18 +163,18 @@ process VarCall {
 Ensure that consensus only includes regions of the genome where there is high confidence */
 process Mask {
 	errorStrategy 'finish'
-    tag "$pair_id"
+	tag "$pair_id"
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") from bam4mask
+	set pair_id, file("mapped.bam") from bam4mask
 
 	output:
-	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
+	set pair_id, file("mask.bed") into maskbed
 
 	"""
-	mask.bash $pair_id $rptmask
+	mask.bash $rptmask mapped.bam mask.bed
 	"""
 }
 
