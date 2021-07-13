@@ -54,6 +54,11 @@ class BtbTests(unittest.TestCase):
         # Convert to SAM to BAM
         with open(bam_filepath, 'w') as f:
             subprocess.call(['samtools', 'view', '-S', '-b', sam_filepath], stdout=f)
+    
+    def bam_to_sam(self, bam_filepath, sam_filepath):
+        # Convert to BAM to SAM
+        proc = subprocess.run(['samtools', 'view', '-h', '-o', sam_filepath, bam_filepath])
+        self.assertEquals(0, proc.returncode)
 
     def copy_tinyreads(self, unzip=False):
         """
@@ -67,13 +72,17 @@ class BtbTests(unittest.TestCase):
         # Unzip
         if unzip:
             for read in reads:
-                proc = subprocess.run(['gunzip', read])
-                self.assertFalse(proc.returncode)
+                self.unzip(read)
 
             reads = [read[:-3] for read in reads]
 
         # Return path to files
         return reads
+
+    def unzip(self, path):
+        """ Unzip a .gz file inplace """
+        proc = subprocess.run(['gunzip', path])
+        self.assertFalse(proc.returncode)
 
     def write_fastq(self, filepath, seq_records):
         """
