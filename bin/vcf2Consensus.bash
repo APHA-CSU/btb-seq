@@ -13,7 +13,6 @@
 #%    ref          input path to reference genome fas
 #%    consensus    output path to consensus fas file
 #%    snps         output path to snps tab file
-#%    name         used as a label in the output consensus file
 
 # Parameters
 MIN_READ_DEPTH=5
@@ -36,7 +35,6 @@ bcftools index $bcf
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bed=consensus.bed
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
