@@ -5,10 +5,9 @@ import unittest
 class Vcf2ConsensusTests(BtbTests):
     ref_path = './references/Mycbovis-2122-97_LT708304.fas'
 
-    def test_mask(self):
+    def test_vcf2consensus(self):
         """
-            Asserts mask.bash completes without errors when 
-            the supplied sam file contains no regions of zero coverage
+            Asserts vcf2Consensus.bash completes without errors on a minimal example
         """
         # Copy data
         bed_filepath = self.temp_dirname + 'tinybed.bed'
