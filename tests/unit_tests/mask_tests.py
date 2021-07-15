@@ -10,8 +10,6 @@ class MaskTests(BtbTests):
             Asserts mask.bash completes without errors when 
             the supplied sam file contains no regions of zero coverage
         """
-        pair_id = self.temp_dirname + 'test'
-
         # Copy data
         sam_filepath = self.temp_dirname+'tinysam.sam'
         bam_filepath = self.temp_dirname+'tinybam.bam'
