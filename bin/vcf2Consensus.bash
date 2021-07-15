@@ -26,7 +26,6 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-name=$6
 
 # Filter
 bcf=filtered.bcf
@@ -34,6 +33,9 @@ bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} && AF<${MIN_ALLEL
 bcftools index $bcf
 
 # Call Consensus
+base_name=`basename $consensus`
+name="${base_name%%.*}"
+
 bed=consensus.bed
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
