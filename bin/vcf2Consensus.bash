@@ -9,10 +9,11 @@
 #%    Consensus calling and output snp table for snippy compatability 
 #%
 #% INPUTS
-#%    vcf          input path to vcf file
-#%    ref          input path to reference genome fas
-#%    consensus    output path to consensus fas file
-#%    snps         output path to snps tab file
+#%    ref          input path to reference genome (.fas)
+#%    bed          input path to mask (.bed)
+#%    vcf          input path to variant (.vcf.gz)
+#%    consensus    output path to consensus file (.fas)
+#%    snps         output path to snps tab file (.tab)
 
 # Parameters
 MIN_READ_DEPTH=5
