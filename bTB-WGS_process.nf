@@ -168,10 +168,10 @@ process Mask {
 	maxForks 2
 
 	input:
-	set pair_id, file("mapped.bam") from bam4mask
+	tuple pair_id, file("mapped.bam") from bam4mask
 
 	output:
-	set pair_id, file("mask.bed") into maskbed
+	tuple pair_id, file("mask.bed") into maskbed
 
 	"""
 	mask.bash $rptmask mapped.bam mask.bed
@@ -190,20 +190,20 @@ process VCF2Consensus {
 	errorStrategy 'finish'
     tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/consensus", mode: 'copy', pattern: '*_consensus.fas'
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/snpTables", mode: 'copy', pattern: '*_snps.tab'
+	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
+	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_RptZeroMask.bed"), file("${pair_id}.norm.vcf.gz") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
 
 	output:
-	set pair_id, file("${pair_id}_consensus.fas") into consensus
-	set pair_id, file("${pair_id}_snps.tab") into snpstab
+	tuple pair_id, file("${pair_id}.fas") into consensus
+	tuple pair_id, file("${pair_id}.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $pair_id $ref
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}.fas ${pair_id}.tab
 	"""
 }
 

@@ -14,6 +14,7 @@ from mask_tests import MaskTests
 from read_stats_tests import ReadStatsTests
 from map2Ref_tests import Map2RefTests
 from varCall_tests import VarCallTests
+from vcf2consensus_tests import Vcf2ConsensusTests
 
 def main():
     # Test List
@@ -23,7 +24,8 @@ def main():
         MaskTests,
         ReadStatsTests,
         Map2RefTests,
-        VarCallTests
+        VarCallTests,
+        Vcf2ConsensusTests
     ]
 
     # Load 'em up
