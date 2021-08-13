@@ -301,7 +301,7 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from IDdata
+	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
 	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
