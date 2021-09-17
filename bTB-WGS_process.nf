@@ -203,7 +203,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}.fas ${pair_id}.tab
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
 	"""
 }
 
