@@ -199,8 +199,8 @@ process VCF2Consensus {
 	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
 
 	output:
-	tuple pair_id, file("${pair_id}.fas") into consensus
-	tuple pair_id, file("${pair_id}.tab") into snpstab
+	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
+	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
 	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
