@@ -155,7 +155,7 @@ process VarCall {
 	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
 
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $MAP_QUAL $BASE_QUAL
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL
 	"""
 }
 
@@ -203,7 +203,8 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab $MIN_READ_DEPTH $MIN_ALLELE_FREQUENCY $SNP_GAP
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab \
+		$params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY $params.SNP_GAP
 	"""
 }
 
