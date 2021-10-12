@@ -203,7 +203,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab $MIN_READ_DEPTH $MIN_ALLELE_FREQUENCY $SNP_GAP
 	"""
 }
 

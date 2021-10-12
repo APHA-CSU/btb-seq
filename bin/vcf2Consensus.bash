@@ -15,11 +15,6 @@
 #%    consensus    output path to consensus file (.fas)
 #%    snps         output path to snps tab file (.tab)
 
-# Parameters
-MIN_READ_DEPTH=5
-MIN_ALLELE_FREQUENCY=0.8
-SNP_GAP=5
-
 =======
 # Inputs
 ref=$1
@@ -27,11 +22,15 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
+MIN_READ_DEPTH=$6
+MIN_ALLELE_FREQUENCY=$7
+SNP_GAP=$8
 
 # Filter
 bcf=filtered.bcf
 bcftools filter --SnpGap $SNP_GAP |
-    -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} || INFO/ADF == 0 || INFO/ADR == 0" |
+    -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} |
+    || INFO/ADF == 0 || INFO/ADR == 0" |
     $vcf -Ob -o $bcf
 bcftools index $bcf
 
