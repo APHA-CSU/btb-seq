@@ -19,8 +19,10 @@
 ref=$1
 bam=$2
 vcf=$3
+MAP_QUAL=$4
+BASE_QUAL=$5
 
 samtools index $bam
-bcftools mpileup -Q 15 -a INFO/AD,INFO/ADF,INFO/ADR -Ou -f $ref "$bam" |
+bcftools mpileup -q $MAP_QUAL -Q $BASE_QUAL -a INFO/AD,INFO/ADF,INFO/ADR -Ou -f $ref "$bam" |
     bcftools call -mf GQ - -Ou |
     bcftools norm -f $ref - -Oz -o "$vcf"

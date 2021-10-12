@@ -155,7 +155,7 @@ process VarCall {
 	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
 
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $MAP_QUAL $BASE_QUAL
 	"""
 }
 
