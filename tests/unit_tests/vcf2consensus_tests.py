@@ -4,6 +4,9 @@ import unittest
 
 class Vcf2ConsensusTests(BtbTests):
     ref_path = './references/Mycbovis-2122-97_LT708304.fas'
+    MIN_READ_DEPTH = 5
+    MIN_ALLELE_FREQUENCY = 0.8
+    SNP_GAP = 5
 
     def test_vcf2consensus(self):
         """
@@ -27,6 +30,9 @@ class Vcf2ConsensusTests(BtbTests):
             vcf_filepath,
             consensus_filepath,
             snps_filepath,
+            self.MIN_READ_DEPTH,
+            self.MIN_ALLELE_FREQUENCY,
+            self.SNP_GAP,
             "test" 
         ])
         self.assertFileExists(consensus_filepath)

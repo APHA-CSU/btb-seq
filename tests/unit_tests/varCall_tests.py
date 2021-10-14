@@ -4,6 +4,8 @@ from btb_tests import BtbTests
 
 class VarCallTests(BtbTests):
     ref_path = './references/Mycbovis-2122-97_LT708304.fas'
+    MAP_QUAL=0
+    BASE_QUAL=10
 
     def test_varCall(self):
         """
@@ -20,7 +22,7 @@ class VarCallTests(BtbTests):
         self.sam_to_bam(sam_path, bam_path)
 
         # Pass case
-        self.assertBashScript(0, ['./bin/varCall.bash', self.ref_path, bam_path, output])
+        self.assertBashScript(0, ['./bin/varCall.bash', self.ref_path, bam_path, output, self.MAP_QUAL, self.BASE_QUAL])
         self.assertFileExists(output)
 
         # Unzip
