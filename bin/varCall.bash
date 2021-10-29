@@ -22,6 +22,6 @@ vcf=$3
 MAP_QUAL=$4
 
 samtools index $bam
-bcftools mpileup -Q 10 -q $MAP_QUAL -Ou -f $ref "$bam" |
+bcftools mpileup -q $MAP_QUAL -Ou -f $ref "$bam" |
 bcftools call -mf GQ - -Ou |
 bcftools norm -f $ref - -Oz -o "$vcf"
