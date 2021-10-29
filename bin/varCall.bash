@@ -21,6 +21,6 @@ bam=$2
 vcf=$3
 
 samtools index $bam
-bcftools mpileup -Q 10 -Ou -f $ref "$bam" |
+bcftools mpileup -Ou -f $ref "$bam" |
 bcftools call -mf GQ - -Ou |
 bcftools norm -f $ref - -Oz -o "$vcf"
