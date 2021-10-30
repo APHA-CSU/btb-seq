@@ -16,7 +16,6 @@
 #%    snps         output path to snps tab file (.tab)
 
 # Parameters
-VAR_QUAL=30
 MIN_READ_DEPTH=5
 MIN_ALLELE_FREQUENCY=0.8
 INDEL_GAP=5
@@ -28,10 +27,11 @@ vcf=$3
 consensus=$4
 snps=$5
 VAR_QUAL=$6
+MIN_READ_DEPTH=$7
 
 # Filter
 bcf=filtered.bcf
-bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || DP<${MIN_READ_DEPTH} || AF<${MIN_ALLELE_FREQUENCY}' $vcf -Ob -o $bcf
+bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || AF<${MIN_ALLELE_FREQUENCY}' $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
