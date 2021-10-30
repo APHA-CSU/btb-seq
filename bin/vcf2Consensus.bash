@@ -17,6 +17,7 @@
 
 # Parameters
 INDEL_GAP=5
+MIN_ALLELE_FREQUENCY=0.8
 
 # Inputs
 ref=$1
@@ -26,12 +27,11 @@ consensus=$4
 snps=$5
 VAR_QUAL=$6
 MIN_READ_DEPTH=$7
-MIN_ALT_PROPORTION=$8
 
 # Filter
 bcf=filtered.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION} ' $vcf -Ob -o $bcf
+bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || AF<${MIN_ALLELE_FREQUENCY}' $vcf -Ob -o $bcf
 bcftools index $bcf
 bcftools view $bcf -Oz -o $filt_vcf
 
