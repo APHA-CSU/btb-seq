@@ -16,7 +16,6 @@
 #%    snps         output path to snps tab file (.tab)
 
 # Parameters
-VAR_QUAL=30
 MIN_READ_DEPTH=5
 MIN_ALLELE_FREQUENCY=0.8
 INDEL_GAP=5
