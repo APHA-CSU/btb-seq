@@ -121,6 +121,8 @@ def performance_test(btb_seq_path, results_path, reference_path, exist_ok=False)
     fasta_path = simulated_genome_path + 'simulated.simseq.genome.fa'
     simulated_snps = simulated_genome_path + "simulated.refseq2simseq.map.txt"
 
+    # TODO: handle dwgsim vcf files. Make sure we are taking into account variants it might generate
+
     # Create Output Directories
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
