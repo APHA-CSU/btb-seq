@@ -45,10 +45,14 @@ def simulate_reads(
     seed=1
 ):
     output_prefix = output_path + "simulated"
-    dwgsim_read_1 = output_path + "simulated_S1_R1_X.fastq"
-    dwgsim_read_1 = output_path + "simulated_S1_R1_X.fastq"
-    read_1 = output_path + "simulated_S1_R1_X.fastq"
-    read_2 = output_path + "simulated_S1_R2_X.fastq"
+    
+    # How dwgsim chooses to name it's output fastq files
+    dwgsim_read_1 = output_prefix + ".bwa.read1.fastq.gz"
+    dwgsim_read_2 = output_prefix + ".bwa.read2.fastq.gz"
+
+    # Output fastq filenames compatible with btb-seq
+    read_1 = output_prefix + "_S1_R1_X.fastq.gz"
+    read_2 = output_prefix + "_S1_R2_X.fastq.gz"
 
     num_read_pairs = 150000
 
@@ -72,7 +76,8 @@ def simulate_reads(
         output_prefix
     ])
 
-    os.rename('simsimulated.bwa.read1.fastq.gz')
+    os.rename(dwgsim_read_1, read_1)
+    os.rename(dwgsim_read_2, read_2)
 
     # # TODO: use python library instead?
     # run(["gzip", read_1, read_2])
