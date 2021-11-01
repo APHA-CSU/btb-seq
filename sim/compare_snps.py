@@ -18,7 +18,6 @@ def analyse(simulated_snps, pipeline_snps):
     # Extract SNP positions
     simulated_pos = set(simulated['ref_start'].values)
     pipeline_pos = set(pipeline['POS'].values)
-    masked_pos = set(masked_positions())
     
     # TODO: Do we need to remove masked positions? 
     # TODO: Should our filtering step apply the mask? TBD with Ele/Richard

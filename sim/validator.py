@@ -27,7 +27,7 @@ def run(cmd, *args, **kwargs):
         raise Exception("""*****
             %s
             cmd failed with exit code %i
-          *****""" % cmd, returncode)
+          *****""" % (cmd, returncode))
 
 def simulate_genome(reference_path, output_path, num_snps=16000):
     run([
@@ -113,9 +113,9 @@ def performance_test(btb_seq_path, results_path, reference_path, exist_ok=False)
     run(["cp", "-r", btb_seq_path, btb_seq_backup_path])
 
     # Run Simulation
-    simulate_genome(reference_path, results_path)
-    simulate_reads(fasta_path, results_path)
-    btb_seq(btb_seq_path, simulated_reads_path, results_path)
+    simulate_genome(reference_path, simulated_genome_path)
+    simulate_reads(fasta_path, simulated_reads_path)
+    btb_seq(btb_seq_path, simulated_reads_path, btb_seq_results_path)
 
     # Analyse Results
     # HACK: this could easily break if additioanl files are present
@@ -131,14 +131,16 @@ def main():
     # Parse
     parser = argparse.ArgumentParser(
         description="Performance test btb-seq code")
-    parser.add_argument("btb-seq", help="path to btb-seq code")
+    parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--ref", "-r", help="path to reference fasta", default=DEFAULT_REFERENCE_PATH)
 
     args = parser.parse_args(sys.argv[1:])
 
+    # TODO: add trailing slash to directory paths
+
     # Run
-    performance_test(args.btb_seq, args.results)
+    performance_test(args.btb_seq, args.results, args.ref)
 
 if __name__ == '__main__':
     main()
