@@ -41,8 +41,15 @@ def simulate_genome(reference_path, output_path, num_snps=16000):
 def simulate_reads(
     genome_fasta,
     output_path,
+    num_read_pairs=150000,
     read_length=150,
-    seed=1
+    seed=1,
+    outer_distance=330,
+    random_dna_probability=0.01,
+    rate_of_mutations=0,
+    indel_mutation_fraction=0,
+    indel_extension_probability=0,
+    per_base_error_rate="0" # TODO: default to Ele's reccomendation? 0.001-0.01
 ):
     output_prefix = output_path + "simulated"
     
@@ -54,33 +61,28 @@ def simulate_reads(
     read_1 = output_prefix + "_S1_R1_X.fastq.gz"
     read_2 = output_prefix + "_S1_R2_X.fastq.gz"
 
-    num_read_pairs = 150000
-
-    # TODO: store stdout to a file
-    # TODO: set error statistics to Ele's reccomendation: dwgsim -e 0.001-0.01
     run([
         "dwgsim",
-        "-e", "0",
+        "-e", str(per_base_error_rate),
+        "-E", str(per_base_error_rate),
         "-i",
-        "-d", "330",
+        "-d", str(outer_distance),
         "-N", str(num_read_pairs),
         "-1", str(read_length),
         "-2", str(read_length),
-        "-r", "0",
-        "-R", "0",
-        "-X", "0",
-        "-y", str(0.01),
+        "-r", str(rate_of_mutations),
+        "-R", str(indel_mutation_fraction),
+        "-X", str(indel_extension_probability),
+        "-y", str(random_dna_probability),
         "-H",
         "-z", str(seed),
         genome_fasta,
         output_prefix
     ])
 
+    # Rename output fastq files
     os.rename(dwgsim_read_1, read_1)
     os.rename(dwgsim_read_2, read_2)
-
-    # # TODO: use python library instead?
-    # run(["gzip", read_1, read_2])
 
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
