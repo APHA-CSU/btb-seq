@@ -44,27 +44,38 @@ def simulate_reads(
     read_length=150,
     seed=1
 ):
+    output_prefix = output_path + "simulated"
+    dwgsim_read_1 = output_path + "simulated_S1_R1_X.fastq"
+    dwgsim_read_1 = output_path + "simulated_S1_R1_X.fastq"
     read_1 = output_path + "simulated_S1_R1_X.fastq"
     read_2 = output_path + "simulated_S1_R2_X.fastq"
 
+    num_read_pairs = 150000
+
     # TODO: store stdout to a file
-    # TODO: set error statistics
+    # TODO: set error statistics to Ele's reccomendation: dwgsim -e 0.001-0.01
     run([
-        "wgsim",
+        "dwgsim",
+        "-e", "0",
+        "-i",
+        "-d", "330",
+        "-N", str(num_read_pairs),
         "-1", str(read_length),
         "-2", str(read_length),
-        "-S", str(seed),
         "-r", "0",
         "-R", "0",
         "-X", "0",
-        "-e", "0",
+        "-y", str(0.01),
+        "-H",
+        "-z", str(seed),
         genome_fasta,
-        read_1,
-        read_2
+        output_prefix
     ])
 
-    # TODO: use python library instead?
-    run(["gzip", read_1, read_2])
+    os.rename('simsimulated.bwa.read1.fastq.gz')
+
+    # # TODO: use python library instead?
+    # run(["gzip", read_1, read_2])
 
 
 def btb_seq(btb_seq_directory, reads_directory, results_directory):
