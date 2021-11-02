@@ -90,7 +90,7 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
          results_directory], cwd=btb_seq_directory)
 
 
-def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False):
+def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -98,6 +98,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False)
             results_path (str): Output path to performance test results
             reference_path (str): Path to reference fasta
             exist_ok (bool): Whether or not to throw an error if a results directory already exists
+            branch (str): Checkout git branch on the repo (default None)
 
         Returns:
             None
@@ -139,6 +140,9 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False)
     #   from the work/ directory nextflow generates
     run(["cp", "-r", btb_seq_path, btb_seq_backup_path])
 
+    if branch:
+        checkout(btb_seq_backup_path, branch)
+
     # Run Simulation
     simulate_genome(reference_path, simulated_genome_path)
     simulate_reads(fasta_path, simulated_reads_path)
@@ -154,6 +158,9 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False)
     with open(results_path + "stats.json", "w") as file:
         file.write(json.dumps(stats, indent=4))
 
+def checkout(repo_path, branch):
+    run(["git", "checkout", str(branch)], cwd=repo_path)
+
 def main():
     # Parse
     parser = argparse.ArgumentParser(
@@ -161,11 +168,12 @@ def main():
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--btb_seq", default="../", help="path to btb-seq code")
     parser.add_argument("--ref", "-r", help="path to reference fasta", default=DEFAULT_REFERENCE_PATH)
+    parser.add_argument("--branch", help="path to reference fasta", default=None)
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    performance_test(args.results, args.btb_seq, args.ref)
+    performance_test(args.results, args.btb_seq, args.ref, args.branch)
 
 if __name__ == '__main__':
     main()
