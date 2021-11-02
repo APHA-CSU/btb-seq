@@ -126,7 +126,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False)
 
     # Analyse Results
     # HACK: this could easily break if additioanl files are present
-    pipeline_directory = glob.glob(btb_seq_results_path + '*')[0] + '/'
+    pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
     pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
     stats = analyse(simulated_snps, pipeline_snps)
 
