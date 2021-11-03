@@ -2,9 +2,10 @@ import validator
 import os
 
 #
-results_root = '/home/aaronfishman/ebs/pipeline-results/ofat-2/'
+results_root = '/home/aaronfishman/ebs/pipeline-results/ofat-4/'
 results_root = os.path.join(results_root, '')
 repo_path = '/home/aaronfishman/temp2/btb-seq'
+reference_path = '/home/aaronfishman/repos/btb-seq/sim/Mycobacterium_bovis_AF212297_LT78304.fa'
 
 # First download them
 branches = [
@@ -30,7 +31,7 @@ def main():
             validator.performance_test(
                 results_path, 
                 repo_path, 
-                validator.DEFAULT_REFERENCE_PATH, 
+                reference_path, 
                 branch=branch
             )
         except:
