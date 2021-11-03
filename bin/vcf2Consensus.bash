@@ -35,7 +35,7 @@ RepeatBed=$10
 bcf=filtered.bcf
 masked_bcf=masked.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION} ' $vcf -Ob -o $bcf
+bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" $vcf -Ob -o $bcf
 
 vcftools --bcf $bcf --exclude-bed $RepeatBed --thin $window --recode-bcf --recode-INFO-all --out $masked_bcf
 
