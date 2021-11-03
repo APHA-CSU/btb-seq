@@ -30,7 +30,8 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-pip \
     vim \
     nano \
-    bc
+    bc \
+    vcftools
 
 # python 
 pip3 install biopython pandas gitpython
