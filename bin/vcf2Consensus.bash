@@ -31,7 +31,7 @@ VAR_QUAL=$6
 # Filter
 bcf=filtered.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e 'TYPE!="snp" || %QUAL<${VAR_QUAL} || DP<${MIN_READ_DEPTH} || AF<${MIN_ALLELE_FREQUENCY}' $vcf -Ob -o $bcf
+bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || DP<${MIN_READ_DEPTH} || AF<${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 bcftools view $bcf -Oz -o $filt_vcf
 
