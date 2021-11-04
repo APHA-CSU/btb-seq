@@ -35,6 +35,8 @@ def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000
             "simuG.pl",
             "-refseq", reference_path,
             "-snp_vcf", predef_snp_path,
+            # below line tells simuG to also simulate predefined indels.
+            #"-indel_vcf", predef_snp_path, 
             "-prefix", output_path + "simulated"
         ])
     else:
