@@ -20,7 +20,7 @@ MIN_READ_DEPTH=5
 MIN_ALLELE_FREQUENCY=0.8
 SNP_GAP=5
 
-=======
+#=======
 # Inputs
 ref=$1
 bed=$2
