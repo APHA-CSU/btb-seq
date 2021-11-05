@@ -52,7 +52,7 @@ params.outdir = "$PWD"
 
 ref = file(params.ref)
 refgbk = file(params.refgbk)
-rptmask = file(params.rptmask)
+/*rptmask = file(params.rptmask)
 RepeatBed = file(params.RepeatBed)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
