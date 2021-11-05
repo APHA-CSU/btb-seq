@@ -30,7 +30,8 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-pip \
     vim \
     nano \
-    bc
+    bc \
+    vcftools
 
 # python 
 pip3 install biopython pandas gitpython
@@ -53,3 +54,4 @@ bash -e install-Kraken2.sh
 bash -e install-bracken.sh
 bash -e install-nextflow.sh
 bash -e install-sra-toolkit.sh
+bash -e install-dwgsim.sh
