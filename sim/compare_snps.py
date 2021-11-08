@@ -6,7 +6,6 @@ from Bio import SeqIO
 Calculate performance stats from simulated data
 """
 
-# TODO: Should this be replaced with vcftools?
 def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
     mask = pd.read_csv(mask_filepath,
         delimiter='\t',
@@ -23,7 +22,7 @@ def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.
 
     return masked_pos
 
-def analyse(simulated_snps, pipeline_snps, adjust = False):
+def analyse(simulated_snps, pipeline_snps):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
         Returns a dictionary of performance stats
@@ -36,13 +35,10 @@ def analyse(simulated_snps, pipeline_snps, adjust = False):
     # Extract SNP positions
     simulated_pos = set(simulated['ref_start'].values)
     pipeline_pos = set(pipeline['POS'].values)
+    masked_pos = set(masked_positions())
 
-    # TODO: Do we need to remove masked positions? 
-    # TODO: Should our filtering step apply the mask? TBD with Ele/Richard
-    if adjust:
-        masked_pos = set(masked_positions())
-        simulated_pos -= masked_pos
-        pipeline_pos -= masked_pos
+    simulated_pos -= masked_pos
+    pipeline_pos -= masked_pos
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
     tp = len(simulated_pos.intersection(pipeline_pos))
