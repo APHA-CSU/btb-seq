@@ -1,48 +1,47 @@
-import glob
-import os
-import json
-import pandas as pd
 
-root = '/home/aaronfishman/ebs/pipeline-results/ofat-4/*'
 
-# Loop over each subfolder
-paths = glob.glob(root)
+def analyse(path)
 
-fns = []
-fps = []
-tps = []
-branch_names = []
+    root = '/home/aaronfishman/ebs/pipeline-results/ofat-4/*'
 
-for path in paths:
-    branch = os.path.basename(path)
+    # Loop over each subfolder
+    paths = glob.glob(root)
 
-    branch_names.append(branch)
+    fns = []
+    fps = []
+    tps = []
+    branch_names = []
 
-    stats_path = path+'/stats.json'
+    for path in paths:
+        branch = os.path.basename(path)
 
-    if not os.path.exists(stats_path):
-        fn = 'FAIL'
-        fp = 'FAIL'
-        tp = 'FAIL'
+        branch_names.append(branch)
 
-    else:
-        # Load the data 
-        with open(stats_path, 'r') as file:
-            data = json.load(file)
+        stats_path = path+'/stats.json'
 
-        fn = data['fn']
-        fp = data['fp']
-        tp = data['tp']
+        if not os.path.exists(stats_path):
+            fn = 'FAIL'
+            fp = 'FAIL'
+            tp = 'FAIL'
 
-    fns.append(fn)
-    fps.append(fp)
-    tps.append(tp)
+        else:
+            # Load the data 
+            with open(stats_path, 'r') as file:
+                data = json.load(file)
 
-df = pd.DataFrame(data={
-    "branch": branch_names,
-    "fn": fns,
-    "fp": fps,
-    "tp": tps
-})
+            fn = data['fn']
+            fp = data['fp']
+            tp = data['tp']
 
-print(df)
+        fns.append(fn)
+        fps.append(fp)
+        tps.append(tp)
+
+    df = pd.DataFrame(data={
+        "branch": branch_names,
+        "fn": fns,
+        "fp": fps,
+        "tp": tps
+    })
+
+    print(df)

@@ -1,10 +1,15 @@
-import validator
 import os
 import sys
 import argparse
+import glob
+import json
+
+import pandas as pd
+import validator
+
 
 """
-    Run the performance benchmarking tool against a number of git branches
+    Run the performance benchmarking tool against a multiple git branches
 """
 
 # Initial list of branches that we are testing
@@ -54,6 +59,59 @@ def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
             print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
 
+    # Analyse results
+    return analyse(results_path)
+
+def analyse(root_path):
+    """ Analyse results from an ofat run
+
+        Parameters:
+            root_path (str): Path to parent directory where 
+                results from ofat trials are stored
+    """
+
+    # Determine path of each trial
+    paths = glob.glob(root_path + '/*')
+
+    # Initialise output data columns
+    fns = []
+    fps = []
+    tps = []
+    branch_names = []
+
+    # Collect data from each trial
+    for path in paths:
+        # Initialised trial dataw
+        branch = os.path.basename(path)
+        stats_path = path+'/stats.json'
+
+        fn = 'FAIL'
+        fp = 'FAIL'
+        tp = 'FAIL'
+
+        # Log 
+        if os.path.exists(stats_path):
+            with open(stats_path, 'r') as file:
+                data = json.load(file)
+
+            fn = data['fn']
+            fp = data['fp']
+            tp = data['tp']
+
+        # Add to output
+        fns.append(fn)
+        fps.append(fp)
+        tps.append(tp)
+        branch_names.append(branch)
+
+    return pd.DataFrame(data={
+        "branch": branch_names,
+        "fn": fns,
+        "fp": fps,
+        "tp": tps
+    })
+
+
 if __name__ == '__main__':
     # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
@@ -65,4 +123,6 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    ofat(args.btb_seq, args.results, args.reference)
+    df = ofat(args.btb_seq, args.results, args.reference)
+    print("OFAT run completed, results:")
+    print(df)
