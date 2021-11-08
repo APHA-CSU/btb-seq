@@ -37,17 +37,26 @@ def analyse(simulated_snps, pipeline_snps):
     pipeline_pos = set(pipeline['POS'].values)
     masked_pos = set(masked_positions())
 
-    simulated_pos -= masked_pos
-    pipeline_pos -= masked_pos
+    simulated_pos_adjusted = simulated_pos - masked_pos
+    pipeline_pos_adjusted = pipeline_pos - masked_pos
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = len(simulated_pos.intersection(pipeline_pos))
+    tp = len(simulated_pos.intersection(pipeline_pos_adjusted))
 
     # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = len(pipeline_pos - simulated_pos)
+    fp = len(pipeline_pos_adjusted - simulated_pos_adjusted)
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn =  len(simulated_pos - pipeline_pos)
+    fn =  len(simulated_pos_adjusted - pipeline_pos_adjusted)
+
+    # TPs excluded 
+    masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
+
+    # FPs excluded
+    masked_fp = len(masked_pos.intersection(simulated_pos - pipeline_pos))
+
+    # FNs excluded
+    masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -63,9 +72,12 @@ def analyse(simulated_snps, pipeline_snps):
     total_errors = fp + fn
 
     return {
-        "tp": tp,
-        "fp": fp,
-        "fn": fn,
+        "TP": tp,
+        "FP": fp,
+        "FN": fn,
+        "masked TPs": masked_tp,
+        "masked FPs": masked_fp,
+        "masked FNs": masked_fn,
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
