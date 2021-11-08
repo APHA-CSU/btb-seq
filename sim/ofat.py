@@ -81,9 +81,9 @@ def analyse(root_path):
 
     # Collect data from each trial
     for path in paths:
-        # Initialised trial dataw
+        # Initialised trial data
         branch = os.path.basename(path)
-        stats_path = path+'/stats.json'
+        stats_path = path + '/stats.json'
 
         fn = 'FAIL'
         fp = 'FAIL'
