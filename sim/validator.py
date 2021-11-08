@@ -5,7 +5,7 @@ import json
 import sys
 import argparse
 
-from compare_snps import analyse_basic, analyse_mask_adjust
+from compare_snps import analyse
 
 DEFAULT_REFERENCE_PATH = './Mycobacterium_bovis_AF212297_LT78304.fa'
 
@@ -164,8 +164,8 @@ def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, refe
     # HACK: this could easily break if additioanl files are present
     pipeline_directory = glob.glob(btb_seq_results_path + 'Results_simulated-reads_*')[0] + '/'
     pipeline_snps = pipeline_directory + 'snpTables/simulated.tab'
-    stats = analyse_basic(simulated_snps, pipeline_snps)
-    stats_mask_asjust = analyse_mask_adjust(simulated_snps, pipeline_snps)
+    stats = analyse(simulated_snps, pipeline_snps)
+    stats_mask_asjust = analyse(simulated_snps, pipeline_snps, adjust = True)
 
     # Write output
     with open(results_path + "stats.json", "w") as file:
