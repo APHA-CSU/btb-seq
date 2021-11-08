@@ -1,5 +1,6 @@
 import validator
 import os
+import sys
 import argparse
 
 """
@@ -28,37 +29,42 @@ def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
             branches (list): List of strings for each git branch to test
     """
     # Add trailing slash
-    repo_path = os.path.join(repo_path, '')
+    btb_seq_path = os.path.join(btb_seq_path, '')
     results_path = os.path.join(results_path, '')     
     
     # Default reference for sims
-    reference_path = repo_path + './sim/Mycobacterium_bovis_AF212297_LT78304.fa'
+    reference_path = btb_seq_path + './sim/Mycobacterium_bovis_AF212297_LT78304.fa'
 
     # Prepare output directory
     os.makedirs(results_path, exist_ok=False)
 
-    # Run against branches
+    # Benchmark the branches
     for branch in branches:
         branch_results_path = results_path + branch + '/'
+
+        print('branch_results_path', branch_results_path)
+        print('btb_seq_path', btb_seq_path)
+        print('reference_path', reference_path)
 
         try:
             validator.performance_test(
                 branch_results_path, 
-                repo_path, 
+                btb_seq_path, 
                 reference_path, 
                 branch=branch
             )
-        except:
+        except Exception as e:
+            print(e)
             print(f"***FAILED BRANCH: {branch}****", branch)
 
 if __name__ == '__main__':
     # Parse
     parser = argparse.ArgumentParser(description="Run the performance benchmarking tool against a number of git branches")
 
-    parser.add_argument("results", help="path to results directory")
     parser.add_argument("btb_seq", help="path to btb-seq code")
+    parser.add_argument("results", help="path to results directory")
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    ofat(args.results, args.btb_seq)
+    ofat(args.btb_seq, args.results)

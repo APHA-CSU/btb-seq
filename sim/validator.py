@@ -4,6 +4,7 @@ import glob
 import json
 import sys
 import argparse
+import shutil
 
 from compare_snps import analyse
 
@@ -131,16 +132,16 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # Create Output Directories
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
-    os.makedirs(btb_seq_backup_path, exist_ok=exist_ok)
     os.makedirs(btb_seq_results_path, exist_ok=exist_ok)    
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    run(["cp", "-r", btb_seq_path, results_path])
+    shutil.copytree(btb_seq_path, btb_seq_backup_path)
 
     if branch:
+        print("checkout", btb_seq_backup_path, branch )
         checkout(btb_seq_backup_path, branch)
 
     # Run Simulation
@@ -160,7 +161,7 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
-    run(["git", "pull", "origin", str(branch)], cwd=repo_path)
+    # run(["git", "pull", "origin", str(branch)], cwd=repo_path)
 
 def main():
     # Parse
