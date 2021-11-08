@@ -20,7 +20,7 @@ DEFAULT_BRANCHES = [
     "RepeatMask"
 ]
 
-def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
+def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
     """ Runs a performance test against the pipeline
 
         Parameters:
@@ -32,8 +32,9 @@ def ofat(btb_seq_path, results_path, branches=DEFAULT_BRANCHES):
     btb_seq_path = os.path.join(btb_seq_path, '')
     results_path = os.path.join(results_path, '')     
     
-    # Default reference for sims
-    reference_path = btb_seq_path + './sim/Mycobacterium_bovis_AF212297_LT78304.fa'
+    # TODO: set the reference file relative to the 
+    #   This is awkward to do atm because many of the branches
+    #   we are testing are not up to date with the latest sim code
 
     # Prepare output directory
     os.makedirs(results_path, exist_ok=False)
@@ -63,8 +64,9 @@ if __name__ == '__main__':
 
     parser.add_argument("btb_seq", help="path to btb-seq code")
     parser.add_argument("results", help="path to results directory")
+    parser.add_argument("reference", help="path to reference file")
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    ofat(args.btb_seq, args.results)
+    ofat(args.btb_seq, args.results, args.reference)
