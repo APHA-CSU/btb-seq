@@ -43,10 +43,6 @@ def ofat(btb_seq_path, results_path, reference_path, branches=DEFAULT_BRANCHES):
     for branch in branches:
         branch_results_path = results_path + branch + '/'
 
-        print('branch_results_path', branch_results_path)
-        print('btb_seq_path', btb_seq_path)
-        print('reference_path', reference_path)
-
         try:
             validator.performance_test(
                 branch_results_path, 

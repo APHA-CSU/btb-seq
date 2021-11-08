@@ -141,7 +141,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     shutil.copytree(btb_seq_path, btb_seq_backup_path)
 
     if branch:
-        print("checkout", btb_seq_backup_path, branch )
         checkout(btb_seq_backup_path, branch)
 
     # Run Simulation
@@ -161,7 +160,6 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
 def checkout(repo_path, branch):
     run(["git", "checkout", str(branch)], cwd=repo_path)
-    # run(["git", "pull", "origin", str(branch)], cwd=repo_path)
 
 def main():
     # Parse
