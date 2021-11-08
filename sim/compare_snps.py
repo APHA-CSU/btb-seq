@@ -8,8 +8,8 @@ Calculate performance stats from simulated data
 
 # TODO: Should this be replaced with vcftools?
 def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
-    mask = pd.read_csv(mask_filepath, 
-        delimiter='\t', 
+    mask = pd.read_csv(mask_filepath,
+        delimiter='\t',
         skiprows=[0,1],
         header=None,
         names=["CHROM", "START", "END", "RPT"]
