@@ -19,15 +19,15 @@ rpt_mask=$1
 bam=$2
 masked=$3
 
-# Find low coverage (<5 reads) regions
+# Find zero coverage regions
 bedtools genomecov -bga -ibam $bam |
-grep -w "[0-4]\$" | 
-cat > low_cov.bed
+grep -w "0\$" | 
+cat > zero_cov.bed
 
 # Mask repeat regions
-cat low_cov.bed $rpt_mask | 
+cat zero_cov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
 
 # Cleanup
-rm low_cov.bed
+rm zero_cov.bed
