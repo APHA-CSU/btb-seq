@@ -204,7 +204,7 @@ process VCF2Consensus {
 
 	"""
 	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab \
-		$params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY $params.SNP_GAP
+		$params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY $params.SNP_GAP $params.SNP_WINDOW
 	"""
 }
 
