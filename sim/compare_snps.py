@@ -97,13 +97,23 @@ def make_details_file(sim_path, pl_path, sites):
     simulated_genome = load_consensus(sim_path+'/simulated.simseq.genome.fa')
     pipeline_genome = load_consensus(pl_path+'/consensus/simulated.fas')
     pipeline_vcf = load_vcf(pl_path+'/vcf/simulated.vcf.gz')
+    mask = set(masked_positions())
     with open(pl_path+'/details.txt','w') as details_file:
-        for i in sites:
+        for i in sites:              
             details_file.write("##POSITION: {}".format(i)+'\n')
             details_file.write('##SIMULATED GENOME:\n')
             details_file.write(simulated_genome[i-51:i-1].lower()+simulated_genome[i-1]+simulated_genome[i:i+50].lower()+'\n')
             details_file.write('##PIPELINE GENOME:\n')
             details_file.write(pipeline_genome[i-49:i+1].lower()+pipeline_genome[i+1]+pipeline_genome[i+2:i+52].lower()+'\n')
+            details_file.write('##MASK:\n')
+            mask_local = ''
+            sites_local = set(range(i-50,i+51))
+            for j in range(i-50,i+51):
+                if j in mask.intersection(sites_local):
+                    mask_local += 'M'
+                else:
+                    mask_local += ' '  
+            details_file.write(mask_local+'\n')
             details_file.write("#PIPELINE VCF:\n")
             details_file.write(pipeline_vcf.loc[pipeline_vcf['POS'] == i].to_csv(sep='\t')+'\n')
             details_file.write("\n\n")
