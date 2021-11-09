@@ -53,7 +53,7 @@ def analyse(simulated_snps, pipeline_snps):
     masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
 
     # FPs excluded
-    masked_fp = len(masked_pos.intersection(simulated_pos - pipeline_pos))
+    masked_fp = len(masked_pos.intersection(pipeline_pos - simulated_pos))
 
     # FNs excluded
     masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
