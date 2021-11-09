@@ -139,6 +139,8 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     #   from the work/ directory nextflow generates
     shutil.copytree(btb_seq_path, btb_seq_backup_path)
 
+    # TODO: Use nextflow's method of choosing github branches
+    #    the method handles automatic pulling of github branches.
     if branch:
         checkout(btb_seq_backup_path, branch)
 
