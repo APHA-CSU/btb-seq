@@ -7,22 +7,6 @@ from io import StringIO
 Calculate performance stats from simulated data
 """
 
-def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
-    mask = pd.read_csv(mask_filepath,
-        delimiter='\t',
-        skiprows=[0,1],
-        header=None,
-        names=["CHROM", "START", "END", "RPT"]
-    )
-
-    # TODO: This is off by one compared to the Emergency Port validation doc
-    #    why is that?
-    masked_pos = []
-    for i, row in mask.iterrows():
-        masked_pos.extend(list(range(row['START'], row['END']+1)))
-
-    return masked_pos
-
 def analyse(simulated_snps, pipeline_snps):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
         If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
@@ -78,7 +62,9 @@ def analyse(simulated_snps, pipeline_snps):
     #  total number of errors (FP + FN) per million sequenced bases
     total_errors = fp_rate + fn_rate
 
-    make_details_file('/home/nickpestell/pipeline-results/btb-seq-9/simulated-genome','/home/nickpestell/pipeline-results/btb-seq-9/btb-seq-results/Results_simulated-reads_09Nov21', fn)
+    # TO DO: better solution to arguments 0 & 1 - will involve changing path arguments to analys()
+    # also maybe better to call from validator.py
+    make_details_file(simulated_snps[:-31],pipeline_snps[:-23], fn, prefix = 'FN')
 
     return {
         "TP": tp_rate,
@@ -93,18 +79,18 @@ def analyse(simulated_snps, pipeline_snps):
         "total_errors": total_errors
     }
 
-def make_details_file(sim_path, pl_path, sites):
+def make_details_file(sim_path, pl_path, sites, prefix = ''):
     simulated_genome = load_consensus(sim_path+'/simulated.simseq.genome.fa')
     pipeline_genome = load_consensus(pl_path+'/consensus/simulated.fas')
     pipeline_vcf = load_vcf(pl_path+'/vcf/simulated.vcf.gz')
     mask = set(masked_positions())
-    with open(pl_path+'/details.txt','w') as details_file:
+    with open(pl_path[:-48]+'/'+prefix+'_details.txt','w') as details_file: # TO DO: sort out the path for where details file is saved
         for i in sites:              
             details_file.write("##POSITION: {}".format(i)+'\n')
             details_file.write('##SIMULATED GENOME:\n')
             details_file.write(simulated_genome[i-51:i-1].lower()+simulated_genome[i-1]+simulated_genome[i:i+50].lower()+'\n')
             details_file.write('##PIPELINE GENOME:\n')
-            details_file.write(pipeline_genome[i-49:i+1].lower()+pipeline_genome[i+1]+pipeline_genome[i+2:i+52].lower()+'\n')
+            details_file.write(pipeline_genome[i-51:i-1].lower()+pipeline_genome[i-1]+pipeline_genome[i:i+50].lower()+'\n')
             details_file.write('##MASK:\n')
             mask_local = ''
             sites_local = set(range(i-50,i+51))
@@ -118,11 +104,6 @@ def make_details_file(sim_path, pl_path, sites):
             details_file.write(pipeline_vcf.loc[pipeline_vcf['POS'] == i].to_csv(sep='\t')+'\n')
             details_file.write("\n\n")
 
-
-    x = 0
-
-#TODO: This may not be required if we can get away with using bcftools/vcftools
-#      for comparisons. Leaving this here for convenience in case those tools aren't suitable 
 def load_consensus(path):
     """ Load a consensus file. Returns the first record in a fasta file a string """
 
@@ -143,4 +124,20 @@ def load_vcf(path):
     vcf_df = pd.read_csv(StringIO(''.join(vcf_data)), delimiter = '\t')
 
     return vcf_df
+
+def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
+    mask = pd.read_csv(mask_filepath,
+        delimiter='\t',
+        skiprows=[0,1],
+        header=None,
+        names=["CHROM", "START", "END", "RPT"]
+    )
+
+    # TODO: This is off by one compared to the Emergency Port validation doc
+    #    why is that?
+    masked_pos = []
+    for i, row in mask.iterrows():
+        masked_pos.extend(list(range(row['START'], row['END']+1)))
+
+    return masked_pos
     
