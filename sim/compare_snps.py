@@ -80,10 +80,30 @@ def analyse(simulated_snps, pipeline_snps):
     }
 
 def make_details_file(sim_path, pl_path, sites, prefix = ''):
+    """ Makes a details.txt file for specified sites e.g. FNs.
+
+        Parameters:
+            sim_path (str): Path to simulated genome
+            pl_path (str): Path to pipeline genome
+            sites (set): Genome positions on which to report details
+            prefix (str): Filename prefix for details.txt file
+
+        Returns:
+            None
+    """
+    # load simulated genome
     simulated_genome = load_consensus(sim_path+'/simulated.simseq.genome.fa')
+    
+    # load pipeline genome
     pipeline_genome = load_consensus(pl_path+'/consensus/simulated.fas')
+    
+    # load pipeline vcf
     pipeline_vcf = load_vcf(pl_path+'/vcf/simulated.vcf.gz')
+
+    # load mask
     mask = set(masked_positions())
+
+    # make details file
     with open(pl_path[:-48]+'/'+prefix+'_details.txt','w') as details_file: # TO DO: sort out the path for where details file is saved
         for i in sites:              
             details_file.write("##POSITION: {}".format(i)+'\n')
@@ -106,11 +126,11 @@ def make_details_file(sim_path, pl_path, sites, prefix = ''):
 
 def load_consensus(path):
     """ Load a consensus file. Returns the first record in a fasta file a string """
-
     seq_record = SeqIO.read(path, "fasta")
     return str(seq_record.seq)
 
 def load_vcf(path):
+    """ Load VCF file. Returns Pandas dataframe object """
     returncode = subprocess.run(['gunzip',
                                  '-k',
                                  path]).returncode
@@ -126,6 +146,7 @@ def load_vcf(path):
     return vcf_df
 
 def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
+    """ Load masked positions. Returns list of all masked positions """
     mask = pd.read_csv(mask_filepath,
         delimiter='\t',
         skiprows=[0,1],
