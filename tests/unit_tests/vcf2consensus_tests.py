@@ -12,6 +12,7 @@ class Vcf2ConsensusTests(BtbTests):
         min_read_depth = str(5)
         min_allele_freq = str(0.8)
         snp_gap = str(5)
+        snp_window = str(1)
         
         # Copy data
         bed_filepath = self.temp_dirname + 'tinybed.bed'
@@ -34,7 +35,7 @@ class Vcf2ConsensusTests(BtbTests):
             min_read_depth,
             min_allele_freq,
             snp_gap,
-            "test"
+            snp_window
         ])
 
         self.assertFileExists(consensus_filepath)
