@@ -18,7 +18,7 @@
 # Parameters
 MIN_READ_DEPTH=5
 MIN_ALLELE_FREQUENCY=0.8
-SNP_GAP=5
+INDEL_GAP=5
 
 #=======
 # Inputs
@@ -30,7 +30,7 @@ snps=$5
 
 # Filter
 bcf=filtered.bcf
-bcftools filter --SnpGap $SNP_GAP -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
