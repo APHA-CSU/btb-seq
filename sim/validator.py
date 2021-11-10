@@ -29,7 +29,7 @@ def run(cmd, *args, **kwargs):
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
 
-def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000):
+def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000, seed=1):
     if predef_snp_path:
         run([
             "simuG.pl",
@@ -37,16 +37,17 @@ def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000
             "-snp_vcf", predef_snp_path,
             # below line tells simuG to also simulate predefined indels.
             #"-indel_vcf", predef_snp_path, 
-            "-prefix", output_path + "simulated"
+            "-prefix", output_path + "simulated",
+            "-seed", str(seed)
         ])
     else:
         run([
             "simuG.pl",
             "-refseq", reference_path,
             "-snp_count", str(num_snps),
-            "-prefix", output_path + "simulated"
+            "-prefix", output_path + "simulated",
+            "-seed", str(seed)
         ])
-
 
 def simulate_reads(
     genome_fasta,
