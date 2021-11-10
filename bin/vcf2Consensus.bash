@@ -32,28 +32,25 @@ window=$9
 
 # Filter
 bcf=filtered.bcf
-masked_bcf=masked.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" $vcf -Ob -o $bcf
+bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" $vcf | bcftools +prune -w $window -n 1 - -Ob -o $bcf
 
-vcftools --bcf $bcf --thin $window --recode-bcf --recode-INFO-all --out $masked_bcf
-
-bcftools index $masked_bcf
-bcftools view $masked_bcf -Oz -o $filt_vcf
+bcftools index $bcf
+bcftools view $bcf -Oz -o $filt_vcf
 
 # Call Consensus
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $masked_bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $masked_bcf |
+bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
 
 # Cleanup
-rm $bcf $masked_bcf $masked_bcf.csi
+rm $bcf $bcf.csi
 
