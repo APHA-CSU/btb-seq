@@ -52,8 +52,9 @@ params.outdir = "$PWD"
 
 ref = file(params.ref)
 refgbk = file(params.refgbk)
-rptmask = file(params.rptmask)
+/* rptmask = file(params.rptmask) */
 RepeatBed = file(params.RepeatBed)
+NoRepeatBed = file(params.NoRepeatBed)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
@@ -204,7 +205,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}.fas ${pair_id}.tab $params.VAR_QUAL $params.MIN_READ_DEPTH $params.MIN_ALT_PROPORTION $params.window $RepeatBed
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}.fas ${pair_id}.tab $params.VAR_QUAL $params.MIN_READ_DEPTH $params.MIN_ALT_PROPORTION $params.window $NoRepeatBed
 	"""
 }
 
