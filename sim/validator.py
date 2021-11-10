@@ -4,7 +4,6 @@ import glob
 import json
 import sys
 import argparse
-import shutil
 
 from compare_snps import analyse
 
@@ -30,13 +29,23 @@ def run(cmd, *args, **kwargs):
             cmd failed with exit code %i
           *****""" % (cmd, returncode))
 
-def simulate_genome(reference_path, output_path, num_snps=16000):
-    run([
-        "simuG.pl",
-        "-refseq", reference_path,
-        "-snp_count", str(num_snps),
-        "-prefix", output_path + "simulated"
-    ])
+def simulate_genome(predef_snp_path, reference_path, output_path, num_snps=16000):
+    if predef_snp_path:
+        run([
+            "simuG.pl",
+            "-refseq", reference_path,
+            "-snp_vcf", predef_snp_path,
+            # below line tells simuG to also simulate predefined indels.
+            #"-indel_vcf", predef_snp_path, 
+            "-prefix", output_path + "simulated"
+        ])
+    else:
+        run([
+            "simuG.pl",
+            "-refseq", reference_path,
+            "-snp_count", str(num_snps),
+            "-prefix", output_path + "simulated"
+        ])
 
 
 def simulate_reads(
@@ -91,19 +100,21 @@ def btb_seq(btb_seq_directory, reads_directory, results_directory):
          results_directory], cwd=btb_seq_directory)
 
 
-def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False, branch=None):
+def performance_test(predef_snp_path, num_snps, results_path, btb_seq_path, reference_path, exist_ok=False):
     """ Runs a performance test against the pipeline
 
         Parameters:
+            predef_snp_path (str): Path to gzipped VCF (vcf.gz) file containing predefined SNPs from snippy
+            num_snps (int): Number of manually introduced SNPs, not used if predef_snp_path parameter is set
             btb_seq_path (str): Path to btb-seq code is stored
             results_path (str): Output path to performance test results
             reference_path (str): Path to reference fasta
             exist_ok (bool): Whether or not to throw an error if a results directory already exists
-            branch (str): Checkout git branch on the repo (default None)
 
         Returns:
             None
     """
+
     # Add trailing slash
     btb_seq_path = os.path.join(btb_seq_path, '')
     results_path = os.path.join(results_path, '')
@@ -115,6 +126,10 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
 
     if not os.path.isdir(btb_seq_path):
         raise Exception("Pipeline code repository not found")
+
+    if predef_snp_path and not os.path.isfile(predef_snp_path):
+    #if not os.path.isfile(predef_snp_path):
+        raise Exception("predfined SNPs file not found")
 
     # Output Directories
     simulated_genome_path = results_path + 'simulated-genome/'
@@ -131,21 +146,17 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     # Create Output Directories
     os.makedirs(simulated_genome_path, exist_ok=exist_ok)
     os.makedirs(simulated_reads_path, exist_ok=exist_ok)
-    os.makedirs(btb_seq_results_path, exist_ok=exist_ok)    
+    os.makedirs(btb_seq_backup_path, exist_ok=exist_ok)
+    os.makedirs(btb_seq_results_path, exist_ok=exist_ok)
 
     # Backup btb-seq code
     # TODO: exclude the work/ subdirectory from this operation.
     #   This could potentially copy large amounts of data
     #   from the work/ directory nextflow generates
-    shutil.copytree(btb_seq_path, btb_seq_backup_path)
-
-    # TODO: Use nextflow's method of choosing github branches
-    #    the method handles automatic pulling of github branches.
-    if branch:
-        checkout(btb_seq_backup_path, branch)
+    run(["cp", "-r", btb_seq_path, btb_seq_backup_path])
 
     # Run Simulation
-    simulate_genome(reference_path, simulated_genome_path)
+    simulate_genome(predef_snp_path, reference_path, simulated_genome_path, num_snps)
     simulate_reads(fasta_path, simulated_reads_path)
     btb_seq(btb_seq_backup_path, simulated_reads_path, btb_seq_results_path)
 
@@ -159,22 +170,20 @@ def performance_test(results_path, btb_seq_path, reference_path, exist_ok=False,
     with open(results_path + "stats.json", "w") as file:
         file.write(json.dumps(stats, indent=4))
 
-def checkout(repo_path, branch):
-    run(["git", "checkout", str(branch)], cwd=repo_path)
-
 def main():
     # Parse
     parser = argparse.ArgumentParser(
         description="Performance test btb-seq code")
     parser.add_argument("results", help="path to performance test results")
     parser.add_argument("--btb_seq", default="../", help="path to btb-seq code")
-    parser.add_argument("--ref", "-r", help="path to reference fasta", default=DEFAULT_REFERENCE_PATH)
-    parser.add_argument("--branch", help="path to reference fasta", default=None)
+    parser.add_argument("--predef_snps", help="optional path to VCF file with predefined SNPs", default=None)
+    parser.add_argument("--num_snps", help="number of simulated snps, overridden by predef_snps", default=16000)
+    parser.add_argument("--ref", "-r", help="optional path to reference fasta", default=DEFAULT_REFERENCE_PATH)
 
     args = parser.parse_args(sys.argv[1:])
 
     # Run
-    performance_test(args.results, args.btb_seq, args.ref, args.branch)
+    performance_test(args.predef_snps, args.num_snps, args.results, args.btb_seq, args.ref)
 
 if __name__ == '__main__':
     main()
