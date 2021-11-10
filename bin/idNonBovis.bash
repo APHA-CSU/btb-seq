@@ -11,7 +11,7 @@ lowmem=$3
 
 outcome=$(cat outcome.txt)
 if [ $outcome != "Pass" ]; then
-kraken2 --threads 2 --quick $lowmem --db $kraken2db --output - --report ${pair_id}_"$outcome"_kraken2.tab --paired ${pair_id}_trim_R1.fastq  ${pair_id}_trim_R2.fastq 
+kraken2 --threads 2 --quick $lowmem --db $kraken2db --output - --report ${pair_id}_"$outcome"_kraken2.tab --paired trimmed_1.fastq trimmed_2.fastq 
 
 # HACK: (AF) Ignore Bracken errors. Better to handle output from Kraken and have unit tests, 
 # but easier let the pipeline pass while we are setting up validation tests.. 
@@ -35,5 +35,5 @@ set -e
 else
 echo "ID not required"
 fi
-rm `readlink ${pair_id}_trim_R1.fastq`
-rm `readlink ${pair_id}_trim_R2.fastq`
+rm `readlink trimmed_1.fastq`
+rm `readlink trimmed_2.fastq`

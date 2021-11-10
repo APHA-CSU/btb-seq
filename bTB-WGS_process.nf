@@ -199,11 +199,11 @@ process VCF2Consensus {
 	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
 
 	output:
-	tuple pair_id, file("${pair_id}.fas") into consensus
-	tuple pair_id, file("${pair_id}.tab") into snpstab
+	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
+	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}.fas ${pair_id}.tab
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
 	"""
 }
 
@@ -301,7 +301,7 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from IDdata
+	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
 	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
