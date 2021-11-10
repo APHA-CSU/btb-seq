@@ -6,8 +6,25 @@ from Bio import SeqIO
 Calculate performance stats from simulated data
 """
 
+def masked_positions(mask_filepath='../references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
+    mask = pd.read_csv(mask_filepath,
+        delimiter='\t',
+        skiprows=[0,1],
+        header=None,
+        names=["CHROM", "START", "END", "RPT"]
+    )
+
+    # TODO: This is off by one compared to the Emergency Port validation doc
+    #    why is that?
+    masked_pos = []
+    for i, row in mask.iterrows():
+        masked_pos.extend(list(range(row['START'], row['END']+1)))
+
+    return masked_pos
+
 def analyse(simulated_snps, pipeline_snps):
     """ Compare simulated SNPs data from simuG against btb-seq's snpTable.tab
+        If adjust == True: applies the mask to simulated SNPs and pipeline SNPs
         Returns a dictionary of performance stats
     """
 
@@ -18,20 +35,28 @@ def analyse(simulated_snps, pipeline_snps):
     # Extract SNP positions
     simulated_pos = set(simulated['ref_start'].values)
     pipeline_pos = set(pipeline['POS'].values)
-    
-    # TODO: Do we need to remove masked positions? 
-    # TODO: Should our filtering step apply the mask? TBD with Ele/Richard
-    # simulated_pos -= masked_pos
-    # pipeline_pos -= masked_pos
+    masked_pos = set(masked_positions())
+
+    simulated_pos_adjusted = simulated_pos - masked_pos
+    pipeline_pos_adjusted = pipeline_pos - masked_pos
 
     # TP - true positive -(the variant is in the simulated genome and correctly called by the pipeline)
-    tp = len(simulated_pos.intersection(pipeline_pos))
+    tp = len(simulated_pos.intersection(pipeline_pos_adjusted))
 
     # FP (the pipeline calls a variant that is not in the simulated genome),
-    fp = len(pipeline_pos - simulated_pos)
+    fp = len(pipeline_pos_adjusted - simulated_pos_adjusted)
 
     # FN SNP calls (the variant is in the simulated genome but the pipeline does not call it).
-    fn =  len(simulated_pos - pipeline_pos)
+    fn =  len(simulated_pos_adjusted - pipeline_pos_adjusted)
+
+    # TPs excluded 
+    masked_tp = len(masked_pos.intersection(simulated_pos.intersection(pipeline_pos)))
+
+    # FPs excluded
+    masked_fp = len(masked_pos.intersection(pipeline_pos - simulated_pos))
+
+    # FNs excluded
+    masked_fn = len(masked_pos.intersection(simulated_pos - pipeline_pos))
 
     # Compute Performance Stats
     # precision (positive predictive value) of each pipeline as TP/(TP + FP), 
@@ -47,33 +72,17 @@ def analyse(simulated_snps, pipeline_snps):
     total_errors = fp + fn
 
     return {
-        "tp": tp,
-        "fp": fp,
-        "fn": fn,
+        "TP": tp,
+        "FP": fp,
+        "FN": fn,
+        "masked TPs": masked_tp,
+        "masked FPs": masked_fp,
+        "masked FNs": masked_fn,
         "precision": precision,
         "sensitivity": sensitivity,
         "miss_rate": miss_rate,
         "total_errors": total_errors
     }
-
-# TODO: Should this be replaced with vcftools?
-def masked_positions(mask_filepath='./references/Mycbovis-2122-97_LT708304.fas.rpt.regions'):
-    mask = pd.read_csv(mask_filepath, 
-        delimiter='\t', 
-        skiprows=2,
-        header=None,
-        names=["name", "start", "end", "mask"]
-    )
-
-    # TODO: This is off by one compared to the Emergency Port validation doc
-    #    why is that?
-    masked_pos = []
-    for i, row in mask.iterrows():
-        masked_pos.extend(range(row['start'], row['end']+1))
-        print('masked_pos', masked_pos[-1])
-        break
-
-    return masked_pos
 
 #TODO: This may not be required if we can get away with using bcftools/vcftools
 #      for comparisons. Leaving this here for convenience in case those tools aren't suitable 
