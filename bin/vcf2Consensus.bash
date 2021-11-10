@@ -33,7 +33,7 @@ window=$9
 # Filter
 bcf=filtered.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" $vcf | bcftools +prune -w $window -n 1 - -Ob -o $bcf
+bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" $vcf | bcftools +prune -w ${window}bp -n 1 - -Ob -o $bcf
 
 bcftools index $bcf
 bcftools view $bcf -Oz -o $filt_vcf
