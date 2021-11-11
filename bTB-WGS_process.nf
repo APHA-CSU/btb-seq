@@ -77,6 +77,8 @@ FirstFile = file( params.reads ).first()
 	params.DataDir = TopDir.last()
 	params.today = new Date().format('ddMMMYY')
 
+publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
+
 /* remove duplicates from raw data
 This process removes potential duplicate data (sequencing and optical replcaites from the raw data set */
 process Deduplicate {
@@ -86,14 +88,13 @@ process Deduplicate {
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz") from read_pairs
+	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into dedup_read_pairs
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") into uniq_reads
+	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
 
 	"""
-	deduplicate.bash ${pair_id}
+	deduplicate.bash $pair_1 $pair_2 dedup_1.fastq dedup_2.fastq
 	"""
 }	
 
@@ -106,15 +107,13 @@ process Trim {
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq") from dedup_read_pairs
+	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
 
 	output:
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_read_pairs
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_read_pairs2
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") into trim_reads
+	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
 	
 	"""
-	trim.bash ${pair_id}
+	trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
 	"""
 }
 
@@ -124,20 +123,18 @@ process Map2Ref {
 	errorStrategy 'finish'
     tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/bam", mode: 'copy', pattern: '*.sorted.bam'
+	publishDir "$publishDir/bam", mode: 'copy', pattern: '*.bam'
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from trim_read_pairs
+	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
 
 	output:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into mapped_bam
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4stats
-	set pair_id, file("${pair_id}.mapped.sorted.bam") into bam4mask
+	tuple pair_id, file("${pair_id}.bam") into mapped_bam, bam4stats, bam4mask
 
 	"""
-	map2Ref.bash ${pair_id} $ref
+	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
@@ -145,21 +142,20 @@ process Map2Ref {
 Determines where the sample differs from the reference genome */
 process VarCall {
 	errorStrategy 'finish'
-    tag "$pair_id"
+	tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.norm.vcf.gz'
+	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
 
 	maxForks 3
 
 	input:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") from mapped_bam
+	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf
-	set pair_id, file("${pair_id}.norm.vcf.gz") into vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
 
 	"""
-	varCall.bash $pair_id $ref
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
 	"""
 }
 
@@ -167,18 +163,18 @@ process VarCall {
 Ensure that consensus only includes regions of the genome where there is high confidence */
 process Mask {
 	errorStrategy 'finish'
-    tag "$pair_id"
+	tag "$pair_id"
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}.mapped.sorted.bam") from bam4mask
+	tuple pair_id, file("mapped.bam") from bam4mask
 
 	output:
-	set pair_id, file("${pair_id}_RptZeroMask.bed") into maskbed
+	tuple pair_id, file("mask.bed") into maskbed
 
 	"""
-	mask.bash $pair_id $rptmask
+	mask.bash $rptmask mapped.bam mask.bed
 	"""
 }
 
@@ -194,20 +190,20 @@ process VCF2Consensus {
 	errorStrategy 'finish'
     tag "$pair_id"
 
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/consensus", mode: 'copy', pattern: '*_consensus.fas'
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/snpTables", mode: 'copy', pattern: '*_snps.tab'
+	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
+	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
 
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_RptZeroMask.bed"), file("${pair_id}.norm.vcf.gz") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
 
 	output:
-	set pair_id, file("${pair_id}_consensus.fas") into consensus
-	set pair_id, file("${pair_id}_snps.tab") into snpstab
+	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
+	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $pair_id $ref
+	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
 	"""
 }
 
@@ -258,7 +254,7 @@ vcf
 Compares SNPs identified in vcf file to lists in reference table */
 
 process AssignClusterCSS{
-	errorStrategy 'finish'
+	errorStrategy 'ignore'
     tag "$pair_id"
 	
 
@@ -305,7 +301,7 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq") from IDdata
+	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
 	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
