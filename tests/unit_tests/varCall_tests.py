@@ -14,6 +14,7 @@ class VarCallTests(BtbTests):
         output = self.temp_dirname + 'variants.vcf.gz'
         map_qual = str(0)
         base_qual = str(10)
+        ploidy = str('GRCh37')
 
         # Copy test data
         shutil.copy2('./tests/data/tinymatch.sam', sam_path)
@@ -22,7 +23,7 @@ class VarCallTests(BtbTests):
         self.sam_to_bam(sam_path, bam_path)
 
         # Pass case
-        self.assertBashScript(0, ['./bin/varCall.bash', self.ref_path, bam_path, output, map_qual, base_qual])
+        self.assertBashScript(0, ['./bin/varCall.bash', self.ref_path, bam_path, output, map_qual, base_qual, ploidy])
         self.assertFileExists(output)
 
         # Unzip
