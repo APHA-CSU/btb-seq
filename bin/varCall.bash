@@ -19,9 +19,8 @@
 ref=$1
 bam=$2
 vcf=$3
-MAP_QUAL=$4
 
 samtools index $bam
-bcftools mpileup -q $MAP_QUAL -Ou -f $ref "$bam" |
+bcftools mpileup -Q 10 -Ou -f $ref "$bam" |
 bcftools call -mf GQ --ploidy 1 - -Ou |
 bcftools norm -f $ref - -Oz -o "$vcf"
