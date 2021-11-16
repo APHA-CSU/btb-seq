@@ -25,13 +25,11 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-VAR_QUAL=$6
-MIN_READ_DEPTH=$7
 
 # Filter
 bcf=filtered.bcf
 filt_vcf=filtered.vcf
-bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || AF<${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter -e "TYPE!='snp' || ADF[1]==0 || ADR[1]==0" $vcf -Ob -o $bcf
 bcftools index $bcf
 bcftools view $bcf -Oz -o $filt_vcf
 
