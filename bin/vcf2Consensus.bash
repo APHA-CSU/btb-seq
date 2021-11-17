@@ -25,11 +25,7 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-VAR_QUAL=$6
-MIN_READ_DEPTH=$7
-MIN_ALT_PROPORTION=$8
-window=$9
-NoRepeatBed=${10}
+NoRepeatBed=$6
 
 # Filter
 bcf=filtered.bcf
@@ -37,7 +33,7 @@ filt_vcf=filtered.vcf
 
 bcftools index $vcf
 
-bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL} || (AD[0]+AD[1])<=${MIN_READ_DEPTH} || ADF[1]==0 || ADR[1]==0 || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}" -R $NoRepeatBed $vcf | bcftools +prune -w ${window}bp -n 1 - -Ob -o $bcf
+bcftools filter -e "TYPE!='snp'" -R $NoRepeatBed $vcf - -Ob -o $bcf
 
 bcftools index $bcf
 bcftools view $bcf -Oz -o $filt_vcf
