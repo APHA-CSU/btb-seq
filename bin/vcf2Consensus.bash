@@ -28,10 +28,10 @@ snps=$5
 
 # Filter
 bcf=filtered.bcf
-filt_vcf=filtered.vcf
+#filt_vcf=filtered.vcf
 bcftools filter -e "TYPE!='snp' || ADF[1]==0 || ADR[1]==0" $vcf -Ob -o $bcf
 bcftools index $bcf
-bcftools view $bcf -Oz -o $filt_vcf
+#bcftools view $bcf -Oz -o $filt_vcf
 
 # Call Consensus
 base_name=`basename $consensus`
@@ -47,4 +47,4 @@ bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
 
 # Cleanup
-rm $bcf $bcf.csi
+#rm $bcf $bcf.csi
