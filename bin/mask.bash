@@ -25,7 +25,7 @@ grep -w "0\$" |
 cat > zero_cov.bed
 
 # Mask repeat regions
-cat zero_cov.bed $rpt_mask | 
+cat zero_cov.bed | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
 
