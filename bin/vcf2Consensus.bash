@@ -25,10 +25,10 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-window=$6
+bcf=$6
+window=$7
 
 # Filter
-bcf=filtered.bcf
 #filt_vcf=filtered.vcf
 bcftools filter -e "TYPE!='snp'" $vcf | bcftools +prune -w ${window}bp -n 1 - -Ob -o $bcf
 
