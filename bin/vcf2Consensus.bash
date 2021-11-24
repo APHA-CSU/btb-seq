@@ -25,7 +25,8 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-MIN_READ_DEPTH=$6
+bcf=$6
+MIN_READ_DEPTH=$7
 
 # Filter
 bcf=filtered.bcf
