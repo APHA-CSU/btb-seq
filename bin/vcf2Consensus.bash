@@ -26,7 +26,8 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-VAR_QUAL=$6
+bcf=$6
+VAR_QUAL=$7
 
 # Filter
 bcf=filtered.bcf
