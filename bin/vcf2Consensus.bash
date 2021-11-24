@@ -25,11 +25,10 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-MIN_ALT_PROPORTION=$6
+bcf=$6
+MIN_ALT_PROPORTION=$7
 
 # Filter
-bcf=filtered.bcf
-#filt_vcf=filtered.vcf
 filt = "TYPE!='snp' || (AD[1]/(AD[0]+AD[1]))<=${MIN_ALT_PROPORTION}"
 bcftools filter -e "$filt" $vcf -Ob -o $bcf
 bcftools index $bcf
