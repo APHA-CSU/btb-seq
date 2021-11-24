@@ -30,7 +30,6 @@ bcf=$6
 VAR_QUAL=$7
 
 # Filter
-bcf=filtered.bcf
 #filt_vcf=filtered.vcf
 bcftools filter -e "TYPE!='snp' || %QUAL<${VAR_QUAL}" $vcf -Ob -o $bcf
 bcftools index $bcf
