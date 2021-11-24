@@ -29,7 +29,6 @@ bcf=$6
 MIN_READ_DEPTH=$7
 
 # Filter
-bcf=filtered.bcf
 #filt_vcf=filtered.vcf
 bcftools filter -e "TYPE!='snp' || (AD[0]+AD[1])<=${MIN_READ_DEPTH}" $vcf -Ob -o $bcf
 bcftools index $bcf
