@@ -25,11 +25,10 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
-NoRepeatBed=$6
+bcf=$6
+NoRepeatBed=$7
 
 # Filter
-bcf=filtered.bcf
-#filt_vcf=filtered.vcf
 
 bcftools index $vcf
 
