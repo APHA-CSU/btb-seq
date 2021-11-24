@@ -26,9 +26,9 @@ bed=$2
 vcf=$3
 consensus=$4
 snps=$5
+bcf=$6
 
 # Filter
-bcf=filtered.bcf
 bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} && AF<${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 
