@@ -27,10 +27,11 @@ class Vcf2ConsensusTests(BtbTests):
             vcf_filepath,
             consensus_filepath,
             snps_filepath,
-            "test" 
+            "test.bcf"
         ])
         self.assertFileExists(consensus_filepath)
         self.assertFileExists(snps_filepath)
+
 
 if __name__ == '__main__':
     unittest.main()
