@@ -29,7 +29,7 @@ snps=$5
 bcf=$6
 
 # Filter
-bcftools filter --IndelGap $INDEL_GAP -e "Type!="SNP" || DP<${MIN_READ_DEPTH} && AF<${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter --IndelGap $INDEL_GAP -e "Type!='snp' || DP<${MIN_READ_DEPTH} && AF<${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
