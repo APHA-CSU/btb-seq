@@ -88,7 +88,7 @@ process Deduplicate {
 	maxForks 2
 
 	input:
-	tuple pair_id, pair_1, pair_2 from read_pairs
+	tuple pair_id, 'pair_1', 'pair_2' from read_pairs
 
 	output:
 	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
