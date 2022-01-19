@@ -301,7 +301,7 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
+	set pair_id, file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
 	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
@@ -319,21 +319,27 @@ AssignCluster
 	.set {Assigned}
 
 QueryBovis
-	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
 	.set {Qbovis}
+
+Qbovis
+	.mix(Assigned)
+	//.view { "Files: $it" } //
+	.set {InputCsv}
+
+//InputCsv = Channel.fromPath( ['$params.outdir/Results_${params.DataDir}_${params.today}/*_AssignedWGSCluster_*.csv', '$params.outdir/Results_${params.DataDir}_${params.today}/*_BovPos_*.csv'] )
 
 process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	
 	input:
-	file('Assigned.csv') from Assigned
-	file('Qbovis.csv') from Qbovis
+	tuple '*_AssignedWGSCluster_*.csv', '*_BovPos_*.csv' from InputCsv
 
 	output:
 	file '*.csv' into FinalOut
 
 	"""
-	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	combineCsv.py *_AssignedWGSCluster_*.csv *_BovPos_*.csv ${params.DataDir}
 	"""
 }
 
