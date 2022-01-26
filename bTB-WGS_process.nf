@@ -174,7 +174,7 @@ process Mask {
 	tuple pair_id, file("mask.bed") into maskbed
 
 	"""
-	mask.bash $rptmask mapped.bam mask.bed
+	mask.bash $rptmask mapped.bam mask.bed $params.MIN_READ_DEPTH
 	"""
 }
 
