@@ -53,6 +53,7 @@ params.outdir = "$PWD"
 ref = file(params.ref)
 refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
+allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
@@ -152,7 +153,7 @@ process VarCall {
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2
 
 	"""
 	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
@@ -171,10 +172,10 @@ process Mask {
 	tuple pair_id, file("mapped.bam") from bam4mask
 
 	output:
-	tuple pair_id, file("mask.bed") into maskbed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask mapped.bam mask.bed $params.MIN_READ_DEPTH
+	mask.bash $rptmask mapped.bam mask.bed nonmasked-regions.bed $params.MIN_READ_DEPTH $allsites
 	"""
 }
 
@@ -196,15 +197,14 @@ process VCF2Consensus {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"), file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab \
-		$params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY $params.SNP_GAP $params.SNP_WINDOW
+	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY $params.SNP_GAP $params.SNP_WINDOW
 	"""
 }
 
@@ -262,7 +262,7 @@ process AssignClusterCSS{
 	maxForks 1
 
 	input:
-	set pair_id, file("${pair_id}.norm.vcf.gz"), file("${pair_id}_stats.csv") from input4Assign
+	set pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
 
 	output:
 	file("${pair_id}_stage1.csv") into AssignCluster

@@ -27,3 +27,4 @@ samtools index $bam
 bcftools mpileup -q $MAP_QUAL -Q $BASE_QUAL -a INFO/AD,INFO/ADF,INFO/ADR -Ou -f $ref "$bam" |
     bcftools call --ploidy $PLOIDY -mf GQ - -Ou |
     bcftools norm -f $ref - -Oz -o "$vcf"
+bcftools index $vcf

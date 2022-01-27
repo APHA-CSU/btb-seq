@@ -17,18 +17,19 @@
 
 # Inputs
 ref=$1
-bed=$2
-vcf=$3
-consensus=$4
-snps=$5
-MIN_READ_DEPTH=$6
-MIN_ALLELE_FREQUENCY=$7
-SNP_GAP=$8
-SNP_WINDOW=$9
+mask=$2
+regions=$3
+vcf=$4
+consensus=$5
+snps=$6
+MIN_READ_DEPTH=$7
+MIN_ALLELE_FREQUENCY=$8
+SNP_GAP=$9
+SNP_WINDOW=${10}
 
 # Filter
 bcf=filtered.bcf
-bcftools filter --SnpGap $SNP_GAP \
+bcftools filter -R $regions --SnpGap $SNP_GAP \
     -e "DP<${MIN_READ_DEPTH} ||
     INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} ||
     INFO/ADF[1] == 0 || INFO/ADR[1] == 0" $vcf |
@@ -39,7 +40,7 @@ bcftools index $bcf
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Write SNPs table

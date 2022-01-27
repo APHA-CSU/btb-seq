@@ -18,7 +18,9 @@
 rpt_mask=$1
 bam=$2
 masked=$3
-MIN_READ_DEPTH=$4
+regions=$4
+MIN_READ_DEPTH=$5
+allsites=$6
 
 # Find low coverage (<5 reads) regions
 bedtools genomecov -bga -ibam $bam |
@@ -29,6 +31,8 @@ cat > low_cov.bed
 cat low_cov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
+
+bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
 rm low_cov.bed
