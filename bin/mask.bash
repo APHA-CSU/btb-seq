@@ -22,7 +22,7 @@ MIN_READ_DEPTH=$4
 
 # Find low coverage (<5 reads) regions
 bedtools genomecov -bga -ibam $bam |
-grep -w "[0-$((MIN_READ_DEPTH-1))\$" |
+grep -w "[0-$((MIN_READ_DEPTH-1))]\$" |
 cat > low_cov.bed
 
 # Mask repeat regions
