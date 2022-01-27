@@ -33,7 +33,7 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bc
 
 # python 
-pip3 install biopython pandas gitpython
+pip3 install biopython pandas=1.3.5 gitpython
 sudo ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################
