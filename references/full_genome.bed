@@ -1,0 +1,3 @@
+# Annotation file for storing repetitive regions with columns CHROM, START, END, RPT
+# number from 0, coordinates inclusive of start and stop
+LT708304-Mycobacteriumbovis-AF2122-97	0	4349905	1
