@@ -38,11 +38,26 @@ bcftools filter --IndelGap $INDEL_GAP -i \
     $vcf -Ob -o $bcf
 bcftools index $bcf
 
+# Bcf to vcf
+bcftools view $bcf > filtered.vcf
+
+# Add unfiltered output to mask
+G=/home/aaronfishman/repos/btb-seq/references/full_genome.bed
+F=filtered.vcf
+M=$bed
+
+bedtools subtract -a $G -b $F > subtracted.bed
+
+# Add
+cat subtracted.bed $M | 
+sort -k1,1 -k2,2n |
+bedtools merge > consensus_mask.bed
+
 # Call Consensus
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m consensus_mask.bed $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Write SNPs table
