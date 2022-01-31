@@ -13,6 +13,8 @@
 #%    rpt_mask     path to repeat mask
 #%    bam          input path to mapped bam file
 #%    masked       output path to masked bed file
+#%    regions	   output path to regions bed file (inverse of mask)
+#%    allsites     input path to allsites file
 
 # Inputs
 rpt_mask=$1
