@@ -73,5 +73,5 @@ sed "/^>/ s/.*/>${name}/" > $consensus
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' snps.vcf.gz |
+bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' snps.vcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
