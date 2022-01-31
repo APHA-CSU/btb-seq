@@ -19,7 +19,7 @@ rpt_mask=$1
 bam=$2
 masked=$3
 regions=$4
-allsites=$6
+allsites=$5
 
 # Find zero coverage regions
 bedtools genomecov -bga -ibam $bam |
