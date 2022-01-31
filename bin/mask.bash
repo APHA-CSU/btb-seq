@@ -18,6 +18,8 @@
 rpt_mask=$1
 bam=$2
 masked=$3
+regions=$4
+allsites=$6
 
 # Find zero coverage regions
 bedtools genomecov -bga -ibam $bam |
@@ -28,6 +30,8 @@ cat > zero_cov.bed
 cat zero_cov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
+
+bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
 rm zero_cov.bed
