@@ -15,8 +15,10 @@
 #%    consensus    output path to consensus file (.fas)
 #%    snps         output path to snps tab file (.tab)
 
+set -e
+
 # Parameters
-MIN_READ_DEPTH=5
+MIN_READ_DEPTH=8
 MIN_ALLELE_FREQUENCY=0.8
 INDEL_GAP=5
 
@@ -30,7 +32,10 @@ snps=$5
 bcf=$6
 
 # Filter
-bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter --IndelGap $INDEL_GAP -i \
+    "(DP>=${MIN_READ_DEPTH} && AD[1]>=${MIN_READ_DEPTH} && INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) >= ${MIN_ALLELE_FREQUENCY}) \
+    || (DP>=${MIN_READ_DEPTH} && AD[0]>=${MIN_READ_DEPTH} && INFO/AD[0]/(INFO/AD[1]+INFO/AD[0]) >= ${MIN_ALLELE_FREQUENCY}) "\
+    $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
