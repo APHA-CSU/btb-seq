@@ -47,8 +47,11 @@ bcftools view refs.bcf > refs.vcf
 # Concatenate
 bcftools concat snps.vcf refs.vcf > filtered.vcf
 
+# Full Genome Bes
+printf "# Annotation file for storing repetitive regions with columns CHROM, START, END, RPT\n# number from 0, coordinates inclusive of start and stop\nLT708304-Mycobacteriumbovis-AF2122-97\t0\t4349905\t1" > full_genome.bed
+
 #TODO: Better names
-G=/home/aaronfishman/repos/btb-seq/references/full_genome.bed
+G=full_genome.bed
 F=filtered.vcf
 M=$bed
 
@@ -59,8 +62,6 @@ bedtools subtract -a $G -b $F > subtracted.bed
 cat subtracted.bed $M | 
 sort -k1,1 -k2,2n |
 bedtools merge > consensus_mask.bed
-
-echo -C-
 
 # Call Consensus
 base_name=`basename $consensus`
