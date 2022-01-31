@@ -172,7 +172,7 @@ process Mask {
 	tuple pair_id, file("mapped.bam") from bam4mask
 
 	output:
-	tuple pair_id, file("mask.bed"), file("nomasked-regions.bed") into maskbed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
 	mask.bash $rptmask mapped.bam mask.bed nonmasked-regions.bed $allsites
