@@ -34,9 +34,9 @@ bcf=$6
 # Filter
 bcftools filter --IndelGap $INDEL_GAP -i \
     "(DP>=${MIN_READ_DEPTH} && AD[1]>=${MIN_READ_DEPTH} && INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) >= ${MIN_ALLELE_FREQUENCY})" \
-$vcf -Ob -o snps.bcf
-bcftools index snps.bcf
-bcftools view snps.bcf > snps.vcf
+$vcf -Ob -o $bcf
+bcftools index $bcf
+bcftools view $bcf > snps.vcf
 
 bcftools filter --IndelGap $INDEL_GAP -i \
     "(DP>=${MIN_READ_DEPTH} && AD[0]>=${MIN_READ_DEPTH} && INFO/AD[0]/(INFO/AD[1]+INFO/AD[0]) >= ${MIN_ALLELE_FREQUENCY})" \
