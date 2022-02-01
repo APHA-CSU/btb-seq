@@ -67,7 +67,7 @@ bedtools merge > consensus_mask.bed
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m consensus_mask.bed snps.bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m consensus_mask.bed $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Write SNPs table
