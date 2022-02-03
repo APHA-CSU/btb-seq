@@ -1,5 +1,4 @@
-#!/bin/bash
-#================================================================
+#!/bin/bash #================================================================
 # vcf2Consensus
 #================================================================
 #% SYNOPSIS
@@ -18,8 +17,8 @@
 set -e
 
 # Parameters
-MIN_ALT_READ_DEPTH=8
-MIN_REF_READ_DEPTH=1
+ALT_MIN_READ_DEPTH=8
+REF_MIN_READ_DEPTH=1
 MIN_ALLELE_FREQUENCY=0.8
 INDEL_GAP=5
 
@@ -38,13 +37,13 @@ bcf=$6
 
 
 bcftools filter --IndelGap $INDEL_GAP -i \
-    "(DP4[2]+DP4[3])>=${MIN_ALT_READ_DEPTH} && (DP4[2]+DP4[3])/(DP4[0]+DP4[1]+DP4[2]+DP4[3]) >= ${MIN_ALLELE_FREQUENCY}" \
+    "(DP4[2]+DP4[3])>=${ALT_MIN_READ_DEPTH} && (DP4[2]+DP4[3])/(DP4[0]+DP4[1]+DP4[2]+DP4[3]) >= ${MIN_ALLELE_FREQUENCY}" \
 $vcf -Ob -o $bcf
 bcftools index $bcf
 bcftools view $bcf > snps.vcf
 
 bcftools filter --IndelGap $INDEL_GAP -i \
-    "(DP4[0]+DP4[1])>=${MIN_REF_READ_DEPTH} && (DP4[0]+DP4[1])/(DP4[0]+DP4[1]+DP4[2]+DP4[3]) >= ${MIN_ALLELE_FREQUENCY}" \
+    "(DP4[0]+DP4[1])>=${REF_MIN_READ_DEPTH} && (DP4[0]+DP4[1])/(DP4[0]+DP4[1]+DP4[2]+DP4[3]) >= ${MIN_ALLELE_FREQUENCY}" \
     $vcf -Ob -o refs.bcf
 bcftools index refs.bcf
 bcftools view refs.bcf > refs.vcf
