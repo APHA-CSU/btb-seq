@@ -26,14 +26,13 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblzma-dev \
     libcurl4-openssl-dev \
     python3 \
-    python3-numpy \
     python3-pip \
     vim \
     nano \
     bc
 
 # python 
-pip3 install biopython pandas gitpython
+pip3 install biopython numpy pandas gitpython
 sudo ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################

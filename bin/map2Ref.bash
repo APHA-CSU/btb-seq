@@ -21,6 +21,6 @@ read_2=$3
 mapped=$4
 
 # Map to reference
-bwa mem -M -t2 $ref $read_1 $read_2 |
+bwa mem -M -E 2 -t2 $ref $read_1 $read_2 |
 samtools view -@2 -ShuF 2308 - |
 samtools sort -@2 - -o $mapped
