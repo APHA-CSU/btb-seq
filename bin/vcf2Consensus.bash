@@ -29,10 +29,10 @@ SNP_WINDOW=${10}
 
 # Filter
 bcf=filtered.bcf
-bcftools filter -R $regions --SnpGap $SNP_GAP \
-    -e "DP<${MIN_READ_DEPTH} ||
-    INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} ||
-    INFO/ADF[1] == 0 || INFO/ADR[1] == 0" $vcf |
+bcftools filter -R $regions --SnpGap $SNP_GAP $vcf |
+#    -e "DP<${MIN_READ_DEPTH} ||
+#    INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} ||
+#    INFO/ADF[1] == 0 || INFO/ADR[1] == 0" $vcf |
     bcftools +prune -w ${SNP_WINDOW}bp -n 1 -Ob -o $bcf
 bcftools index $bcf
 
@@ -46,7 +46,7 @@ sed "/^>/ s/.*/>${name}/" > $consensus
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
+bcftools query -R $regions -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
 
 # Cleanup

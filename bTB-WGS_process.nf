@@ -153,7 +153,7 @@ process VarCall {
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2, vcf4mask
 
 	"""
 	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
@@ -169,13 +169,13 @@ process Mask {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mapped.bam") from bam4mask
+	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
 
 	output:
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask mapped.bam mask.bed nonmasked-regions.bed $params.MIN_READ_DEPTH $allsites
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $params.MIN_READ_DEPTH $allsites $params.MIN_ALLELE_FREQUENCY
 	"""
 }
 
