@@ -267,7 +267,7 @@ process AssignClusterCSS{
 	maxForks 1
 
 	input:
-	set pair_id, file("${pair_id}.norm.vcf.gz"), file("${pair_id}_stats.csv") from input4Assign
+	set pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
 
 	output:
 	file("${pair_id}_stage1.csv") into AssignCluster
