@@ -40,4 +40,4 @@ bedtools merge > $masked
 bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
-rm excluded-sites.bed
+rm excluded-sites.bed excluded-sites.vcf
