@@ -10,10 +10,13 @@
 #%
 #% INPUTS
 #%    ref          input path to reference genome (.fas)
-#%    bed          input path to mask (.bed)
+#%    mask         input path to mask (.bed)
+#%    regions      input path to regions file containing all regions
+#%                 for masking/filtering(.bed)
 #%    vcf          input path to variant (.vcf.gz)
 #%    consensus    output path to consensus file (.fas)
 #%    snps         output path to snps tab file (.tab)
+#%    bcf          output path to filtered bcf file (.bcf)
 
 # Parameters
 MIN_READ_DEPTH=5
