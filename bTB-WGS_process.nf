@@ -53,6 +53,7 @@ params.outdir = "$PWD"
 ref = file(params.ref)
 refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
+allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
 stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
@@ -152,7 +153,8 @@ process VarCall {
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,
+	vcf4mask
 
 	"""
 	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
@@ -168,13 +170,13 @@ process Mask {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mapped.bam") from bam4mask
+	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
 
 	output:
-	tuple pair_id, file("mask.bed") into maskbed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask mapped.bam mask.bed
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $params.MIN_READ_DEPTH $allsites $params.MIN_ALLELE_FREQUENCY
 	"""
 }
 
@@ -198,7 +200,8 @@ process VCF2Consensus {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),
+	file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
@@ -206,7 +209,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf
+	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf
 	"""
 }
 

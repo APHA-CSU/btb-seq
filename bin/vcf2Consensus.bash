@@ -23,25 +23,26 @@ INDEL_GAP=5
 #=======
 # Inputs
 ref=$1
-bed=$2
-vcf=$3
-consensus=$4
-snps=$5
-bcf=$6
+mask=$2
+regions=$3
+vcf=$4
+consensus=$5
+snps=$6
+bcf=$7
 
 # Filter
-bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter -R $regions $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
 base_name=`basename $consensus`
 name="${base_name%%.*}"
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
+bcftools query -R $regions -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
