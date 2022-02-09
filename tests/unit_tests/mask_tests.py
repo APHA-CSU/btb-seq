@@ -18,7 +18,14 @@ class MaskTests(BtbTests):
         shutil.copy('./tests/data/tinyvariants.vcf.gz', vcf_filepath)        
         
         # Test
-        self.assertBashScript(0, ['./bin/mask.bash', self.rpt_mask, vcf_filepath, mask_filepath, regions_filepath, str(5), self.allsites, str(0.8)])
+        self.assertBashScript(0, ['./bin/mask.bash', 
+            self.rpt_mask, 
+            vcf_filepath, 
+            mask_filepath, 
+            regions_filepath, 
+            str(5), 
+            self.allsites, 
+            str(0.8)])
         self.assertFileExists(mask_filepath)
 
 if __name__ == '__main__':
