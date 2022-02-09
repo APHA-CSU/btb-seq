@@ -60,6 +60,13 @@ class BtbTests(unittest.TestCase):
         proc = subprocess.run(['samtools', 'view', '-h', '-o', sam_filepath, bam_filepath])
         self.assertEquals(0, proc.returncode)
 
+    def index(self, variant_call_filepath, indexed_filepath=None):
+        # Index VCF/BCF files
+        if indexed_filepath is None:
+            indexed_filepath = variant_call_filepath + '.csi'
+        proc = subprocess.run(['bcftools', 'index', variant_call_filepath, '-o', indexed_filepath])
+        self.assertEquals(0, proc.returncode)
+
     def copy_tinyreads(self, unzip=False):
         """
             Copies tinyreads to the temporary directory that tests run in
