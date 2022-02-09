@@ -10,11 +10,15 @@ class Vcf2ConsensusTests(BtbTests):
             Asserts vcf2Consensus.bash completes without errors on a minimal example
         """
         # Copy data
-        bed_filepath = self.temp_dirname + 'tinybed.bed'
+        mask_filepath = self.temp_dirname + 'tinybed.bed'
         vcf_filepath = self.temp_dirname + 'tinyvariants.vcf.gz'
+        regions_filepath = self.temp_dirname + 'regions.bed'
 
-        shutil.copy('./tests/data/tinybed.bed', bed_filepath) 
+        shutil.copy('./tests/data/tinybed.bed', mask_filepath) 
         shutil.copy('./tests/data/tinyvariants.vcf.gz', vcf_filepath) 
+        shutil.copy('./tests/data/tinybed.bed', regions_filepath) 
+
+        self.index(vcf_filepath)
 
         # Outputs
         consensus_filepath = self.temp_dirname + 'consensus.fas'
@@ -23,7 +27,8 @@ class Vcf2ConsensusTests(BtbTests):
         # Test
         self.assertBashScript(0, ['./bin/vcf2Consensus.bash', 
             self.ref_path, 
-            bed_filepath,
+            mask_filepath,
+            regions_filepath,
             vcf_filepath,
             consensus_filepath,
             snps_filepath,
