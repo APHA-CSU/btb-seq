@@ -61,7 +61,7 @@ class BtbTests(unittest.TestCase):
         self.assertEquals(0, proc.returncode)
 
     def index(self, variant_call_filepath, indexed_filepath=None):
-        # Index VCF/BCF files
+        # Index .vcf/.vcf.gz/.bcf files
         if indexed_filepath is None:
             indexed_filepath = variant_call_filepath + '.csi'
         proc = subprocess.run(['bcftools', 'index', variant_call_filepath, '-o', indexed_filepath])
