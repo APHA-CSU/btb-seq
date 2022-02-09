@@ -4,6 +4,7 @@ import unittest
 
 class MaskTests(BtbTests):
     rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
+    allsites = './references/All-sites.bed'
 
     def test_mask(self):
         """
@@ -11,16 +12,13 @@ class MaskTests(BtbTests):
             the supplied sam file contains no regions of zero coverage
         """
         # Copy data
-        sam_filepath = self.temp_dirname+'tinysam.sam'
-        bam_filepath = self.temp_dirname+'tinybam.bam'
+        vcf_filepath = self.temp_dirname+'tinyvariants.vcf.gz'
         mask_filepath = self.temp_dirname+'masked.bed'
-        shutil.copy('./tests/data/tinymatch.sam', sam_filepath)        
+        regions_filepath = self.temp_dirname+'regions.bed'
+        shutil.copy('./tests/data/tinyvariants.vcf.gz', vcf_filepath)        
         
-        # Convert to bam
-        self.sam_to_bam(sam_filepath, bam_filepath)
-
         # Test
-        self.assertBashScript(0, ['./bin/mask.bash', self.rpt_mask, bam_filepath, mask_filepath])
+        self.assertBashScript(0, ['./bin/mask.bash', self.rpt_mask, vcf_filepath, mask_filepath, regions_filepath, str(5), self.allsites, str(0.8)])
         self.assertFileExists(mask_filepath)
 
 if __name__ == '__main__':
