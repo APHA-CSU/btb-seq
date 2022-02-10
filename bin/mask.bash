@@ -28,12 +28,13 @@ MIN_ALLELE_FREQUENCY=$7
 # Mask regions which don't have any evidence for ref or sufficient evidence for alt
 bcftools filter -i "ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} ||
     ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY} ||
-        ALT='.' && AD=0" $vcf -ov -o excluded-sites.vcf
-	bedtools merge -i excluded-sites.vcf > excluded-sites.bed
+    ALT='.' && AD=0" $vcf -ov -o excluded-sites.vcf
+bedtools merge -i excluded-sites.vcf > excluded-sites.bed
 
 # Merge with exisiting known repeat regions
 cat excluded-sites.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
+cut -f4 --complement |
 bedtools merge > $masked
 
 # Make bedfile of sites to keep
