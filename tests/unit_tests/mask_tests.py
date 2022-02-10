@@ -23,8 +23,8 @@ class MaskTests(BtbTests):
             vcf_filepath, 
             mask_filepath, 
             regions_filepath, 
-            str(5), 
             self.allsites, 
+            str(5), 
             str(0.8)])
         self.assertFileExists(mask_filepath)
 

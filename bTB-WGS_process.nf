@@ -176,7 +176,7 @@ process Mask {
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $params.MIN_READ_DEPTH $allsites $params.MIN_ALLELE_FREQUENCY
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY
 	"""
 }
 

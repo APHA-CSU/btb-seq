@@ -21,8 +21,8 @@ rpt_mask=$1
 vcf=$2
 masked=$3
 regions=$4
-MIN_READ_DEPTH=$5
-allsites=$6
+allsites=$5
+MIN_READ_DEPTH=$6
 MIN_ALLELE_FREQUENCY=$7
 
 # Mask regions which don't have any evidence for ref or sufficient evidence for alt
