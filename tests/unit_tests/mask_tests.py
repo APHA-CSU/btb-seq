@@ -1,9 +1,11 @@
 from btb_tests import BtbTests
 import shutil
 import unittest
+import io
 
 class MaskTests(BtbTests):
     allsites = './references/All-sites.bed'
+    ref_masked_filepath = './tests/data/edge-cases.bed'
 
     def test_mask(self):
         """
@@ -13,7 +15,7 @@ class MaskTests(BtbTests):
         # Copy data
         rpt_mask_filepath = self.temp_dirname+'rpt_mask.bed'
         vcf_filepath = self.temp_dirname+'edge-cases.vcf.gz'
-        mask_filepath = self.temp_dirname+'masked.bed'
+        masked_filepath = self.temp_dirname+'masked.bed'
         regions_filepath = self.temp_dirname+'regions.bed'
         shutil.copy('./tests/data/edge-cases.vcf.gz', vcf_filepath)        
         shutil.copy('./tests/data/tinymask.bed', rpt_mask_filepath)        
@@ -22,12 +24,15 @@ class MaskTests(BtbTests):
         self.assertBashScript(0, ['./bin/mask.bash', 
             rpt_mask_filepath, 
             vcf_filepath, 
-            mask_filepath, 
+            masked_filepath, 
             regions_filepath, 
             self.allsites, 
             str(5), 
             str(0.8)])
         self.assertFileExists(regions_filepath)
+        with io.open(masked_filepath) as test_f, io.open(self.ref_masked_filepath) as ref_f:
+            self.assertListEqual(list(test_f), list(ref_f))
+
 
 if __name__ == '__main__':
     unittest.main()
