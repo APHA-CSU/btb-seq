@@ -15,6 +15,7 @@ class Vcf2ConsensusTests(BtbTests):
         vcf_filepath = self.temp_dirname + 'edge-cases.vcf'
         vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         regions_filepath = self.temp_dirname + 'regions.bed'
+        bcf_filepath = self.temp_dirname + 'edge-cases.bcf'
 
         shutil.copy('./tests/data/tinyref.fas', ref_filepath) 
         shutil.copy('./tests/data/edge-cases.bed', masked_filepath) 
@@ -36,7 +37,7 @@ class Vcf2ConsensusTests(BtbTests):
             vcf_gz_filepath,
             consensus_filepath,
             snps_filepath,
-            "test.bcf"
+            bcf_filepath
         ])
         self.assertFileExists(snps_filepath)
         with open(consensus_filepath) as test_f, open(self.ref_consensus_filepath) as ref_f:
