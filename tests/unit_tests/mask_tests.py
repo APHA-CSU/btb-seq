@@ -29,7 +29,7 @@ class MaskTests(BtbTests):
             masked_filepath, 
             regions_filepath, 
             self.allsites, 
-            str(5), 
+            str(8), 
             str(0.8)])
         self.assertFileExists(regions_filepath)
         with open(masked_filepath) as test_f, open(self.ref_masked_filepath) as ref_f:
