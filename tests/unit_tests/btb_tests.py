@@ -1,3 +1,4 @@
+from sys import stdout
 import unittest
 import subprocess
 import tempfile
@@ -89,6 +90,15 @@ class BtbTests(unittest.TestCase):
     def unzip(self, path):
         """ Unzip a .gz file inplace """
         proc = subprocess.run(['gunzip', path])
+        self.assertFalse(proc.returncode)
+
+    def gzip(self, path, outpath=None):
+        """ gzip VCF/BCF file writting output to outpath """
+        if not outpath:
+            outpath = path + '.gz'
+        with open(outpath, 'wb') as gzf:
+            proc = subprocess.run(['bcftools', 'convert', '-O', 'z', path], 
+                                  stdout=gzf)
         self.assertFalse(proc.returncode)
 
     def write_fastq(self, filepath, seq_records):

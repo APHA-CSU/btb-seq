@@ -12,15 +12,17 @@ class Vcf2ConsensusTests(BtbTests):
         # Copy data
         ref_filepath = self.temp_dirname + 'ref.fas'
         masked_filepath = self.temp_dirname + 'masked.bed'
-        vcf_filepath = self.temp_dirname + 'edge-cases.vcf.gz'
+        vcf_filepath = self.temp_dirname + 'edge-cases.vcf'
+        vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         regions_filepath = self.temp_dirname + 'regions.bed'
 
         shutil.copy('./tests/data/tinyref.fas', ref_filepath) 
         shutil.copy('./tests/data/edge-cases.bed', masked_filepath) 
-        shutil.copy('./tests/data/edge-cases.vcf.gz', vcf_filepath) 
+        shutil.copy('./tests/data/edge-cases.vcf', vcf_filepath) 
         shutil.copy('./tests/data/edge-cases_regions.bed', regions_filepath) 
 
-        self.index(vcf_filepath)
+        self.gzip(vcf_filepath, vcf_gz_filepath)
+        self.index(vcf_gz_filepath)
 
         # Outputs
         consensus_filepath = self.temp_dirname + 'consensus.fas'
@@ -31,7 +33,7 @@ class Vcf2ConsensusTests(BtbTests):
             ref_filepath, 
             masked_filepath,
             regions_filepath,
-            vcf_filepath,
+            vcf_gz_filepath,
             consensus_filepath,
             snps_filepath,
             "test.bcf"

@@ -13,16 +13,19 @@ class MaskTests(BtbTests):
         """
         # Copy data
         rpt_mask_filepath = self.temp_dirname+'rpt_mask.bed'
-        vcf_filepath = self.temp_dirname+'edge-cases.vcf.gz'
+        vcf_filepath = self.temp_dirname+'edge-cases.vcf'
+        vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         masked_filepath = self.temp_dirname+'masked.bed'
         regions_filepath = self.temp_dirname+'regions.bed'
-        shutil.copy('./tests/data/edge-cases.vcf.gz', vcf_filepath)        
+        shutil.copy('./tests/data/edge-cases.vcf', vcf_filepath)        
         shutil.copy('./tests/data/tinymask.bed', rpt_mask_filepath)        
         
+        self.gzip(vcf_filepath, vcf_gz_filepath)
+
         # Test
         self.assertBashScript(0, ['./bin/mask.bash', 
             rpt_mask_filepath, 
-            vcf_filepath, 
+            vcf_gz_filepath, 
             masked_filepath, 
             regions_filepath, 
             self.allsites, 
