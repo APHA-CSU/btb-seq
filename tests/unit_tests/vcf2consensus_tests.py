@@ -3,6 +3,7 @@ import shutil
 import unittest
 
 class Vcf2ConsensusTests(BtbTests):
+    ref_consensus_filepath = './tests/data/edge-cases.fas'
 
     def test_vcf2consensus(self):
         """
@@ -35,8 +36,9 @@ class Vcf2ConsensusTests(BtbTests):
             snps_filepath,
             "test.bcf"
         ])
-        self.assertFileExists(consensus_filepath)
         self.assertFileExists(snps_filepath)
+        with open(consensus_filepath) as test_f, open(self.ref_consensus_filepath) as ref_f:
+            self.assertMultiLineEqual(test_f.read(), ref_f.read())
 
 
 if __name__ == '__main__':
