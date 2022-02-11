@@ -1,7 +1,6 @@
 from btb_tests import BtbTests
 import shutil
 import unittest
-import io
 
 class MaskTests(BtbTests):
     allsites = './references/All-sites.bed'
@@ -30,7 +29,7 @@ class MaskTests(BtbTests):
             str(5), 
             str(0.8)])
         self.assertFileExists(regions_filepath)
-        with io.open(masked_filepath) as test_f, io.open(self.ref_masked_filepath) as ref_f:
+        with open(masked_filepath) as test_f, open(self.ref_masked_filepath) as ref_f:
             self.assertListEqual(list(test_f), list(ref_f))
 
 

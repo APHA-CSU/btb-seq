@@ -3,20 +3,21 @@ import shutil
 import unittest
 
 class Vcf2ConsensusTests(BtbTests):
-    ref_path = './references/Mycbovis-2122-97_LT708304.fas'
 
     def test_vcf2consensus(self):
         """
             Asserts vcf2Consensus.bash completes without errors on a minimal example
         """
         # Copy data
-        mask_filepath = self.temp_dirname + 'tinybed.bed'
-        vcf_filepath = self.temp_dirname + 'tinyvariants.vcf.gz'
+        ref_filepath = self.temp_dirname + 'ref.fas'
+        masked_filepath = self.temp_dirname + 'masked.bed'
+        vcf_filepath = self.temp_dirname + 'edge-cases.vcf.gz'
         regions_filepath = self.temp_dirname + 'regions.bed'
 
-        shutil.copy('./tests/data/tinybed.bed', mask_filepath) 
-        shutil.copy('./tests/data/tinyvariants.vcf.gz', vcf_filepath) 
-        shutil.copy('./tests/data/tinybed.bed', regions_filepath) 
+        shutil.copy('./tests/data/tinyref.fas', ref_filepath) 
+        shutil.copy('./tests/data/edge-cases.bed', masked_filepath) 
+        shutil.copy('./tests/data/edge-cases.vcf.gz', vcf_filepath) 
+        shutil.copy('./tests/data/edge-cases_regions.bed', regions_filepath) 
 
         self.index(vcf_filepath)
 
@@ -26,8 +27,8 @@ class Vcf2ConsensusTests(BtbTests):
 
         # Test
         self.assertBashScript(0, ['./bin/vcf2Consensus.bash', 
-            self.ref_path, 
-            mask_filepath,
+            ref_filepath, 
+            masked_filepath,
             regions_filepath,
             vcf_filepath,
             consensus_filepath,
