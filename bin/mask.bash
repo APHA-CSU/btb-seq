@@ -24,10 +24,11 @@ allsites=$6
 MIN_ALLELE_FREQUENCY=$7
 
 # Mask regions which don't have any evidence for ref or sufficient evidence for alt
-bcftools filter -i "ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} ||
-    ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY} ||
-    ALT='.' && AD=0" $vcf -ov -o excluded-sites.vcf
-bedtools merge -i excluded-sites.vcf > excluded-sites.bed
+bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH}) ||
+    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY}) ||
+    (ALT='.' && AD=0)" $vcf -ov -o excluded-sites.vcf
+bcftools filter -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.6' excluded-sites.vcf -Ov -o quality-mask.vcf  
+bedtools merge -i quality-mask.vcf > quality-mask.bed
 
 ## OLD FILTER # Find low coverage (<5 reads) regions
 #bedtools genomecov -bga -ibam $bam |
@@ -35,7 +36,7 @@ bedtools merge -i excluded-sites.vcf > excluded-sites.bed
 #cat > low_cov.bed
 
 # Merge with exisiting known repeat regions
-cat excluded-sites.bed $rpt_mask | 
+cat quality-mask.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
 
@@ -43,4 +44,4 @@ bedtools merge > $masked
 bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
-rm excluded-sites.bed
+# rm excluded-sites.bed

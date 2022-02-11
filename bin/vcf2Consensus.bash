@@ -29,7 +29,7 @@ SNP_WINDOW=${10}
 
 # Filter
 bcf=filtered.bcf
-bcftools filter -R $regions --SnpGap $SNP_GAP $vcf |
+bcftools filter -R $regions --SnpGap $SNP_GAP -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.6' $vcf |
 #    -e "DP<${MIN_READ_DEPTH} ||
 #    INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY} ||
 #    INFO/ADF[1] == 0 || INFO/ADR[1] == 0" $vcf |
