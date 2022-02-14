@@ -29,8 +29,9 @@ consensus=$5
 snps=$6
 bcf=$7
 
-# Filter
-bcftools filter -R $regions -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.5' $vcf -Ob -o $bcf
+# Select SNPs
+# applies filter/mask and chooses SNP sites
+bcftools filter -R $regions -i 'ALT!="." && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= 0.8' $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus

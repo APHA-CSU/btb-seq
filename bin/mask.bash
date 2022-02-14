@@ -25,11 +25,11 @@ allsites=$5
 MIN_READ_DEPTH=$6
 MIN_ALLELE_FREQUENCY=$7
 
-# Mask regions which don't have any evidence for ref or sufficient evidence for alt
-bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH}) ||
-    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY}) ||
-    (ALT='.' && AD=0)" $vcf -ov -o excluded-sites.vcf
-bcftools filter -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.5' excluded-sites.vcf -Ov -o quality-mask.vcf
+# Construct a mask: 
+# mask regions which don't have {sufficient evidence for alt AND suffecient evidence for the REF} OR {zero coverage} 
+bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH}) && INFO/AD[1] >= INFO/AD[0] ||
+    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY}) && INFO/AD[1] >= INFO/AD[0] ||
+    (ALT='.' && AD=0)" $vcf -ov -o quality-mask.vcf
 bedtools merge -i quality-mask.vcf > quality-mask.bed
 
 # Merge with exisiting known repeat regions
@@ -42,4 +42,4 @@ bedtools merge > $masked
 bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
-rm excluded-sites.vcf
+# rm excluded-sites.vcf
