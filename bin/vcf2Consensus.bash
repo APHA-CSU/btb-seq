@@ -18,10 +18,6 @@
 #%    snps         output path to snps tab file (.tab)
 #%    bcf          output path to filtered bcf file (.bcf)
 
-# Parameters
-MIN_READ_DEPTH=5
-MIN_ALLELE_FREQUENCY=0.8
-INDEL_GAP=5
 
 #=======
 # Inputs
@@ -34,7 +30,7 @@ snps=$6
 bcf=$7
 
 # Filter
-bcftools filter -R $regions $vcf -Ob -o $bcf
+bcftools filter -R $regions -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.6' $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
