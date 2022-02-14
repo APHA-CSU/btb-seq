@@ -29,7 +29,7 @@ MIN_ALLELE_FREQUENCY=$7
 bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH}) ||
     (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY}) ||
     (ALT='.' && AD=0)" $vcf -ov -o excluded-sites.vcf
-bcftools filter -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.6' excluded-sites.vcf -Ov -o quality-mask.vcf
+bcftools filter -e 'ALT!="." && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) > 0.5' excluded-sites.vcf -Ov -o quality-mask.vcf
 bedtools merge -i quality-mask.vcf > quality-mask.bed
 
 # Merge with exisiting known repeat regions
