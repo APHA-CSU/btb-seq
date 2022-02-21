@@ -26,7 +26,7 @@ MIN_READ_DEPTH=$6
 MIN_ALLELE_FREQUENCY=$7
 
 # Construct a mask: 
-# mask regions which don't have {sufficient evidence for alt AND suffecient evidence for the REF} OR {zero coverage} 
+# mask regions which don't have {sufficient evidence for alt AND suffecient evidence for the REF} OR {zero coverage}
 bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[1] >= INFO/AD[0]) ||
     (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY} && INFO/AD[1] >= INFO/AD[0]) ||
     (ALT='.' && AD=0)" $vcf -ov -o quality-mask.vcf
@@ -42,4 +42,4 @@ bedtools merge > $masked
 bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
-# rm excluded-sites.vcf
+rm quality-mask.vcf quality-mask.bed
