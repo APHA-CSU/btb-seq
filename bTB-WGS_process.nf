@@ -153,8 +153,7 @@ process VarCall {
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,
-	vcf4mask
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,	vcf4mask
 
 	"""
 	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
@@ -200,8 +199,7 @@ process VCF2Consensus {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),
-	file("variant.vcf.gz.csi") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
