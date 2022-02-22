@@ -35,7 +35,6 @@ bedtools merge -i quality-mask.vcf > quality-mask.bed
 # Merge with exisiting known repeat regions
 cat quality-mask.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
-cut -f4 --complement |
 bedtools merge > $masked
 
 # Make bedfile of sites to keep
