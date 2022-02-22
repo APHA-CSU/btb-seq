@@ -37,7 +37,8 @@ class Vcf2ConsensusTests(BtbTests):
             vcf_gz_filepath,
             consensus_filepath,
             snps_filepath,
-            bcf_filepath
+            bcf_filepath,
+            str(0.8)
         ])
         self.assertFileExists(snps_filepath)
         with open(consensus_filepath) as test_f, open(self.ref_consensus_filepath) as ref_f:
