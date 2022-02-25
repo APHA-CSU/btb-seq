@@ -16,7 +16,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 
 # Install Docker Engine
 sudo apt-get -y update
-sudo printf "8\n" apt-get -y install docker-ce docker-ce-cli containerd.io
+printf "8\n" sudo | apt-get -y install docker-ce docker-ce-cli containerd.io
 sudo usermod -a -G docker "$USER" 
 
 # Install Amazon ECS container agent
