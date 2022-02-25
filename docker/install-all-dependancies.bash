@@ -30,8 +30,7 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     vim \
     nano \
     bc \
-    awscli
-
+    
 # python 
 pip3 install biopython numpy pandas gitpython
 sudo ln -s /usr/bin/python3 /usr/bin/python
