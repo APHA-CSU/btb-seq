@@ -24,3 +24,4 @@ samtools index $bam
 bcftools mpileup -Q 10 -a INFO/AD -Ou -f $ref "$bam" |
 bcftools call -mf GQ - -Ou |
 bcftools norm -f $ref - -Oz -o "$vcf"
+bcftools index $vcf

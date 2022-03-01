@@ -1,3 +1,4 @@
+from sys import stdout
 import unittest
 import subprocess
 import tempfile
@@ -60,6 +61,13 @@ class BtbTests(unittest.TestCase):
         proc = subprocess.run(['samtools', 'view', '-h', '-o', sam_filepath, bam_filepath])
         self.assertEquals(0, proc.returncode)
 
+    def index(self, variant_call_filepath, indexed_filepath=None):
+        # Index .vcf/.vcf.gz/.bcf files
+        if indexed_filepath is None:
+            indexed_filepath = variant_call_filepath + '.csi'
+        proc = subprocess.run(['bcftools', 'index', variant_call_filepath, '-o', indexed_filepath])
+        self.assertEquals(0, proc.returncode)
+
     def copy_tinyreads(self, unzip=False):
         """
             Copies tinyreads to the temporary directory that tests run in
@@ -82,6 +90,15 @@ class BtbTests(unittest.TestCase):
     def unzip(self, path):
         """ Unzip a .gz file inplace """
         proc = subprocess.run(['gunzip', path])
+        self.assertFalse(proc.returncode)
+
+    def gzip(self, path, outpath=None):
+        """ gzip VCF/BCF file writting output to outpath """
+        if not outpath:
+            outpath = path + '.gz'
+        with open(outpath, 'wb') as gzf:
+            proc = subprocess.run(['bcftools', 'convert', '-O', 'z', path], 
+                                  stdout=gzf)
         self.assertFalse(proc.returncode)
 
     def write_fastq(self, filepath, seq_records):

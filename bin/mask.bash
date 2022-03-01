@@ -11,23 +11,35 @@
 #%
 #% INPUTS
 #%    rpt_mask     path to repeat mask
-#%    bam          input path to mapped bam file
+#%    vcf          input path to vcf file
 #%    masked       output path to masked bed file
+#%    regions      output path to regions file (sites to keep)
+#%    allsites     input path to allsites bed file
 
 # Inputs
 rpt_mask=$1
-bam=$2
+vcf=$2
 masked=$3
+regions=$4
+allsites=$5
+MIN_READ_DEPTH=$6
+MIN_ALLELE_FREQUENCY_ALT=$7
+MIN_ALLELE_FREQUENCY_REF=$8
 
-# Find zero coverage regions
-bedtools genomecov -bga -ibam $bam |
-grep -w "0\$" | 
-cat > zero_cov.bed
+# Construct a mask: 
+# mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF} OR {zero coverage}
+bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF}) ||
+    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY_ALT} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF}) ||
+    (ALT='.' && AD=0)" $vcf -ov -o quality-mask.vcf
+bedtools merge -i quality-mask.vcf > quality-mask.bed
 
-# Mask repeat regions
-cat zero_cov.bed $rpt_mask | 
+# Merge with exisiting known repeat regions
+cat quality-mask.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
 
+# Make bedfile of sites to keep
+bedtools subtract -a $allsites -b $masked > $regions
+
 # Cleanup
-rm zero_cov.bed
+rm quality-mask.vcf quality-mask.bed
