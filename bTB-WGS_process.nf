@@ -185,7 +185,7 @@ process Mask {
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
@@ -219,7 +219,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
 
 	"""
-	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY
+	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT
 	"""
 }
 
