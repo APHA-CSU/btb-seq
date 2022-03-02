@@ -3,7 +3,8 @@ set -e
 ################## DEPENDENCIES ######################
 
 sudo apt-get install -y \
-    awscli \
+    awscli #\
+:'
     ca-certificates \
     gnupg \
     lsb-release
@@ -44,3 +45,4 @@ docker run --name ecs-agent \
 	--net=host \
 	--env-file=/etc/ecs/ecs.config \
 	amazon/amazon-ecs-agent:latest
+'
