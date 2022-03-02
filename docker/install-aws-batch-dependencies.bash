@@ -3,7 +3,6 @@ set -e
 ################## DEPENDENCIES ######################
 
 sudo apt-get install -y \
-    curl \
     awscli \
     ca-certificates \
     gnupg \

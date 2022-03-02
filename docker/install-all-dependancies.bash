@@ -12,6 +12,7 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     wget \
     make \
     git \
+    curl \
     liblzma-dev \
     libz-dev \
     libncurses5-dev \
