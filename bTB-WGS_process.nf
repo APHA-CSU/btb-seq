@@ -90,6 +90,12 @@ process Deduplicate {
 
 	container "aaronsfishman/bov-tb:batch"
 
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	tuple pair_id, pair_1, pair_2 from read_pairs
 
@@ -110,6 +116,12 @@ process Trim {
 	maxForks 2
 
 	container "aaronsfishman/bov-tb:batch"
+
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
@@ -134,6 +146,12 @@ process Map2Ref {
 
 	container "aaronsfishman/bov-tb:batch"
 
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
 
@@ -157,6 +175,12 @@ process VarCall {
 
 	container "aaronsfishman/bov-tb:batch"
 
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
@@ -177,6 +201,12 @@ process Mask {
 	maxForks 2
 
 	container "aaronsfishman/bov-tb:batch"
+
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
@@ -209,6 +239,12 @@ process VCF2Consensus {
 	maxForks 2
 
 	container "aaronsfishman/bov-tb:batch"
+
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
@@ -249,6 +285,12 @@ process ReadStats{
 
 	container "aaronsfishman/bov-tb:batch"
 
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
 
@@ -279,6 +321,12 @@ process AssignClusterCSS{
 	maxForks 1
 
 	container "aaronsfishman/bov-tb:batch"
+
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
 
 	input:
 	set pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
@@ -322,6 +370,12 @@ process IDnonbovis{
 
 	container "aaronsfishman/bov-tb:batch"
 
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
@@ -348,7 +402,13 @@ process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 
 	container "aaronsfishman/bov-tb:batch"
-	
+
+	memory "16 GB"
+
+	cpus 4
+
+	scratch 'nxf-scratch'
+
 	input:
 	file('Assigned.csv') from Assigned
 	file('Qbovis.csv') from Qbovis
