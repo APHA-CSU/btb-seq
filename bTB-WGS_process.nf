@@ -94,8 +94,6 @@ process Deduplicate {
 
 	cpus 4
 
-	scratch 'nxf-scratch'
-
 	input:
 	tuple pair_id, pair_1, pair_2 from read_pairs
 
@@ -120,8 +118,6 @@ process Trim {
 	memory "16 GB"
 
 	cpus 4
-
-	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
@@ -150,8 +146,6 @@ process Map2Ref {
 
 	cpus 4
 
-	scratch 'nxf-scratch'
-
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
 
@@ -179,8 +173,6 @@ process VarCall {
 
 	cpus 4
 
-	scratch 'nxf-scratch'
-
 	input:
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
@@ -205,8 +197,6 @@ process Mask {
 	memory "16 GB"
 
 	cpus 4
-
-	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
@@ -243,8 +233,6 @@ process VCF2Consensus {
 	memory "16 GB"
 
 	cpus 4
-
-	scratch 'nxf-scratch'
 
 	input:
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
@@ -289,8 +277,6 @@ process ReadStats{
 
 	cpus 4
 
-	scratch 'nxf-scratch'
-
 	input:
 	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
 
@@ -325,8 +311,6 @@ process AssignClusterCSS{
 	memory "16 GB"
 
 	cpus 4
-
-	scratch 'nxf-scratch'
 
 	input:
 	set pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
@@ -374,8 +358,6 @@ process IDnonbovis{
 
 	cpus 4
 
-	scratch 'nxf-scratch'
-
 	input:
 	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
@@ -406,8 +388,6 @@ process CombineOutput {
 	memory "16 GB"
 
 	cpus 4
-
-	scratch 'nxf-scratch'
 
 	input:
 	file('Assigned.csv') from Assigned
