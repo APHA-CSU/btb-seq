@@ -98,7 +98,7 @@ process Deduplicate {
 	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
+	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads, uniq_reads
 
 	"""
 	deduplicate.bash $pair_1 $pair_2 dedup_1.fastq dedup_2.fastq
@@ -106,29 +106,29 @@ process Deduplicate {
 }	
 
 /* trim adapters and low quality bases from fastq data
-Removes the adapters which are added during the lab processing and and any low quality data */
-process Trim {
-	errorStrategy 'finish'
-    tag "$pair_id"
-
-	maxForks 2
-
-	container "aaronsfishman/bov-tb:batch"
-
-	memory "16 GB"
-
-	cpus 4
-
-	input:
-	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
-
-	output:
-	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
-	
-	"""
-	trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
-	"""
-}
+/* Removes the adapters which are added during the lab processing and and any low quality data */
+/* process Trim {
+/*	errorStrategy 'finish'
+/*   tag "$pair_id"
+/*
+/*       maxForks 2
+/*
+/*container "aaronsfishman/bov-tb:batch"
+/*
+/*memory "16 GB"
+/*
+/*cpus 4
+/*
+/*input:
+/*tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
+/*
+/*output:
+/*tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
+/*
+/*"""
+/*trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
+/*"""
+/*}       
 
 /* map to reference sequence
 Aligns the individiual sequence reads to the reference genome */
