@@ -17,4 +17,4 @@ READS=$1
 RESULTS=$2
 PROFILE=${3:-local} 
 
-nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html" -profile $PROFILE -bucket-dir s3://nxflow-work/work/ 
+nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html" -profile $PROFILE -bucket-dir s3://nxflow-work/work/
