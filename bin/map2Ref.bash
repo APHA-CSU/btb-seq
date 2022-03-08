@@ -20,8 +20,9 @@ read_1=$2
 read_2=$3
 mapped=$4
 GAP_EXT_PEN=$5
+CLIP_PEN=$6
 
 # Map to reference
-bwa mem -E $GAP_EXT_PEN -t2 $ref $read_1 $read_2 |
+bwa mem -E $GAP_EXT_PEN -L $CLIP_PEN -t2 $ref $read_1 $read_2 |
 samtools view -@2 -ShuF 2308 - |
 samtools sort -@2 - -o $mapped

@@ -135,7 +135,7 @@ process Map2Ref {
 	tuple pair_id, file("${pair_id}.bam") into mapped_bam, bam4stats, bam4mask
 
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam $params.GAP_EXT_PEN
+	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam $params.GAP_EXT_PEN $params.CLIP_PEN
 	"""
 }
 
