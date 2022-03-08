@@ -28,5 +28,6 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 RUN cd ./docker && bash ./install-all-dependancies.bash
 
 ## AWS Batch
+RUN mkdir ./nxf-scratch-dir
 RUN cd ./docker && bash ./install-aws-batch-dependencies.bash
 #RUN sudo usermod -a -G docker "$USER" 
