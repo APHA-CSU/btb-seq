@@ -2,7 +2,7 @@ set -e
 
 ################## DEPENDENCIES ######################
 
-#sudo apt-get install -y awscli 
+sudo apt-get install -y awscli 
 
 #    ca-certificates \
 #       gnupg \
