@@ -82,7 +82,7 @@ publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
 
 /* remove duplicates from raw data
 This process removes potential duplicate data (sequencing and optical replcaites from the raw data set */
-process Deduplicate {
+/* process Deduplicate {
 	errorStrategy 'finish'
     tag "$pair_id"
 
@@ -103,7 +103,7 @@ process Deduplicate {
 	"""
 	deduplicate.bash $pair_1 $pair_2 dedup_1.fastq dedup_2.fastq
 	"""
-}	
+} */	
 
 /* trim adapters and low quality bases from fastq data
 Removes the adapters which are added during the lab processing and and any low quality data */
@@ -120,13 +120,13 @@ process Trim {
 	cpus 4
 
 	input:
-	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
+	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads
+	tuple pair_id, file("trimmed_1.fastq"), file("trimmed_2.fastq") into trim_read_pairs, trim_read_pairs2, trim_reads, dedup_read_pairs, uniq_reads
 	
 	"""
-	trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
+	trim.bash $adapters $pair_1 $pair_2 trimmed_1.fastq trimmed_2.fastq
 	"""
 }
 
