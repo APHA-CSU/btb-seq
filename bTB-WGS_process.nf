@@ -105,6 +105,24 @@ This process removes potential duplicate data (sequencing and optical replcaites
 	"""
 } */	
 
+process test{
+
+	publishDir "$params.outdir", mode: 'copy'
+
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
+
+	scratch '/BovTB-nf/nxf-scratch-dir'
+
+	output:
+		file "scratch_test.txt"
+
+	script:
+	"""
+	touch scratch_test.txt
+	echo \"PWD `pwd` \" >> scratch_test.txt
+	"""
+}
+
 /* trim adapters and low quality bases from fastq data
 Removes the adapters which are added during the lab processing and and any low quality data */
 process Trim {
@@ -113,13 +131,13 @@ process Trim {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
 	cpus 4
 
-	scratch 'nxf-scratch-dir'
+	scratch '/BovTB-nf/nxf-scratch-dir'
 
 	input:
 	tuple pair_id, pair_1, pair_2 from read_pairs
@@ -142,7 +160,7 @@ process Map2Ref {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -171,7 +189,7 @@ process VarCall {
 
 	maxForks 3
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -198,7 +216,7 @@ process Mask {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -236,7 +254,7 @@ process VCF2Consensus {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -281,7 +299,7 @@ process ReadStats{
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -318,7 +336,7 @@ process AssignClusterCSS{
 
 	maxForks 1
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
@@ -366,7 +384,7 @@ process IDnonbovis{
 
 	maxForks 1
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch-no-deduplicate"
 
 	memory "16 GB"
 
