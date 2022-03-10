@@ -11,14 +11,13 @@ LABEL about.tags="Genomics, WGS"
 
 ################## ARGS #############################
 
-ARG BOVTB_PATH="/BovTB-nf/"
+ARG BOVTB_PATH="/home/ubuntu/BovTB-nf/"
 
 ################## DEPENDENCIES ######################
 
 # Copy repository
 WORKDIR $BOVTB_PATH
 COPY ./ ./
-RUN ls
 RUN chmod +x ./bin/*
 
 # Sudo
@@ -30,4 +29,3 @@ RUN cd ./docker && bash ./install-all-dependancies.bash
 ## AWS Batch
 RUN mkdir ./nxf-scratch-dir
 RUN cd ./docker && bash ./install-aws-batch-dependencies.bash
-#RUN sudo usermod -a -G docker "$USER" 
