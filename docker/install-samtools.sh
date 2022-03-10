@@ -4,5 +4,5 @@ tar xjf samtools-1.10.tar.bz2
 rm -f samtools-1.10.tar.bz2
 cd samtools-1.10
 make
-sudo make install
+make install
 cd ..

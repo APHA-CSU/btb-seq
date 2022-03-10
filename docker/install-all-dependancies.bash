@@ -7,7 +7,7 @@ BIOTOOLS_PATH=~/biotools/
 
 ################## DEPENDENCIES ######################
 
-sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-11-jdk \
     wget \
     make \
@@ -33,7 +33,7 @@ sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     
 # python 
 pip3 install biopython numpy pandas gitpython
-sudo ln -s /usr/bin/python3 /usr/bin/python
+ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################
 
@@ -50,6 +50,5 @@ bash -e install-bcftools.sh
 bash -e install-bedtools.sh
 bash -e install-Kraken2.sh
 bash -e install-bracken.sh
-bash -e install-nextflow.sh
 bash -e install-sra-toolkit.sh
 bash -e install-dwgsim.sh

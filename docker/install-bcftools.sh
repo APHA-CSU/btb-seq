@@ -4,5 +4,5 @@ tar xjf bcftools-1.10.2.tar.bz2
 rm -f bcftools-1.10.2.tar.bz2
 cd bcftools-1.10.2
 make
-sudo make install
+make install
 cd ..

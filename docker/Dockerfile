@@ -21,7 +21,7 @@ COPY ./ ./
 RUN chmod +x ./bin/*
 
 # Sudo
-RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
+RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive
 
 # Biotools
 RUN cd ./docker && bash ./install-all-dependancies.bash
