@@ -88,11 +88,13 @@ process Deduplicate {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "nickpestell/bov-tb_deduplicate:latest"
 
 	memory "16 GB"
 
 	cpus 4
+
+	publishDir "$publishDir/dedup", mode: 'copy'
 
 	input:
 	tuple pair_id, pair_1, pair_2 from read_pairs

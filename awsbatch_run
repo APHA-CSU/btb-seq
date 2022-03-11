@@ -1,2 +1,2 @@
 #!/bin/sh
-./btb-seq s3://nicks-test-output-bucket/ERR4586795/ s3://nicks-test-output-bucket/pipeline-results/test_1 awsbatch
+./btb-seq s3://nicks-test-output-bucket/ERR4586795/ s3://nicks-test-output-bucket/pipeline-results/test_1/ awsbatch
