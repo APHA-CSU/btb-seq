@@ -11,7 +11,7 @@ LABEL about.tags="Genomics, WGS"
 
 ################## ARGS #############################
 
-ARG BOVTB_PATH="/BovTB-nf/"
+ARG BOVTB_PATH="/home/ubuntu/BovTB-nf/"
 
 ################## DEPENDENCIES ######################
 
