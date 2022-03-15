@@ -2,7 +2,7 @@ set -e
 
 ################## ARGS ##############################
 
-BIOTOOLS_PATH=$PWD/biotools/
+BIOTOOLS_PATH=/home/ubuntu/BovTB-nf/biotools/
 
 
 ################## DEPENDENCIES ######################
