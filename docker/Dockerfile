@@ -21,7 +21,6 @@ COPY ./ ./
 RUN ls
 RUN chmod +x ./bin/*
 
-# Sudo
 RUN apt-get -y update
 
 # Biotools

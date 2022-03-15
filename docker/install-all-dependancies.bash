@@ -2,13 +2,14 @@ set -e
 
 ################## ARGS ##############################
 
-BIOTOOLS_PATH=biotools/
+BIOTOOLS_PATH=$PWD/biotools/
 
 
 ################## DEPENDENCIES ######################
 
 apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     make \
+    g++ \
     wget
     
 ################## BIOTOOLS ######################
