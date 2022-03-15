@@ -22,11 +22,10 @@ RUN ls
 RUN chmod +x ./bin/*
 
 # Sudo
-RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
+RUN apt-get -y update
 
 # Biotools
 RUN cd ./docker && bash ./install-all-dependancies.bash
 
 ## AWS Batch
 RUN cd ./docker && bash ./install-aws-batch-dependencies.bash
-#RUN sudo usermod -a -G docker "$USER" 
