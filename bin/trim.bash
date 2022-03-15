@@ -24,7 +24,7 @@ trimmed_2=$5
 
 # Error if adapters file does not exist, as trimmomatic won't!
 if [[ ! -f $adapters ]]; then
-    echo $adapter does not exist
+    echo $adapters does not exist
     exit 1
 fi
 

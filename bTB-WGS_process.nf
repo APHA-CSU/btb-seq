@@ -66,9 +66,16 @@ kraken2db = file(params.kraken2db)
 Define the input raw sequening data files */
 Channel
     .fromFilePairs( params.reads, flat: true )
+    .view()
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	.set { read_pairs } 
 	read_pairs.into { read_pairs; raw_reads }
+
+Channel
+    .fromPath( [params.amb, params.ann, params.bwt, params.pac, params.sa] )
+    .collect()
+    .view()
+	.set { ref_ind } 
 
 // Collect name of data folder and analysis run date
 FirstFile = file( params.reads ).first()
@@ -94,13 +101,12 @@ process Deduplicate {
 
 	cpus 4
 
-	publishDir "$publishDir/dedup", mode: 'copy'
 
 	input:
 	tuple pair_id, pair_1, pair_2 from read_pairs
 
 	output:
-	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
+	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, test_in, uniq_reads
 
 	"""
 	deduplicate.bash $pair_1 $pair_2 dedup_1.fastq dedup_2.fastq
@@ -115,11 +121,13 @@ process Trim {
 
 	maxForks 2
 
-	container "aaronsfishman/bov-tb:batch"
+	container "nickpestell/bov-tb_trim:latest"
 
 	memory "16 GB"
 
 	cpus 4
+
+	publishDir "$publishDir/trim", mode: 'copy'
 
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from dedup_read_pairs
@@ -150,12 +158,14 @@ process Map2Ref {
 
 	input:
 	tuple pair_id, file("read_1.fastq"), file("read_2.fastq") from trim_read_pairs
+	path "*" from ref_ind
+	path "*" from params.ref_bwa
 
 	output:
 	tuple pair_id, file("${pair_id}.bam") into mapped_bam, bam4stats, bam4mask
 
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	map2Ref.bash Mycbovis-2122-97_LT708304.fas read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
