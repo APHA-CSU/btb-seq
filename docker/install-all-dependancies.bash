@@ -10,7 +10,9 @@ BIOTOOLS_PATH=/home/ubuntu/BovTB-nf/biotools/
 apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     make \
     g++ \
-    wget
+    wget \
+    python3 \
+    python3-pip
     
 ################## BIOTOOLS ######################
 

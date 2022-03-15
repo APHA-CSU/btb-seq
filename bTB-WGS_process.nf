@@ -66,7 +66,6 @@ kraken2db = file(params.kraken2db)
 Define the input raw sequening data files */
 Channel
     .fromFilePairs( params.reads, flat: true )
-    .view()
     .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	.set { read_pairs } 
 	read_pairs.into { read_pairs; raw_reads }
@@ -74,7 +73,6 @@ Channel
 Channel
     .fromPath( [params.amb, params.ann, params.bwt, params.pac, params.sa] )
     .collect()
-    .view()
 	.set { ref_ind } 
 
 // Collect name of data folder and analysis run date
@@ -364,7 +362,7 @@ process IDnonbovis{
 
 	maxForks 1
 
-	container "aaronsfishman/bov-tb:batch"
+	container "aaronsfishman/bov-tb:batch_IDnonBovis"
 
 	memory "16 GB"
 
