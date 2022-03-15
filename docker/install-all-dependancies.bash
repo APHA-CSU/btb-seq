@@ -8,7 +8,8 @@ BIOTOOLS_PATH=biotools/
 ################## DEPENDENCIES ######################
 
 apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    wget \
+    make \
+    wget
     
 ################## BIOTOOLS ######################
 
