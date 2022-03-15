@@ -20,5 +20,9 @@ mkdir -p $BIOTOOLS_PATH
 cp ./install*.*sh $BIOTOOLS_PATH
 cd $BIOTOOLS_PATH
 
+# python 
+pip3 install biopython numpy pandas gitpython
+ln -s /usr/bin/python3 /usr/bin/python
+
 bash -e install-Kraken2.sh
 bash -e install-bracken.sh
