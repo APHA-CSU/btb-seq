@@ -22,5 +22,6 @@ mapped=$4
 
 # Map to reference
 bwa mem -M -E 2 -t2 $ref $read_1 $read_2 |
+samclip --max 10 --ref $ref | 
 samtools view -@2 -ShuF 2308 - |
 samtools sort -@2 - -o $mapped
