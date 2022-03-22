@@ -21,10 +21,11 @@ rpt_mask=$1
 vcf=$2
 masked=$3
 regions=$4
-allsites=$5
-MIN_READ_DEPTH=$6
-MIN_ALLELE_FREQUENCY_ALT=$7
-MIN_ALLELE_FREQUENCY_REF=$8
+bam=$5
+allsites=$6
+MIN_READ_DEPTH=$7
+MIN_ALLELE_FREQUENCY_ALT=$8
+MIN_ALLELE_FREQUENCY_REF=$9
 
 # Construct a mask: 
 # mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF} OR {zero coverage}
@@ -33,8 +34,11 @@ bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[0]/(I
     (ALT='.' && AD=0)" $vcf -ov -o quality-mask.vcf
 bedtools merge -i quality-mask.vcf > quality-mask.bed
 
+# mash regions where there is zero coverage
+bedtools genomecov -bga -ibam $bam | grep -w "0\$" > zerocov.bed
+
 # Merge with exisiting known repeat regions
-cat quality-mask.bed $rpt_mask | 
+cat quality-mask.bed zerocov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
 

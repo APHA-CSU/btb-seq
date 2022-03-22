@@ -170,12 +170,13 @@ process Mask {
 
 	input:
 	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
+	tuple pair_id, file("mapped.bam") from bam4mask
 
 	output:
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed mapped.bam $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
