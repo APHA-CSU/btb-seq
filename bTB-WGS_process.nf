@@ -160,8 +160,8 @@ process VarCall {
 	"""
 }
 
-bam4mask
-	.join(vcf4mask)
+vcf4mask
+	.join(bam4mask)
 	.set { mask_input }
 
 /* Masking known repeats regions and sites with zero coverage
