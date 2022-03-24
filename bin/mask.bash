@@ -28,10 +28,9 @@ MIN_ALLELE_FREQUENCY_ALT=$8
 MIN_ALLELE_FREQUENCY_REF=$9
 
 # Construct a mask: 
-# mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF} OR {zero coverage}
+# mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF}
 bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF}) ||
-    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY_ALT} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF}) ||
-    (ALT='.' && AD=0)" $vcf -ov -o quality-mask.vcf
+    (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY_ALT} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF})" $vcf -ov -o quality-mask.vcf
 bedtools merge -i quality-mask.vcf > quality-mask.bed
 
 # mash regions where there is zero coverage
