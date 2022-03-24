@@ -17,8 +17,10 @@ class MaskTests(BtbTests):
         vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         masked_filepath = self.temp_dirname+'masked.bed'
         regions_filepath = self.temp_dirname+'regions.bed'
+        bam_filepath = self.temp_dirname+'edge-cases.bam'
         shutil.copy('./tests/data/edge-cases.vcf', vcf_filepath)        
         shutil.copy('./tests/data/tinymask.bed', rpt_mask_filepath)        
+        shutil.copy('./tests/data/edge-cases.bam', bam_filepath)        
         
         self.gzip(vcf_filepath, vcf_gz_filepath)
 
@@ -28,6 +30,7 @@ class MaskTests(BtbTests):
             vcf_gz_filepath, 
             masked_filepath, 
             regions_filepath, 
+            bam_filepath,
             self.allsites, 
             str(8), 
             str(0.8),
