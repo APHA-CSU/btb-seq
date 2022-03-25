@@ -29,6 +29,14 @@ snps=$6
 bcf=$7
 MIN_ALLELE_FREQUENCY=$8
 
+set -e
+
+# handle the case when the regions file is empty otherwise bcftools filter will faile
+if [ ! -s $regions ]; then
+	# The file is empty.
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
+fi
+
 # Select SNPs
 # applies filter/mask and chooses SNP sites
 bcftools filter -R $regions -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
