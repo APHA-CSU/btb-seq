@@ -5,7 +5,7 @@ rm -f v2.0.8-beta.tar.gz
 cd kraken2-2.0.8-beta
 ./install_kraken2.sh ../Kraken2
 cd ..
-ln -s $PWD/Kraken2/kraken2 /usr/local/bin/kraken2
+sudo ln -s $PWD/Kraken2/kraken2 /usr/local/bin/kraken2
 
 mkdir Kraken2/db
 

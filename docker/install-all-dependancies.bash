@@ -7,7 +7,7 @@ BIOTOOLS_PATH=~/biotools/
 
 ################## DEPENDENCIES ######################
 
-sudo apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+sudo apt-get -y update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openjdk-11-jdk \
     wget \
     make \
