@@ -7,7 +7,7 @@ cd kraken2-2.0.8-beta
 cd ..
 sudo ln -s $PWD/Kraken2/kraken2 /usr/local/bin/kraken2
 
-sudo mkdir /opt/Kraken2/db
+sudo mkdir -p /opt/Kraken2/db
 
 wget https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v1_8GB_201904.tgz
 sudo tar xvf minikraken2_v1_8GB_201904.tgz -C /opt/Kraken2/db/
