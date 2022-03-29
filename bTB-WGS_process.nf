@@ -160,6 +160,10 @@ process VarCall {
 	"""
 }
 
+vcf4mask
+	.join(bam4mask)
+	.set { mask_input }
+
 /* Masking known repeats regions and sites with zero coverage
 Ensure that consensus only includes regions of the genome where there is high confidence */
 process Mask {
@@ -169,13 +173,13 @@ process Mask {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("called.vcf"), file("called.vcf.csi") from vcf4mask
+	tuple pair_id, file("called.vcf"), file("called.vcf.csi"), file("mapped.bam") from mask_input
 
 	output:
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed mapped.bam $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
