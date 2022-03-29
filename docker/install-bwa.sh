@@ -4,4 +4,4 @@ cd bwa
 git checkout v0.7.17
 make
 cd ..
-ln -s $PWD/bwa/bwa /usr/local/bin/bwa
+sudo ln -s $PWD/bwa/bwa /usr/local/bin/bwa

@@ -9,6 +9,6 @@ rm -f v2.6.0.tar.gz
 cd Bracken-2.6.0
 sh ./install_bracken.sh ../bracken
 cd ..
-ln -s $PWD/Bracken-2.6.0/bracken /usr/local/bin/bracken
-ln -s $PWD/Bracken-2.6.0/src /usr/local/bin/src
+sudo ln -s $PWD/Bracken-2.6.0/bracken /usr/local/bin/bracken
+sudo ln -s $PWD/Bracken-2.6.0/src /usr/local/bin/src
   
