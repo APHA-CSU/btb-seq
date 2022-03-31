@@ -27,6 +27,10 @@ MIN_READ_DEPTH=$7
 MIN_ALLELE_FREQUENCY_ALT=$8
 MIN_ALLELE_FREQUENCY_REF=$9
 
+# Error handling
+set -e
+set pipefail
+
 # Construct a mask: 
 # mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF}
 bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF}) ||
