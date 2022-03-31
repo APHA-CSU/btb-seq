@@ -5,11 +5,13 @@
 # Bracken parses the output which is then sorted to generate a top 20 list of species
 # Presence / absence of M.bovis is also determined by parsing Bracken output
 
-set -e
-
 pair_id=$1
 kraken2db=$2
 lowmem=$3
+
+# Error handling
+set -e
+set pipefail
 
 outcome=$(cat outcome.txt)
 if [ $outcome != "Pass" ]; then

@@ -29,7 +29,9 @@ snps=$6
 bcf=$7
 MIN_ALLELE_FREQUENCY=$8
 
+# Error handling
 set -e
+set pipefail
 
 # handle the case when the regions file is empty otherwise bcftools filter will faile
 if [ ! -s $regions ]; then

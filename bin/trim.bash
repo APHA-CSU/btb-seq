@@ -22,6 +22,10 @@ read_2=$3
 trimmed_1=$4
 trimmed_2=$5
 
+# Error handling
+set -e
+set pipefail
+
 # Error if adapters file does not exist, as trimmomatic won't!
 if [[ ! -f $adapters ]]; then
     echo $adapter does not exist

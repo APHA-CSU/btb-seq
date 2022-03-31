@@ -10,6 +10,10 @@
 
 pair_id=$1
 
+# Error handling
+set -e
+set pipefail
+
 # Count reads in each catagory; in fastq files each read consists of four lines
 
     raw_R1=$(( $(zcat ${pair_id}_*_R1_*.fastq.gz | wc -l) / 4 )) # counts number of reads in file

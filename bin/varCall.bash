@@ -20,6 +20,10 @@ ref=$1
 bam=$2
 vcf=$3
 
+# Error handling
+set -e
+set pipefail
+
 samtools index $bam
 bcftools mpileup -Q 10 -a INFO/AD -Ou -f $ref "$bam" |
 bcftools call -mf GQ - -Ou |
