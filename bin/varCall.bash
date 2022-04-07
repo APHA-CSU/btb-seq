@@ -13,16 +13,14 @@
 #%    bam             path to first input fastq read file
 #%    vcf             path to output vcf.gz file
 
+# Error handling
+set -eo pipefail
 
 # Determines where the sample differs from the reference genome
 
 ref=$1
 bam=$2
 vcf=$3
-
-# Error handling
-set -e
-set pipefail
 
 samtools index $bam
 bcftools mpileup -Q 10 -a INFO/AD -Ou -f $ref "$bam" |

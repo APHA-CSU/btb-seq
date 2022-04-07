@@ -16,15 +16,14 @@
 #%    trimmed_1       output path to first trimmed fastq file
 #%    trimmed_2       output path to second trimmed fafstq file
 
+# Error handling
+set -eo pipefail
+
 adapters=$1
 read_1=$2
 read_2=$3
 trimmed_1=$4
 trimmed_2=$5
-
-# Error handling
-set -e
-set pipefail
 
 # Error if adapters file does not exist, as trimmomatic won't!
 if [[ ! -f $adapters ]]; then

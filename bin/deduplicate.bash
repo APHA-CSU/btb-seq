@@ -14,15 +14,14 @@
 #%    deduplicated_1  output path to first deduplicated file
 #%    deduplicated_2  output path to second deduplicated file
 
+# Error handling
+set -eo pipefail
+
 # Inputs
 pair_1=$1
 pair_2=$2
 deduplicated_1=$3
 deduplicated_2=$4
-
-# Error handling
-set -e
-set pipefail
 
 nl=$'\n'
 
