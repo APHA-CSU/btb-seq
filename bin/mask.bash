@@ -16,6 +16,9 @@
 #%    regions      output path to regions file (sites to keep)
 #%    allsites     input path to allsites bed file
 
+# Error handling
+set -eo pipefail
+
 # Inputs
 rpt_mask=$1
 vcf=$2
@@ -26,10 +29,6 @@ allsites=$6
 MIN_READ_DEPTH=$7
 MIN_ALLELE_FREQUENCY_ALT=$8
 MIN_ALLELE_FREQUENCY_REF=$9
-
-# Error handling
-set -e
-set pipefail
 
 # Construct a mask: 
 # mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF}
