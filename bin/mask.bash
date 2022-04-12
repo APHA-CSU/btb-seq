@@ -45,4 +45,4 @@ bedtools merge > $masked
 bedtools subtract -a $allsites -b $masked > $regions
 
 # Cleanup
-rm quality-mask.vcf quality-mask.bed
+rm quality-mask.vcf quality-mask.bed zerocov.bed
