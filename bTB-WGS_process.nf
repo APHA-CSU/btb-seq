@@ -196,6 +196,7 @@ process VCF2Consensus {
     tag "$pair_id"
 
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
+	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
 	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.bcf'
 	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.csi'
@@ -206,12 +207,12 @@ process VCF2Consensus {
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
-	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
+	tuple pair_id, file("${pair_id}_consensus.fas"), file("${pair_id}_consensus_raw.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
 	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
 
 	"""
-	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT
+	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT ${pair_id}_consensus_raw.fas
 	"""
 }
 
