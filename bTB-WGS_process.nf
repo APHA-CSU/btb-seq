@@ -196,7 +196,6 @@ process VCF2Consensus {
     tag "$pair_id"
 
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
-	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
 	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.bcf'
 	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.csi'
