@@ -8,6 +8,8 @@ import argparse
 import getpass
 import git
 import os
+import subprocess
+
 from datetime import datetime, date
 
 def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshold):
@@ -16,7 +18,7 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
     user = getpass.getuser()
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     repo = git.Repo(scriptpath, search_parent_directories=True)
-    commit = repo.head.object.__str__()
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout
 
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
