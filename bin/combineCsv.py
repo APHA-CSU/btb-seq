@@ -17,7 +17,7 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
     date_out = date.today().strftime('%d%b%y')
     user = getpass.getuser()
     scriptpath = os.path.dirname(os.path.abspath(__file__))
-    repo = git.Repo(scriptpath, search_parent_directories=True)
+
     commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout
 
     #Read Assigned Clade csv and replace blank cells  with 'NA'
@@ -49,10 +49,11 @@ def combine(assigned_csv, bovis_csv, seq_run, read_threshold, abundance_threshol
     finalout_df.sort_index(inplace = True)
 
     #Write to csv
-    finalout_df.to_csv("{}_FinalOut_{}.csv".format(seq_run, date_out))
+    fileout_path = "FinalOut.csv"
+    finalout_df.to_csv(fileout_path)
 
     #Append log info
-    with open("{}_FinalOut_{}.csv".format(seq_run, date_out), "a") as outFile:
+    with open(fileout_path, "a") as outFile:
         outFile.write("# Operator: " +user +"\n" +"# BovTB-nf commit: " +commit)
         outFile.close
 
