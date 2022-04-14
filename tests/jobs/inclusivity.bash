@@ -30,6 +30,6 @@ mv ${accession}_2.fastq.gz /reads/${accession}_S1_R2_001.fastq.gz
 nextflowtest
 
 # Check results
-WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
+WGS_CLUSTER_CSV=/results/AssignedWgsCluster.csv
 assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "Pass"
 assert_first_csv_row $WGS_CLUSTER_CSV "group" "$group"

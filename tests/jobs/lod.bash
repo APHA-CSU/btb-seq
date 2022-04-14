@@ -59,5 +59,5 @@ combine_fastq --seed 1 \
 nextflowtest
 
 # Check results
-WGS_CLUSTER_CSV=$(print_todays_wgs_cluster)
+WGS_CLUSTER_CSV=/results/AssignedWgsCluster.csv
 assert_first_csv_row $WGS_CLUSTER_CSV "Outcome" "$outcome"
