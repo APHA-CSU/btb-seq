@@ -27,7 +27,9 @@ vcf=$4
 consensus=$5
 snps=$6
 bcf=$7
-MIN_ALLELE_FREQUENCY=$8
+unmasked_consensus=$8
+MIN_ALLELE_FREQUENCY=$9
+
 
 set -e
 
@@ -48,6 +50,9 @@ name="${base_name%%.*}"
 
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
+
+bcftools consensus -f ${ref} -e 'TYPE="indel"' $bcf |
+sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
