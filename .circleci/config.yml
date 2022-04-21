@@ -31,9 +31,9 @@ commands:
       - setup_remote_docker
       - run: |
           TAG=<< parameters.tag >>
-          docker build -t aaronsfishman/bov-tb:$TAG -f ./docker/Dockerfile .
+          docker build -t aphacsubot/btb-seq:$TAG -f ./docker/Dockerfile .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker push aaronsfishman/bov-tb:$TAG
+          docker push aphacsubot/btb-seq:$TAG
 
 # Run tests under BovTB-nf/tests/jobs/ and store artifacts
 jobs:
@@ -100,7 +100,7 @@ jobs:
 executors:
   nf-pipeline:
     docker:
-      - image: "aaronsfishman/bov-tb:$CIRCLE_BRANCH"
+      - image: "aphacsubot/btb-seq:$CIRCLE_BRANCH"
 
 # Orchestrates the validation tests 
 workflows:
