@@ -31,7 +31,13 @@ commands:
       - setup_remote_docker
       - run: |
           TAG=<< parameters.tag >>
+          echo $DOCKER_PASS
+          echo $DOCKER_USER
+          exit 1
+
           docker build -t aaronsfishman/bov-tb:$TAG -f ./docker/Dockerfile .
+          
+
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aaronsfishman/bov-tb:$TAG
 
