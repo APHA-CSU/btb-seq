@@ -31,7 +31,10 @@ commands:
       - setup_remote_docker
       - run: |
           TAG=<< parameters.tag >>
-          echo $DOCKER_PASS
+          echo DOCKER_PASS
+          python -c 'print($DOCKER_PASS)'
+
+          echo DOCKER_USER
           echo $DOCKER_USER
           exit 1
 
