@@ -32,7 +32,7 @@ commands:
       - run: |
           TAG=<< parameters.tag >>
           echo DOCKER_PASS
-          python -c 'print($DOCKER_PASS)'
+          python3 -c 'print($DOCKER_PASS)'
 
           echo DOCKER_USER
           echo $DOCKER_USER
