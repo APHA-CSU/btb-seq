@@ -52,6 +52,7 @@ name="${base_name%%.*}"
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
+# TODO test unmasked_consensus
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $filter $bcf |
 sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 
