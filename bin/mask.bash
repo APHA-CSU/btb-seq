@@ -12,7 +12,8 @@
 #% INPUTS
 #%    rpt_mask     path to repeat mask
 #%    vcf          input path to vcf file
-#%    masked       output path to masked bed file
+#%    masked       output path to masked bed file INCLUDING rpt mask
+#%    filtered     output path to masked bed file EXCLUDING rpt mask
 #%    regions      output path to regions file (sites to keep)
 #%    allsites     input path to allsites bed file
 
@@ -20,12 +21,13 @@
 rpt_mask=$1
 vcf=$2
 masked=$3
-regions=$4
-bam=$5
-allsites=$6
-MIN_READ_DEPTH=$7
-MIN_ALLELE_FREQUENCY_ALT=$8
-MIN_ALLELE_FREQUENCY_REF=$9
+filtered=$4
+regions=$5
+bam=$6
+allsites=$7
+MIN_READ_DEPTH=$8
+MIN_ALLELE_FREQUENCY_ALT=$9
+MIN_ALLELE_FREQUENCY_REF=${10}
 
 # Construct a mask: 
 # mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF}
@@ -40,6 +42,11 @@ bedtools genomecov -bga -ibam $bam | grep -w "0\$" | cut -f -3 > zerocov.bed
 cat quality-mask.bed zerocov.bed $rpt_mask | 
 sort -k1,1 -k2,2n |
 bedtools merge > $masked
+
+# exclude rpt mask
+cat quality-mask.bed zerocov.bed | 
+sort -k1,1 -k2,2n |
+bedtools merge > $filtered
 
 # Make bedfile of sites to keep
 bedtools subtract -a $allsites -b $masked > $regions

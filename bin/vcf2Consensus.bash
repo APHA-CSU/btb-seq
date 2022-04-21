@@ -22,13 +22,14 @@
 # Inputs
 ref=$1
 mask=$2
-regions=$3
-vcf=$4
-consensus=$5
-snps=$6
-bcf=$7
-unmasked_consensus=$8
-MIN_ALLELE_FREQUENCY=$9
+filter=$3
+regions=$4
+vcf=$5
+consensus=$6
+snps=$7
+bcf=$8
+unmasked_consensus=$9
+MIN_ALLELE_FREQUENCY=${10}
 
 
 set -e
@@ -51,7 +52,7 @@ name="${base_name%%.*}"
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $filter $bcf |
 sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 
 # Write SNPs table

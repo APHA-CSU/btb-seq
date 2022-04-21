@@ -12,6 +12,7 @@ class Vcf2ConsensusTests(BtbTests):
         # Copy data
         ref_filepath = self.temp_dirname + 'ref.fas'
         masked_filepath = self.temp_dirname + 'masked.bed'
+        filtered_filepath = self.temp_dirname + 'filtered.bed'
         vcf_filepath = self.temp_dirname + 'edge-cases.vcf'
         vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         regions_filepath = self.temp_dirname + 'regions.bed'
@@ -19,6 +20,7 @@ class Vcf2ConsensusTests(BtbTests):
 
         shutil.copy('./tests/data/tinyref.fas', ref_filepath) 
         shutil.copy('./tests/data/edge-cases.bed', masked_filepath) 
+        shutil.copy('./tests/data/edge-cases.bed', filtered_filepath) 
         shutil.copy('./tests/data/edge-cases.vcf', vcf_filepath) 
         shutil.copy('./tests/data/edge-cases_regions.bed', regions_filepath) 
 
@@ -34,6 +36,7 @@ class Vcf2ConsensusTests(BtbTests):
         self.assertBashScript(0, ['./bin/vcf2Consensus.bash', 
             ref_filepath, 
             masked_filepath,
+            filtered_filepath,
             regions_filepath,
             vcf_gz_filepath,
             consensus_filepath,

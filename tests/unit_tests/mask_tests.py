@@ -16,6 +16,7 @@ class MaskTests(BtbTests):
         vcf_filepath = self.temp_dirname+'edge-cases.vcf'
         vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
         masked_filepath = self.temp_dirname+'masked.bed'
+        filtered_filepath = self.temp_dirname+'filtered.bed'
         regions_filepath = self.temp_dirname+'regions.bed'
         sam_filepath = self.temp_dirname+'edge-cases.sam'
         bam_filepath = self.temp_dirname+'edge-cases.bam'
@@ -31,6 +32,7 @@ class MaskTests(BtbTests):
             rpt_mask_filepath, 
             vcf_gz_filepath, 
             masked_filepath, 
+            filtered_filepath, 
             regions_filepath, 
             bam_filepath,
             self.allsites, 
