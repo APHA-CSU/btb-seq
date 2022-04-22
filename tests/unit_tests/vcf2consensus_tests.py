@@ -29,7 +29,7 @@ class Vcf2ConsensusTests(BtbTests):
 
         # Outputs
         consensus_filepath = self.temp_dirname + 'consensus.fas'
-        unmasked_consensus_filepath = self.temp_dirname + 'unmasked_consensus.fas'
+        unmasked_consensus_filepath = self.temp_dirname + 'consensus_unmaksed.fas'
         snps_filepath = self.temp_dirname + 'snps.tab'
 
         # Test
