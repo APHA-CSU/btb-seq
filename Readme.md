@@ -45,11 +45,11 @@ To run a batch from the terminal
 
 **Note:** While running from the terminal is the easiest method for developers and data analysts, the pipeline can also be run from docker. This method has the benefit of working across platforms while guaranteeing consistency with automated tests (see below). 
 
-A docker image containing all required dependancies is provided [here](https://hub.docker.com/r/aaronsfishman/bov-tb). 
+A docker image containing all required dependancies is provided [here](https://hub.docker.com/r/aphacsubot/btb-seq). 
 
 This pull the latest image (if it's not already fetched) from dockerhub and run the container on data
 ```
-sudo docker run --rm -it -v /ABS/PATH/TO/READS/:/reads/ -v /ABS/PATH/TO/RESULTS/:/results/ aaronsfishman/bov-tb
+sudo docker run --rm -it -v /ABS/PATH/TO/READS/:/reads/ -v /ABS/PATH/TO/RESULTS/:/results/ aphacsubot/btb-seq
 ```
 
 #### Build docker image from source 
