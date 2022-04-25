@@ -17,6 +17,8 @@
 #%    snps         output path to snps tab file (.tab)
 #%    bcf          output path to filtered bcf file (.bcf)
 
+# Error handling
+set -eo pipefail
 
 #=======
 # Inputs
@@ -30,8 +32,6 @@ bcf=$7
 unmasked_consensus=$8
 MIN_ALLELE_FREQUENCY=$9
 
-
-set -e
 
 # handle the case when the regions file is empty otherwise bcftools filter will faile
 if [ ! -s $regions ]; then

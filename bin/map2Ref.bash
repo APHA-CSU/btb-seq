@@ -14,6 +14,9 @@
 #%    read_2          path to second input fastq read file
 #%    mapped          path to output mapped bam file
 
+# Error handling
+set -eo pipefail
+
 # Args
 ref=$1
 read_1=$2
