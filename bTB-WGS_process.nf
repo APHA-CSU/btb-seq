@@ -78,6 +78,8 @@ FirstFile = file( params.reads ).first()
 	params.DataDir = TopDir.last()
 	params.today = new Date().format('ddMMMYY')
 
+seqplate = "${params.DataDir}"
+
 publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
 
 /* remove duplicates from raw data
@@ -334,14 +336,14 @@ process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	
 	input:
-	file('Assigned.csv') from Assigned
-	file('Qbovis.csv') from Qbovis
+	file('assigned_csv') from Assigned
+	file('qbovis_csv') from Qbovis
 
 	output:
 	file('*.csv') into FinalOut
 
 	"""
-	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	combineCsv.py assigned_csv qbovis_csv $seqplate
 	"""
 }
 
