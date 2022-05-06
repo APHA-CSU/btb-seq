@@ -3,6 +3,9 @@
 # Assigns cluster by matching patterns of cluster specific SNPs
 # Compares SNPs identified in vcf file to lists in reference table
 
+# Error handling
+set -eo pipefail
+
 pair_id=$1
 discrimPos=$2
 stage1pat=$3

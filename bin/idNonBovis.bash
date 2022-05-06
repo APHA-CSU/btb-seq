@@ -1,11 +1,12 @@
 #!/bin/bash
 
+# Error handling
+set -eo pipefail
+
 # Identify any non-M.bovis samples using kraken
 # Samples with flag != 'Pass' are processed to detemine which microbe(s) are present 
 # Bracken parses the output which is then sorted to generate a top 20 list of species
 # Presence / absence of M.bovis is also determined by parsing Bracken output
-
-set -e
 
 pair_id=$1
 kraken2db=$2

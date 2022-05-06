@@ -16,6 +16,9 @@
 #%    trimmed_1       output path to first trimmed fastq file
 #%    trimmed_2       output path to second trimmed fafstq file
 
+# Error handling
+set -eo pipefail
+
 adapters=$1
 read_1=$2
 read_2=$3
