@@ -89,7 +89,7 @@ process Deduplicate {
 	maxForks 2
 
 	input:
-	tuple pair_id, pair_1, pair_2 from read_pairs
+	tuple pair_id, file("pair_1"), file("pair_2") from read_pairs
 
 	output:
 	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
@@ -240,11 +240,11 @@ process ReadStats{
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
+	tuple pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
 
 	output:
-	set pair_id, file("${pair_id}_stats.csv") into stats
-	set pair_id, file('outcome.txt') into Outcome
+	tuple pair_id, file("${pair_id}_stats.csv") into stats
+	tuple pair_id, file('outcome.txt') into Outcome
 
     """
     readStats.bash "$pair_id"
@@ -269,7 +269,7 @@ process AssignClusterCSS{
 	maxForks 1
 
 	input:
-	set pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
 
 	output:
 	file("${pair_id}_stage1.csv") into AssignCluster
@@ -309,10 +309,10 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
+	tuple pair_id, file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
-	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
+	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
 	file("${pair_id}_bovis.csv") optional true into QueryBovis
 
 	"""
@@ -338,7 +338,7 @@ process CombineOutput {
 	file('Qbovis.csv') from Qbovis
 
 	output:
-	file '*.csv' into FinalOut
+	file('*.csv') into FinalOut
 
 	"""
 	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
