@@ -82,6 +82,8 @@ seqplate = "${params.DataDir}"
 
 publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
 
+commitId = "${workflow.commitId}"
+
 /* remove duplicates from raw data
 This process removes potential duplicate data (sequencing and optical replcaites from the raw data set */
 process Deduplicate {
@@ -343,7 +345,7 @@ process CombineOutput {
 	file('*.csv') into FinalOut
 
 	"""
-	combineCsv.py assigned_csv qbovis_csv $seqplate
+	combineCsv.py assigned_csv qbovis_csv $seqplate $commitId
 	"""
 }
 
