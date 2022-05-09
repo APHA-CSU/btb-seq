@@ -16,8 +16,7 @@ def combine(assigned_csv, bovis_csv, seq_run, commitId, read_threshold, abundanc
     user = getpass.getuser()
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     repo = git.Repo(scriptpath, search_parent_directories=True)
-    #commit = repo.head.object.__str__()
-
+    
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
     assignedround_df = assigned_df.round(2)
