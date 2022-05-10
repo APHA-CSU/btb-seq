@@ -13,6 +13,8 @@
 #%    bam             path to first input fastq read file
 #%    vcf             path to output vcf.gz file
 
+# Error handling
+set -eo pipefail
 
 # Determines where the sample differs from the reference genome
 

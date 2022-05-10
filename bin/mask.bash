@@ -17,6 +17,9 @@
 #%    regions      output path to regions file (sites to keep)
 #%    allsites     input path to allsites bed file
 
+# Error handling
+set -eo pipefail
+
 # Inputs
 rpt_mask=$1
 vcf=$2

@@ -5,9 +5,10 @@
 #  Created by ellisrichardj on 10/10/2019.
 #  
 
+# Error handling
+set -eo pipefail
+
 #  Define inputs - sample name
-
-
 pair_id=$1
 
 # Count reads in each catagory; in fastq files each read consists of four lines
