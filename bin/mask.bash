@@ -25,12 +25,13 @@ rpt_mask=$1
 vcf=$2
 masked=$3
 filtered=$4
-regions=$5
-bam=$6
-allsites=$7
-MIN_READ_DEPTH=$8
-MIN_ALLELE_FREQUENCY_ALT=$9
-MIN_ALLELE_FREQUENCY_REF=${10}
+regions_masked=$5
+regions_filtered=$6
+bam=$7
+allsites=$8
+MIN_READ_DEPTH=$9
+MIN_ALLELE_FREQUENCY_ALT=${10}
+MIN_ALLELE_FREQUENCY_REF=${11}
 
 # Construct a mask: 
 # mask regions which don't have {sufficient evidence for alt AND sufficient evidence for the REF}
@@ -51,8 +52,11 @@ cat quality-mask.bed zerocov.bed |
 sort -k1,1 -k2,2n |
 bedtools merge > $filtered
 
-# Make bedfile of sites to keep
-bedtools subtract -a $allsites -b $masked > $regions
+# Make bedfile of sites to keep - exc. mask positions
+bedtools subtract -a $allsites -b $masked > $regions_masked
+
+# Make bedfile of sites to keep - inc. mask positions
+bedtools subtract -a $allsites -b $filtered > $regions_filtered
 
 # Cleanup
 rm quality-mask.vcf quality-mask.bed zerocov.bed

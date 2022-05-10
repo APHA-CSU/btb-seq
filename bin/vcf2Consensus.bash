@@ -25,13 +25,14 @@ set -eo pipefail
 ref=$1
 mask=$2
 filter=$3
-regions=$4
-vcf=$5
-consensus=$6
-snps=$7
-bcf=$8
-unmasked_consensus=$9
-MIN_ALLELE_FREQUENCY=${10}
+regions_masked=$4
+regions_filtered=$5
+vcf=$6
+consensus=$7
+snps=$8
+bcf=$9
+unmasked_consensus=${10}
+MIN_ALLELE_FREQUENCY=${11}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will faile
@@ -42,8 +43,12 @@ fi
 
 # Select SNPs
 # applies filter/mask and chooses SNP sites
-bcftools filter -R $regions -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+bcftools filter -R $regions_masked -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
+
+# applies filter and chooses SNP sites
+bcftools filter -R $regions_filtered -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o unmasked_bcf
+bcftools index unmasked_bcf
 
 # Call Consensus
 base_name=`basename $consensus`
@@ -53,7 +58,7 @@ bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
 # TODO test unmasked_consensus
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $filter $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $filter unmasked_bcf |
 sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 
 # Write SNPs table
