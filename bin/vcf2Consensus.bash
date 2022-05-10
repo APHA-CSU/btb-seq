@@ -34,11 +34,14 @@ bcf=$9
 unmasked_consensus=${10}
 MIN_ALLELE_FREQUENCY=${11}
 
-
 # handle the case when the regions file is empty otherwise bcftools filter will faile
-if [ ! -s $regions ]; then
+if [ ! -s $regions_masked ]; then
 	# The file is empty.
-	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions_masked	
+fi
+if [ ! -s $regions_filtered ]; then
+	# The file is empty.
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions_filtered	
 fi
 
 # Select SNPs
@@ -64,5 +67,5 @@ sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -R $regions -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
+bcftools query -R $regions_masked -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
