@@ -215,7 +215,7 @@ process VCF2Consensus {
 	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
 
 	"""
-	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf ${pair_id}_unmasked_consensus.fas $params.MIN_ALLELE_FREQUENCY_ALT 
+	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT 
 	"""
 }
 

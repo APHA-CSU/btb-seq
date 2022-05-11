@@ -29,8 +29,7 @@ vcf=$4
 consensus=$5
 snps=$6
 bcf=$7
-unmasked_consensus=$8
-MIN_ALLELE_FREQUENCY=$9
+MIN_ALLELE_FREQUENCY=$8
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will faile
