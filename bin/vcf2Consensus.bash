@@ -51,9 +51,6 @@ name="${base_name%%.*}"
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' $bcf |
-sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
-
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
