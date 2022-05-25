@@ -32,7 +32,7 @@ bcf=$7
 MIN_ALLELE_FREQUENCY=$8
 
 
-# handle the case when the regions file is empty otherwise bcftools filter will faile
+# handle the case when the regions file is empty otherwise bcftools filter will fail
 if [ ! -s $regions ]; then
 	# The file is empty.
 	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
