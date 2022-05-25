@@ -26,3 +26,6 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 
 # Biotools
 RUN cd ./docker && bash ./install-all-dependancies.bash
+
+# Pull nextflow project
+RUN nextflow pull APHA-CSU/btb-seq
