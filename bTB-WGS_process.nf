@@ -160,7 +160,7 @@ process VarCall {
 	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,	vcf4mask
 
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
 	"""
 }
 
