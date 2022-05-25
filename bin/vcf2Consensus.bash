@@ -29,11 +29,10 @@ vcf=$4
 consensus=$5
 snps=$6
 bcf=$7
-unmasked_consensus=$8
-MIN_ALLELE_FREQUENCY=$9
+MIN_ALLELE_FREQUENCY=$8
 
 
-# handle the case when the regions file is empty otherwise bcftools filter will faile
+# handle the case when the regions file is empty otherwise bcftools filter will fail
 if [ ! -s $regions ]; then
 	# The file is empty.
 	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
@@ -50,9 +49,6 @@ name="${base_name%%.*}"
 
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
-
-bcftools consensus -f ${ref} -e 'TYPE="indel"' $bcf |
-sed "/^>/ s/.*/>${name}/" > $unmasked_consensus
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
