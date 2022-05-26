@@ -201,8 +201,6 @@ process VCF2Consensus {
 
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
-	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.bcf'
-	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.csi'
 
 	maxForks 2
 
@@ -212,7 +210,6 @@ process VCF2Consensus {
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
-	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
 
 	"""
 	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT 
