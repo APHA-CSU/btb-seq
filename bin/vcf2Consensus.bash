@@ -44,8 +44,9 @@ bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLE
 bcftools index $bcf
 
 # Call Consensus
-base_name=`basename $consensus`
-name="${base_name%%.*}"
+file="$(basename $consensus)"
+file_name=${file%%.*}
+name="${file_name%%_*}"
 
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
