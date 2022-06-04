@@ -55,7 +55,6 @@ refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
 allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
-stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
