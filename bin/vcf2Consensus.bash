@@ -51,6 +51,10 @@ name="${file_name%%_*}"
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${name}/" > $consensus
 
+# Count Ns in consensus file
+ncount=$(grep -o 'N' $consensus | wc -l)
+echo -e "${pair_id},$ncount" > ncount.csv
+
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
