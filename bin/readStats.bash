@@ -47,6 +47,11 @@ pair_id=$1
     minafttrim=60 # require at least 60% reads to pass quality filtering steps
 
 
+# Count the number of missing sites in consensus sequences
+
+ num_Ns=$(grep "N" ${pair_id}_consensus.fas | wc -l)
+
+
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
     if [[ ${pc_aft_trim%%.*} -lt $minafttrim ]]; then flag="LowQualData"
@@ -60,6 +65,6 @@ pair_id=$1
 
 # Write values to csv file
 
-    echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome" > ${pair_id}_stats.csv
-    echo "${pair_id},"$num_raw","$num_uniq","$pc_aft_dedup","$num_trim","$pc_aft_trim","$num_map","$pc_mapped","$avg_depth","$genome_cov","$flag"" >> ${pair_id}_stats.csv
+    echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,MissingSites,Outcome" > ${pair_id}_stats.csv
+    echo "${pair_id},"$num_raw","$num_uniq","$pc_aft_dedup","$num_trim","$pc_aft_trim","$num_map","$pc_mapped","$avg_depth","$genome_cov","$num_Ns","$flag"" >> ${pair_id}_stats.csv
     echo "$flag" > outcome.txt

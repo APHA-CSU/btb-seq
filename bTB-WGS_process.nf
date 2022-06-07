@@ -231,7 +231,7 @@ raw_uniq
 	.set { input4stats }
 
 /* Generation of data quality and mapping statistics
-Calculate number of raw reads, unique reads, trimmed reads, proportion aligned to reference genome */
+Calculate number of raw reads, unique reads, trimmed reads, proportion aligned to reference genome, the number of missing sites*/
 
 process ReadStats{
 	errorStrategy 'finish'
@@ -241,6 +241,7 @@ process ReadStats{
 
 	input:
 	tuple pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
+	tuple pair_id, file("${pair_id}_consensus.fas") from consensus
 
 	output:
 	tuple pair_id, file("${pair_id}_stats.csv") into stats
