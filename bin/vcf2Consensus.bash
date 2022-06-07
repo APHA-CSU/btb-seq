@@ -53,7 +53,8 @@ sed "/^>/ s/.*/>${name}/" > $consensus
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
-echo -e "${pair_id},$ncount" > ncount.csv
+echo -e "Sample,Ncount" > ${pair_id}_ncount.csv
+echo -e "${pair_id},$ncount" >> ${pair_id}_ncount.csv
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps

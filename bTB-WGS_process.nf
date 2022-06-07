@@ -209,7 +209,7 @@ process VCF2Consensus {
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
-	tuple pair_id, file("ncount.csv") into ncount
+	tuple pair_id, file("ncount.csv") into Ncount
 
 	"""
 	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT 
@@ -331,12 +331,17 @@ QueryBovis
 	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
 	.set {Qbovis}
 
+Ncount
+	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
+	.set {ConsensusQual}
+
 process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	
 	input:
 	file('assigned_csv') from Assigned
 	file('qbovis_csv') from Qbovis
+	file('ncount_csv') from ConsensusQual
 
 	output:
 	file('*.csv') into FinalOut
