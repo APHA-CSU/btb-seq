@@ -355,7 +355,7 @@ process CombineOutput {
 	file('*.csv') into FinalOut
 
 	"""
-	combineCsv.py assigned_csv qbovis_csv $seqplate $commitId
+	combineCsv.py assigned_csv qbovis_csv ncount_csv $seqplate $commitId
 	"""
 }
 
