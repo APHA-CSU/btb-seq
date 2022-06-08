@@ -40,7 +40,7 @@ def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_thresho
     qbovis_df['ID'].fillna('Negative', inplace = True)
 
     #Merge dataframes fill with appropriate Mycobacterium ID (Other, microti, bovis), then any remaining blank cells with 'NA'
-    finalout_df = pd.merge(pd.merge(assignedround_df, ncount_df, on = 'Sample', how = 'outer'), qbovis_df, on = 'Sample', how = 'outer')
+    finalout_df = pd.merge(pd.merge(assignedround_df, ncount_df, on = 'Sample', how = 'left'), qbovis_df, on = 'Sample', how = 'outer')
     finalout_df.loc[(finalout_df['group'] == 'nonbTB' ) | (finalout_df['group'] == 'MicPin' ) | (finalout_df['group'] == 'Pinnipedii' ), 'ID' ] = 'Other Mycobacteria'
     finalout_df.loc[(finalout_df['group'] == 'Microti' ), 'ID' ] = 'Mycobacterium microti'
     finalout_df['ID'].fillna('Mycobacterium bovis', inplace = True)

@@ -209,7 +209,7 @@ process VCF2Consensus {
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
-	tuple pair_id, file("${pair_id}_ncount.csv") into Ncount
+	file("${pair_id}_ncount.csv") into Ncount
 
 	"""
 	vcf2Consensus.bash $ref \
@@ -340,7 +340,7 @@ QueryBovis
 	.set {Qbovis}
 
 Ncount
-	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
+	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true)
 	.set {ConsensusQual}
 
 process CombineOutput {
