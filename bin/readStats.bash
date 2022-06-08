@@ -49,7 +49,7 @@ pair_id=$1
 
 # Count the number of missing sites in consensus sequences
 
- num_Ns=$(grep "N" ${pair_id}_consensus.fas | wc -l)
+    num_Ns=$(grep "N" ${pair_id}_consensus.fas | wc -l)
 
 
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome

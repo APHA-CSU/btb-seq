@@ -13,10 +13,12 @@ class ReadStatsTests(BtbTests):
         fastq_1 = reads_path+'_S1_R1_X.fastq.gz'
         fastq_2 = reads_path+'_S1_R2_X.fastq.gz'
         pair_id = self.temp_dirname + name
+        consensus_filepath = pair_id + '_consensus.fas'
 
         # Copy over 
         shutil.copy(fastq_1, self.temp_dirname)
         shutil.copy(fastq_2, self.temp_dirname)
+        shutil.copy('./tests/data/tinyconsensus.fas', consensus_filepath) 
 
         # Unzip
         fastq_files = glob.glob(self.temp_dirname + '*.gz')
