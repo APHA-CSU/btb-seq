@@ -209,7 +209,7 @@ process VCF2Consensus {
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
-	tuple pair_id, file("ncount.csv") into Ncount
+	tuple pair_id, file("${pair_id}_ncount.csv") into Ncount
 
 	"""
 	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf $params.MIN_ALLELE_FREQUENCY_ALT 
