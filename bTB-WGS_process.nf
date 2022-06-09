@@ -273,7 +273,6 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'ignore'
     tag "$pair_id"
-	
 
 	maxForks 1
 
@@ -321,26 +320,24 @@ process IDnonbovis{
 	tuple pair_id, file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
-	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
-	file("${pair_id}_bovis.csv") optional true into QueryBovis
+	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab") optional true into IDnonbovis
+	file("${pair_id}_bovis.csv") into QueryBovis
 
 	"""
 	idNonBovis.bash $pair_id $kraken2db $params.lowmem
 	"""
 }
 
-/* Combine all cluster assignment data into a single results file */
-
 AssignCluster
-	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Assigned}
 
 QueryBovis
-	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Qbovis}
 
 Ncount
-	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true)
+	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
 	.set {ConsensusQual}
 
 process CombineOutput {
