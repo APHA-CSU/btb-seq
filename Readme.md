@@ -16,7 +16,7 @@ nextflow run APHA-CSU/btb-seq -with-docker aphacsubot/btb-seq --reads='path/to/i
 
 This will pull the code from this github repository and run the analysis using the pre-prepared docker image containing all required dependencies [here](https://hub.docker.com/r/aphacsubot/btb-seq).
 
-To run the pipeline on a batch a samples, a directory containing raw `.fastq.gz` files is required (and defined using `--reads`). Each read-pair sample is represented by a pair of files named `*_R1*.fastq.gz` and `*_R2*.fastq.gz`. For example, to batch two samples named `bovis-a` and `bovis-b`, a directory containing `bovis-a_R1.fastq.gz`, `bovis-a_R2.fastq.gz`, `bovis-b_R1.fastq.gz` and `bovis-b_R2.fastq.gz`, is required.  This can be also be an AWS s3 uri (denoted using `s3://..`) if required
+To run the pipeline on a batch of samples, a directory containing raw `.fastq.gz` files is required (and defined using `--reads`). Each read-pair sample is represented by a pair of files named `*_R1*.fastq.gz` and `*_R2*.fastq.gz`. For example, to batch two samples named `bovis-a` and `bovis-b`, a directory containing `bovis-a_R1.fastq.gz`, `bovis-a_R2.fastq.gz`, `bovis-b_R1.fastq.gz` and `bovis-b_R2.fastq.gz`, is required.  This can be also be an AWS s3 uri (denoted using `s3://..`) if required
 
 Pipeline output is stored in a results directory (which can also be an s3 uri) that contains:
 - A summary csv file (`FinalOut.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
