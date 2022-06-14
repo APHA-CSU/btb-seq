@@ -9,5 +9,5 @@ set +e
 echo "q" | ./sratoolkit.2.10.8-ubuntu64/bin/vdb-config -i > /dev/null 2>&1
 set -e
 
-ln -s $PWD/sratoolkit.2.10.8-ubuntu64/bin/fasterq-dump /usr/local/bin/fasterq-dump
-ln -s $PWD/sratoolkit.2.10.8-ubuntu64/bin/prefetch /usr/local/bin/prefetch
+sudo ln -s $PWD/sratoolkit.2.10.8-ubuntu64/bin/fasterq-dump /usr/local/bin/fasterq-dump
+sudo ln -s $PWD/sratoolkit.2.10.8-ubuntu64/bin/prefetch /usr/local/bin/prefetch

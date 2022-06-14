@@ -3,7 +3,8 @@ import shutil
 import unittest
 
 class MaskTests(BtbTests):
-    rpt_mask = './references/Mycbovis-2122-97_LT708304.fas.rpt.regions'
+    allsites = './references/All-sites.bed'
+    ref_masked_filepath = './tests/data/edge-cases.bed'
 
     def test_mask(self):
         """
@@ -11,17 +12,35 @@ class MaskTests(BtbTests):
             the supplied sam file contains no regions of zero coverage
         """
         # Copy data
-        sam_filepath = self.temp_dirname+'tinysam.sam'
-        bam_filepath = self.temp_dirname+'tinybam.bam'
-        mask_filepath = self.temp_dirname+'masked.bed'
-        shutil.copy('./tests/data/tinymatch.sam', sam_filepath)        
+        rpt_mask_filepath = self.temp_dirname+'rpt_mask.bed'
+        vcf_filepath = self.temp_dirname+'edge-cases.vcf'
+        vcf_gz_filepath = self.temp_dirname+'edge-cases.vcf.gz'
+        masked_filepath = self.temp_dirname+'masked.bed'
+        regions_filepath = self.temp_dirname+'regions.bed'
+        sam_filepath = self.temp_dirname+'edge-cases.sam'
+        bam_filepath = self.temp_dirname+'edge-cases.bam'
+        shutil.copy('./tests/data/edge-cases.vcf', vcf_filepath)        
+        shutil.copy('./tests/data/tinymask.bed', rpt_mask_filepath)        
+        shutil.copy('./tests/data/edge-cases.sam', sam_filepath)        
         
-        # Convert to bam
+        self.gzip(vcf_filepath, vcf_gz_filepath)
         self.sam_to_bam(sam_filepath, bam_filepath)
 
         # Test
-        self.assertBashScript(0, ['./bin/mask.bash', self.rpt_mask, bam_filepath, mask_filepath])
-        self.assertFileExists(mask_filepath)
+        self.assertBashScript(0, ['./bin/mask.bash', 
+            rpt_mask_filepath, 
+            vcf_gz_filepath, 
+            masked_filepath, 
+            regions_filepath, 
+            bam_filepath,
+            self.allsites, 
+            str(8), 
+            str(0.8),
+            str(0.7)])
+        self.assertFileExists(regions_filepath)
+        with open(masked_filepath) as test_f, open(self.ref_masked_filepath) as ref_f:
+            self.assertListEqual(list(test_f), list(ref_f))
+
 
 if __name__ == '__main__':
     unittest.main()

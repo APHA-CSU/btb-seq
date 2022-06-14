@@ -10,41 +10,51 @@
 #%
 #% INPUTS
 #%    ref          input path to reference genome (.fas)
-#%    bed          input path to mask (.bed)
+#%    mask         input path to mask (.bed)
+#%    regions      input path to regions file containing all regions for masking/filtering(.bed)
 #%    vcf          input path to variant (.vcf.gz)
 #%    consensus    output path to consensus file (.fas)
 #%    snps         output path to snps tab file (.tab)
+#%    bcf          output path to filtered bcf file (.bcf)
 
-# Parameters
-MIN_READ_DEPTH=5
-MIN_ALLELE_FREQUENCY=0.8
-INDEL_GAP=5
+# Error handling
+set -eo pipefail
 
 #=======
 # Inputs
 ref=$1
-bed=$2
-vcf=$3
-consensus=$4
-snps=$5
+mask=$2
+regions=$3
+vcf=$4
+consensus=$5
+snps=$6
+bcf=$7
+MIN_ALLELE_FREQUENCY=$8
+pair_id=$9
 
-# Filter
-bcf=filtered.bcf
-bcftools filter --IndelGap $INDEL_GAP -e "DP<${MIN_READ_DEPTH} || INFO/AD[1]/(INFO/AD[1]+INFO/AD[0]) < ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
+
+# handle the case when the regions file is empty otherwise bcftools filter will fail
+if [ ! -s $regions ]; then
+	# The file is empty.
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
+fi
+
+# Select SNPs
+# applies filter/mask and chooses SNP sites
+bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 
 # Call Consensus
-base_name=`basename $consensus`
-name="${base_name%%.*}"
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
+sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $bed $bcf |
-sed "/^>/ s/.*/>${name}/" > $consensus
+# Count Ns in consensus file
+ncount=$(grep -o 'N' $consensus | wc -l)
+echo -e "Sample,Ncount" > ${pair_id}_ncount.csv
+echo -e "${pair_id},$ncount" >> ${pair_id}_ncount.csv
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
-bcftools query -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
+bcftools query -R $regions -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
-
-# Cleanup
-rm $bcf $bcf.csi

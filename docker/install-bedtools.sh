@@ -5,4 +5,4 @@ rm -f bedtools-2.29.0.tar.gz
 cd bedtools2
 make
 cd ..
-ln -s $PWD/bedtools2/bin/bedtools /usr/local/bin/bedtools
+sudo ln -s $PWD/bedtools2/bin/bedtools /usr/local/bin/bedtools

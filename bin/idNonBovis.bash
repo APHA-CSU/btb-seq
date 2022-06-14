@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Error handling
+set -eo pipefail
+
 # Identify any non-M.bovis samples using kraken
 # Samples with flag != 'Pass' are processed to detemine which microbe(s) are present 
 # Bracken parses the output which is then sorted to generate a top 20 list of species
@@ -34,6 +37,7 @@ set -e
 
 else
 echo "ID not required"
+echo "Sample,ID,TotalReads,Abundance" > ${pair_id}_bovis.csv
 fi
 rm `readlink trimmed_1.fastq`
 rm `readlink trimmed_2.fastq`

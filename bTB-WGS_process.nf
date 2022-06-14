@@ -53,8 +53,8 @@ params.outdir = "$PWD"
 ref = file(params.ref)
 refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
+allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
-stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
@@ -77,7 +77,11 @@ FirstFile = file( params.reads ).first()
 	params.DataDir = TopDir.last()
 	params.today = new Date().format('ddMMMYY')
 
+seqplate = "${params.DataDir}"
+
 publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
+
+commitId = "${workflow.commitId}"
 
 /* remove duplicates from raw data
 This process removes potential duplicate data (sequencing and optical replcaites from the raw data set */
@@ -88,7 +92,7 @@ process Deduplicate {
 	maxForks 2
 
 	input:
-	tuple pair_id, pair_1, pair_2 from read_pairs
+	tuple pair_id, file("pair_1"), file("pair_2") from read_pairs
 
 	output:
 	tuple pair_id, file("dedup_1.fastq"), file("dedup_2.fastq") into dedup_read_pairs, uniq_reads
@@ -152,12 +156,16 @@ process VarCall {
 	tuple pair_id, file("mapped.bam") from mapped_bam
 
 	output:
-	tuple pair_id, file("${pair_id}.vcf.gz") into vcf, vcf2
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,	vcf4mask
 
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
 	"""
 }
+
+vcf4mask
+	.join(bam4mask)
+	.set { mask_input }
 
 /* Masking known repeats regions and sites with zero coverage
 Ensure that consensus only includes regions of the genome where there is high confidence */
@@ -168,13 +176,13 @@ process Mask {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mapped.bam") from bam4mask
+	tuple pair_id, file("called.vcf"), file("called.vcf.csi"), file("mapped.bam") from mask_input
 
 	output:
-	tuple pair_id, file("mask.bed") into maskbed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed") into maskbed
 
 	"""
-	mask.bash $rptmask mapped.bam mask.bed
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed mapped.bam $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
@@ -196,14 +204,23 @@ process VCF2Consensus {
 	maxForks 2
 
 	input:
-	tuple pair_id, file("mask.bed"), file("variant.vcf.gz") from vcf_bed
+	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
 	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
+	file("${pair_id}_ncount.csv") into Ncount
 
 	"""
-	vcf2Consensus.bash $ref mask.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab
+	vcf2Consensus.bash $ref \
+		mask.bed \
+		nonmasked-regions.bed \
+		variant.vcf.gz \
+		${pair_id}_consensus.fas \
+		${pair_id}_snps.tab \
+		${pair_id}_filtered.bcf \
+		$params.MIN_ALLELE_FREQUENCY_ALT \
+		$pair_id
 	"""
 }
 
@@ -232,11 +249,11 @@ process ReadStats{
 	maxForks 2
 
 	input:
-	set pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
+	tuple pair_id, file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"), file("${pair_id}.mapped.sorted.bam") from input4stats
 
 	output:
-	set pair_id, file("${pair_id}_stats.csv") into stats
-	set pair_id, file('outcome.txt') into Outcome
+	tuple pair_id, file("${pair_id}_stats.csv") into stats
+	tuple pair_id, file('outcome.txt') into Outcome
 
     """
     readStats.bash "$pair_id"
@@ -256,12 +273,11 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'ignore'
     tag "$pair_id"
-	
 
 	maxForks 1
 
 	input:
-	set pair_id, file("${pair_id}.norm.vcf.gz"), file("${pair_id}_stats.csv") from input4Assign
+	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"), file("${pair_id}_stats.csv") from input4Assign
 
 	output:
 	file("${pair_id}_stage1.csv") into AssignCluster
@@ -301,39 +317,42 @@ process IDnonbovis{
 	maxForks 1
 
 	input:
-	set pair_id, file('outcome.txt'), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
+	tuple pair_id, file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
-	set pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
-	file("${pair_id}_bovis.csv") optional true into QueryBovis
+	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab") optional true into IDnonbovis
+	file("${pair_id}_bovis.csv") into QueryBovis
 
 	"""
 	idNonBovis.bash $pair_id $kraken2db $params.lowmem
 	"""
 }
 
-/* Combine all cluster assignment data into a single results file */
-
 AssignCluster
-	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Assigned}
 
 QueryBovis
-	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Qbovis}
+
+Ncount
+	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
+	.set {ConsensusQual}
 
 process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	
 	input:
-	file('Assigned.csv') from Assigned
-	file('Qbovis.csv') from Qbovis
+	file('assigned_csv') from Assigned
+	file('qbovis_csv') from Qbovis
+	file('ncount_csv') from ConsensusQual
 
 	output:
-	file '*.csv' into FinalOut
+	file('*.csv') into FinalOut
 
 	"""
-	combineCsv.py Assigned.csv Qbovis.csv ${params.DataDir}
+	combineCsv.py assigned_csv qbovis_csv ncount_csv $seqplate $commitId
 	"""
 }
 
