@@ -361,4 +361,8 @@ workflow.onComplete {
 		log.info "Nextflow Version:	$workflow.nextflow.version"
 		log.info "Duration:		$workflow.duration"
 		log.info "Output Directory:	$params.outdir/Results_${params.DataDir}_${params.today}"
+		stage = file("$workflow.workDir/stage")
+		tmp = file("$workflow.workDir/tmp")
+		stage.deleteDir()
+		tmp.deleteDir()
 }
