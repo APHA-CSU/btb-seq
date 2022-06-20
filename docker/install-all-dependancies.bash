@@ -27,7 +27,6 @@ sudo apt-get -y update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y
     libcurl4-openssl-dev \
     python3 \
     python3-pip \
-    vim \
     nano \
     bc
 
@@ -52,4 +51,3 @@ bash -e install-Kraken2.sh
 bash -e install-bracken.sh
 bash -e install-nextflow.sh
 bash -e install-sra-toolkit.sh
-bash -e install-dwgsim.sh
