@@ -221,6 +221,7 @@ process VCF2Consensus {
 		${pair_id}_filtered.bcf \
 		$params.MIN_ALLELE_FREQUENCY_ALT \
 		$pair_id
+		$publishDir
 	"""
 }
 
