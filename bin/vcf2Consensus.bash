@@ -49,10 +49,15 @@ bcftools index $bcf
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
-# Count Ns in consensus file
+# Count Ns in consensus file and extract submission number from sample name
 ncount=$(grep -o 'N' $consensus | wc -l)
-echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
-echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
+set +e; submission_number=$(echo $pair_id | grep -Eo '[0-9]{2,2}\-[0-9]{4,5}\-[0-9]{2,2}'); set -e
+echo -e "Sample,Submission,Ncount,ResultLoc" > ${pair_id}_ncount.csv
+if [ -n "$submission_number" ]; then
+    echo -e "${pair_id},$submission_number,$ncount,$publishDir" >> ${pair_id}_ncount.csv
+else
+    echo -e "${pair_id},${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
+fi
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
