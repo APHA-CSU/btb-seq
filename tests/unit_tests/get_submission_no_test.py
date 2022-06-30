@@ -61,17 +61,17 @@ class GetSubmissionNoTests(unittest.TestCase):
                        "12-3456-89", 
                        "12345678", 
                        "ABCDEFGH", 
-                       ""] 
+                       ""]
         fail = False 
         i = 0
-        for input, output in zip(test_input, test_output):
+        for n, (input, output) in enumerate(zip(test_input, test_output)):
             try:
                 ps = subprocess.run(["bash", "./bin/get_submission_no.bash", input], capture_output=True)
                 self.assertEqual(ps.stdout.decode().strip('\n'), output)
             except AssertionError as e:
                 i += 1
                 fail = True
-                print(f"Test failure {i}: ", e)
+                print(f"Test failure #{n}: ", e)
         if fail: 
             print(f"{i} test failures")
             raise AssertionError
