@@ -51,13 +51,9 @@ sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 # Count Ns in consensus file and extract submission number from sample name
 ncount=$(grep -o 'N' $consensus | wc -l)
-set +e; submission_number=$(echo $pair_id | grep -Eo '[0-9]{2,2}\-[0-9]{4,5}\-[0-9]{2,2}'); set -e
+submission_number=$(bash get_submission_no.bash $pair_id)
 echo -e "Sample,Submission,Ncount,ResultLoc" > ${pair_id}_ncount.csv
-if [ -n "$submission_number" ]; then
-    echo -e "${pair_id},$submission_number,$ncount,$publishDir" >> ${pair_id}_ncount.csv
-else
-    echo -e "${pair_id},${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
-fi
+echo -e "${pair_id},$submission_number,$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
