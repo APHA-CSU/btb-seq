@@ -15,6 +15,7 @@ from read_stats_tests import ReadStatsTests
 from map2Ref_tests import Map2RefTests
 from varCall_tests import VarCallTests
 from vcf2consensus_tests import Vcf2ConsensusTests
+from get_submission_no_test import GetSubmissionNoTests
 
 def main():
     # Test List
@@ -25,7 +26,8 @@ def main():
         ReadStatsTests,
         Map2RefTests,
         VarCallTests,
-        Vcf2ConsensusTests
+        Vcf2ConsensusTests,
+        GetSubmissionNoTests
     ]
 
     # Load 'em up
