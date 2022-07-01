@@ -51,7 +51,7 @@ sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 # Count Ns in consensus file and extract submission number from sample name
 ncount=$(grep -o 'N' $consensus | wc -l)
-submission_number=$(bash get_submission_no.bash $pair_id)
+submission_number=$(bash $(dirname $(realpath $0))/get_submission_no.bash $pair_id)
 echo -e "Sample,Submission,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$submission_number,$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
