@@ -30,6 +30,8 @@ consensus=$5
 snps=$6
 bcf=$7
 MIN_ALLELE_FREQUENCY=$8
+pair_id=$9
+publishDir=${10}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
@@ -44,11 +46,13 @@ bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLE
 bcftools index $bcf
 
 # Call Consensus
-base_name=`basename $consensus`
-name="${base_name%%.*}"
-
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $mask $bcf |
-sed "/^>/ s/.*/>${name}/" > $consensus
+sed "/^>/ s/.*/>${pair_id}/" > $consensus
+
+# Count Ns in consensus file
+ncount=$(grep -o 'N' $consensus | wc -l)
+echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
+echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
