@@ -53,3 +53,4 @@ bash -e install-bracken.sh
 bash -e install-nextflow.sh
 bash -e install-sra-toolkit.sh
 bash -e install-dwgsim.sh
+bash -e install-aws-cli.sh
