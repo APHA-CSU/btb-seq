@@ -48,7 +48,8 @@ def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_thresho
     finalout_df.loc[(finalout_df['group'] == 'Microti' ), 'ID' ] = 'Mycobacterium microti'
     finalout_df['ID'].fillna('Mycobacterium bovis', inplace = True)
     finalout_df.fillna('NA', inplace = True)
-    finalout_df.set_index.('Sample', inplace = True).astype(str)
+    finalout_df.set_index.('Sample', inplace = True)
+    finalout_df.index.astype(str)
     finalout_df.sort_index(inplace = True)
 
     #Write to csv
