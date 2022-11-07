@@ -16,12 +16,12 @@ READS=$1
 RESULTS=$2
 
 nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
-exitCode=$?
-if [ $exitCode -eq "0" ]
-	then
-		echo "No problem"
-	else
-		echo "$0 exited unexpectedly with status:$exitCode"
-		aws s3 cp --recursive ./work/ ${RESULTS}/work/
-		exit 1
-fi
+# exitCode=$?
+#if [ $exitCode -eq "0" ]
+#	then
+#		echo "No problem"
+#	else
+#		echo "$0 exited unexpectedly with status:$exitCode"
+#		aws s3 cp --recursive ./work/ ${RESULTS}/work/
+#		exit 1
+#fi
