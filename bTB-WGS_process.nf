@@ -55,7 +55,6 @@ refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
 allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
-stage2pat = file(params.stage2pat)
 adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
@@ -160,7 +159,7 @@ process VarCall {
 	tuple pair_id, file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi") into vcf, vcf2,	vcf4mask
 
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
 	"""
 }
 
@@ -201,8 +200,6 @@ process VCF2Consensus {
 
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
-	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.bcf'
-	publishDir "$publishDir/filteredBcf/", mode: 'copy', pattern: '*.csi'
 
 	maxForks 2
 
@@ -210,12 +207,21 @@ process VCF2Consensus {
 	tuple pair_id, file("mask.bed"), file("nonmasked-regions.bed"), file("variant.vcf.gz"),	file("variant.vcf.gz.csi") from vcf_bed
 
 	output:
-	tuple pair_id, file("${pair_id}_consensus.fas"), file("${pair_id}_unmasked_consensus.fas") into consensus
+	tuple pair_id, file("${pair_id}_consensus.fas") into consensus
 	tuple pair_id, file("${pair_id}_snps.tab") into snpstab
-	tuple pair_id, file("${pair_id}_filtered.bcf"), file("${pair_id}_filtered.bcf.csi") into _
+	file("${pair_id}_ncount.csv") into Ncount
 
 	"""
-	vcf2Consensus.bash $ref mask.bed nonmasked-regions.bed variant.vcf.gz ${pair_id}_consensus.fas ${pair_id}_snps.tab ${pair_id}_filtered.bcf ${pair_id}_unmasked_consensus.fas $params.MIN_ALLELE_FREQUENCY_ALT 
+	vcf2Consensus.bash $ref \
+		mask.bed \
+		nonmasked-regions.bed \
+		variant.vcf.gz \
+		${pair_id}_consensus.fas \
+		${pair_id}_snps.tab \
+		${pair_id}_filtered.bcf \
+		$params.MIN_ALLELE_FREQUENCY_ALT \
+		$pair_id \
+		$publishDir
 	"""
 }
 
@@ -268,7 +274,6 @@ Compares SNPs identified in vcf file to lists in reference table */
 process AssignClusterCSS{
 	errorStrategy 'ignore'
     tag "$pair_id"
-	
 
 	maxForks 1
 
@@ -316,23 +321,25 @@ process IDnonbovis{
 	tuple pair_id, file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq") from IDdata
 
 	output:
-	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab")  optional true into IDnonbovis
-	file("${pair_id}_bovis.csv") optional true into QueryBovis
+	tuple pair_id, file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab") optional true into IDnonbovis
+	file("${pair_id}_bovis.csv") into QueryBovis
 
 	"""
 	idNonBovis.bash $pair_id $kraken2db $params.lowmem
 	"""
 }
 
-/* Combine all cluster assignment data into a single results file */
-
 AssignCluster
-	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Assigned}
 
 QueryBovis
-	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, storeDir: "$params.outdir/Results_${params.DataDir}_${params.today}", keepHeader: true )
+	.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
 	.set {Qbovis}
+
+Ncount
+	.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
+	.set {ConsensusQual}
 
 process CombineOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
@@ -340,12 +347,13 @@ process CombineOutput {
 	input:
 	file('assigned_csv') from Assigned
 	file('qbovis_csv') from Qbovis
+	file('ncount_csv') from ConsensusQual
 
 	output:
 	file('*.csv') into FinalOut
 
 	"""
-	combineCsv.py assigned_csv qbovis_csv $seqplate $commitId
+	combineCsv.py assigned_csv qbovis_csv ncount_csv $seqplate $commitId
 	"""
 }
 
@@ -354,4 +362,8 @@ workflow.onComplete {
 		log.info "Nextflow Version:	$workflow.nextflow.version"
 		log.info "Duration:		$workflow.duration"
 		log.info "Output Directory:	$params.outdir/Results_${params.DataDir}_${params.today}"
+		stage = file("$workflow.workDir/stage")
+		tmp = file("$workflow.workDir/tmp")
+		stage.deleteDir()
+		tmp.deleteDir()
 }

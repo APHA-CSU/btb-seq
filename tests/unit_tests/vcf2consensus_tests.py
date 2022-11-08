@@ -27,7 +27,6 @@ class Vcf2ConsensusTests(BtbTests):
 
         # Outputs
         consensus_filepath = self.temp_dirname + 'consensus.fas'
-        unmasked_consensus_filepath = self.temp_dirname + 'unmasked_consensus.fas'
         snps_filepath = self.temp_dirname + 'snps.tab'
 
         # Test
@@ -37,10 +36,10 @@ class Vcf2ConsensusTests(BtbTests):
             regions_filepath,
             vcf_gz_filepath,
             consensus_filepath,
-            unmasked_consensus_filepath,
             snps_filepath,
             bcf_filepath,
-            str(0.8)
+            str(0.8),
+            str('consensus')
         ])
         self.assertFileExists(snps_filepath)
         with open(consensus_filepath) as test_f, open(self.ref_consensus_filepath) as ref_f:
