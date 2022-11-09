@@ -15,7 +15,7 @@
 READS=$1
 RESULTS=$2
 
-nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
+NXF_OPTS="-Dleveldb.mmap=false" nextflow run ./bTB-WGS_process.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
 # exitCode=$?
 #if [ $exitCode -eq "0" ]
 #	then
