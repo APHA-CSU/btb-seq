@@ -15,4 +15,4 @@
 READS=$1
 RESULTS=$2
 
-nextflow run ./bTB-WGS_process.nf -work-dir s3://s3-csu-004/scratch --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
+nextflow run ./bTB-WGS_process.nf -work-dir s3://s3-csu-004/scratch --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html" -with-docker s3-work

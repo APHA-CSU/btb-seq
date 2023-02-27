@@ -49,7 +49,7 @@ bash -e install-bcftools.sh
 bash -e install-bedtools.sh
 bash -e install-Kraken2.sh
 bash -e install-bracken.sh
-bash -e install-nextflow.sh
+#bash -e install-nextflow.sh
 bash -e install-sra-toolkit.sh
 # aws-cli installation may or may not be required for aws batch
 bash -e install-aws-cli.sh
