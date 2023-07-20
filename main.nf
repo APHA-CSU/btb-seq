@@ -56,6 +56,20 @@ process trim {
 	"""
 }
 
+process map2Ref {
+    errorStrategy 'finish'
+    tag "$pair_id"
+	publishDir "$publishDir/bam", mode: 'copy', pattern: '*.bam'
+	maxForks 2
+	input:
+    	tuple val(pair_id), file("read_1.fastq"), file("read_2.fastq")
+	output:
+    	tuple val(pair_id), file("${pair_id}.bam")
+	"""
+	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	"""
+}
+
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
@@ -68,9 +82,9 @@ workflow{
 
     trim(deduplicate.out)
 
-/*    map2Ref(trim.out)
+    map2Ref(trim.out)
 
-    mask(map2Ref.out)
+/*    mask(map2Ref.out)
 
     varCall(map2Ref.out)
 
