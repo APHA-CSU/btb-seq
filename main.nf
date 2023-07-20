@@ -2,26 +2,6 @@
 
 nextflow.enable.dsl=2
 
-//Define variables
-params.lowmem = ""
-params.reads = "$PWD/*_{S*_R1,S*_R2}*.fastq.gz"
-params.outdir = "$PWD"
-
-ref = file(params.ref)
-refgbk = file(params.refgbk)
-rptmask = file(params.rptmask)
-allsites = file(params.allsites)
-stage1pat = file(params.stage1pat)
-adapters = file(params.adapters)
-discrimPos = file(params.discrimPos)
-
-pypath = file(params.pypath)
-kraken2db = file(params.kraken2db)
-
-seqplate = "${params.DataDir}"
-publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
-commitId = "${workflow.commitId}"
-
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
