@@ -90,7 +90,7 @@ process mask {
 	maxForks 2
 	input:
 		tuple val(pair_id), file("called.vcf"), file("called.vcf.csi")
-		tuple val(paid_id), file("mapped.bam")
+		tuple val(pair_id), file("mapped.bam")
 	output:
 		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
 	"""
@@ -123,9 +123,10 @@ process vcf2Consensus {
 	maxForks 2
 	input:
 		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
-		tuple val(paid_id), file("variant.vcf.gz"),	file("variant.vcf.gz.csi")
+		tuple val(pair_id), file("variant.vcf.gz"),	file("variant.vcf.gz.csi")
 	output:
-		tuple val(pair_id), file("${pair_id}_consensus.fas"), file("${pair_id}_snps.tab"), file("${pair_id}_ncount.csv")
+		tuple val(pair_id), file("${pair_id}_consensus.fas"), file("${pair_id}_snps.tab"), emit: consensus
+		tuple val(pair_id), file("${pair_id}_ncount.csv"), emit: nCount
 	"""
 	vcf2Consensus.bash $ref \
 		mask.bed \
@@ -179,6 +180,19 @@ process idNonBovis {
 	"""
 }
 
+process combineOutput {
+	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
+	input:
+		file('assigned_csv')
+		file('qbovis_csv')
+		file('ncount_csv')
+	output:
+		file('*.csv')
+	"""
+	combineCsv.py assigned_csv qbovis_csv ncount_csv $seqplate $commitId
+	"""
+}
+
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
@@ -205,5 +219,17 @@ workflow{
 
     idNonBovis(readStats.out.outcome, trim.out)
 
-    /*combineOutput(assignCluster.out, idNonBovis.out)*/
+	assignCluster.out
+		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
+		.set {assigned}
+
+	idNonBovis.out.queryBovis
+		.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
+		.set {qbovis}
+
+	vcf2Consensus.out.nCount
+		.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
+		.set {consensusQual}
+
+    combineOutput(assigned, qbovis, consensusQual)
 }
