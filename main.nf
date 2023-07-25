@@ -98,7 +98,7 @@ process mask {
 	"""
 }
 
-process readStats{
+process readStats {
 	errorStrategy 'finish'
     tag "$pair_id"
 	maxForks 2
@@ -140,13 +140,13 @@ process vcf2Consensus {
 	"""
 }
 
-process assignCluster{
+process assignCluster {
 	errorStrategy 'ignore'
     tag "$pair_id"
 	maxForks 1
 	input:
 		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi")
-		tuple val(paid_id), file("${pair_id}_stats.csv")
+		tuple val(pair_id), file("${pair_id}_stats.csv")
 	output:
 		file("${pair_id}_stage1.csv")
 	"""
@@ -160,6 +160,22 @@ process assignCluster{
 		$min_qual_nonsnp \
 		$pypath \
 		$ref
+	"""
+}
+
+process idNonBovis {
+	errorStrategy 'finish'
+    tag "$pair_id"
+	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
+	maxForks 1
+	input:
+		tuple val(pair_id), file("outcome.txt")
+		tuple val(pair_id), file("trimmed_1.fastq"), file("trimmed_2.fastq")
+	output:
+		tuple val(pair_id), file("${pair_id}_bovis.csv"), emit: queryBovis
+		tuple val(pair_id), file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab"), optional: true, emit: krakenOut
+	"""
+	idNonBovis.bash $pair_id $kraken2db $params.lowmem
 	"""
 }
 
@@ -187,7 +203,7 @@ workflow{
 
     assignCluster(varCall.out, readStats.out.stats)
 
-    /*idNonBovis(trim.out, readStats.out)
+    idNonBovis(readStats.out.outcome, trim.out)
 
-    combineOutput(assignCluster.out, idNonBovis.out)*/
+    /*combineOutput(assignCluster.out, idNonBovis.out)*/
 }
