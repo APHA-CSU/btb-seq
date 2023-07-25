@@ -89,8 +89,7 @@ process mask {
 	tag "$pair_id"
 	maxForks 2
 	input:
-		tuple val(pair_id), file("called.vcf"), file("called.vcf.csi")
-		tuple val(pair_id), file("mapped.bam")
+		tuple val(pair_id), file("called.vcf"), file("called.vcf.csi"), file("mapped.bam")
 	output:
 		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
 	"""
@@ -103,10 +102,10 @@ process readStats {
     tag "$pair_id"
 	maxForks 2
 	input:
-		tuple val(pair_id), file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz")
-		tuple val(pair_id), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq")
-		tuple val(pair_id), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq")
-		tuple val(pair_id), file("${pair_id}.mapped.sorted.bam")
+		tuple val(pair_id), file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz"), 
+		file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq"),
+		file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq"),
+		file("${pair_id}.mapped.sorted.bam")
 	output:
 		tuple val(pair_id), file("${pair_id}_stats.csv"), emit: stats
 		tuple val(pair_id), file('outcome.txt'), emit: outcome
@@ -122,11 +121,11 @@ process vcf2Consensus {
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
 	maxForks 2
 	input:
-		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
-		tuple val(pair_id), file("variant.vcf.gz"),	file("variant.vcf.gz.csi")
+		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed"),
+		file("variant.vcf.gz"),	file("variant.vcf.gz.csi")
 	output:
 		tuple val(pair_id), file("${pair_id}_consensus.fas"), file("${pair_id}_snps.tab"), emit: consensus
-		tuple val(pair_id), file("${pair_id}_ncount.csv"), emit: nCount
+		file("${pair_id}_ncount.csv"), emit: nCount
 	"""
 	vcf2Consensus.bash $ref \
 		mask.bed \
@@ -146,8 +145,8 @@ process assignCluster {
     tag "$pair_id"
 	maxForks 1
 	input:
-		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi")
-		tuple val(pair_id), file("${pair_id}_stats.csv")
+		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi"),
+		file("${pair_id}_stats.csv")
 	output:
 		file("${pair_id}_stage1.csv")
 	"""
@@ -170,10 +169,9 @@ process idNonBovis {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
 	maxForks 1
 	input:
-		tuple val(pair_id), file("outcome.txt")
-		tuple val(pair_id), file("trimmed_1.fastq"), file("trimmed_2.fastq")
+		tuple val(pair_id), file("outcome.txt"), file("trimmed_1.fastq"), file("trimmed_2.fastq")
 	output:
-		tuple val(pair_id), file("${pair_id}_bovis.csv"), emit: queryBovis
+		file("${pair_id}_bovis.csv"), emit: queryBovis
 		tuple val(pair_id), file("${pair_id}_*_brackensort.tab"), file("${pair_id}_*_kraken2.tab"), optional: true, emit: krakenOut
 	"""
 	idNonBovis.bash $pair_id $kraken2db $params.lowmem
@@ -209,15 +207,37 @@ workflow{
 
 	varCall(map2Ref.out)
 	
-	mask(varCall.out, map2Ref.out)
+	varCall.out
+		.join( map2Ref.out )
+		.set {vcf_bam}
 
-    readStats(readPairs, deduplicate.out, trim.out, map2Ref.out)
+	mask(vcf_bam)
 
-    vcf2Consensus(mask.out, varCall.out)
+	readPairs
+		.join( deduplicate.out )
+		.join( trim.out )
+		.join( map2Ref.out )
+		.set {reads_mapped}
 
-    assignCluster(varCall.out, readStats.out.stats)
+    readStats(reads_mapped)
 
-    idNonBovis(readStats.out.outcome, trim.out)
+    mask.out
+		.join( varCall.out )
+		.set {mask_vcf}
+
+	vcf2Consensus(mask_vcf)
+
+	varCall.out
+		.join( readStats.out.stats )
+		.set {vcf_stats}
+
+    assignCluster(vcf_stats)
+
+	readStats.out.outcome
+		.join( trim.out )
+		.set {outcome_reads}
+
+    idNonBovis(outcome_reads)
 
 	assignCluster.out
 		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
