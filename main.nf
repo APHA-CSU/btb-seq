@@ -66,7 +66,7 @@ process map2Ref {
 	output:
     	tuple val(pair_id), file("${pair_id}.bam")
 	"""
-	map2ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
@@ -81,6 +81,20 @@ process varCall {
 		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi")
 	"""
 	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
+	"""
+}
+
+process mask {
+	errorStrategy 'finish'
+	tag "$pair_id"
+	maxForks 2
+	input:
+		tuple val(pair_id), file("called.vcf"), file("called.vcf.csi")
+		tuple val(paid_id), file("mapped.bam")
+	output:
+		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
+	"""
+	mask.bash $rptmask called.vcf mask.bed nonmasked-regions.bed mapped.bam $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
@@ -100,9 +114,9 @@ workflow{
 
 	varCall(map2Ref.out)
 	
-	/*mask(map2Ref.out)
+	mask(varCall.out, map2Ref.out)
 
-    readStats(read_pairs, deduplicate.out, trim.out, map2Ref.out)
+    /*readStats(read_pairs, deduplicate.out, trim.out, map2Ref.out)
 
     vcf2Consensus(varCall.out, mask.out)
 
