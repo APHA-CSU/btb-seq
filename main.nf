@@ -18,17 +18,17 @@ discrimPos = file(params.discrimPos)
 pypath = file(params.pypath)
 kraken2db = file(params.kraken2db)
 
-    /* Collect name of data folder and analysis run date
+//Collect name of data folder and analysis run date
     FirstFile = file( params.reads ).first()
-	    DataPath = FirstFile.getParent()
-	    GetTopDir = ~/\/\*\//
-	    TopDir = DataPath - GetTopDir
-	    params.DataDir = TopDir.last()
-	    params.today = new Date().format('ddMMMYY')
+	DataPath = FirstFile.getParent()
+	GetTopDir = ~/\/\*\//
+	TopDir = DataPath - GetTopDir
+	params.DataDir = TopDir.last()
+	params.today = new Date().format('ddMMMYY')
 
-seqplate = "${params.DataDir}"
-publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
-commitId = "${workflow.commitId}"*/
+	seqplate = "${params.DataDir}"
+	publishDir = "$params.outdir/Results_${params.DataDir}_${params.today}/"
+	commitId = "${workflow.commitId}"
 
 process deduplicate {
     errorStrategy 'finish'
@@ -66,7 +66,21 @@ process map2Ref {
 	output:
     	tuple val(pair_id), file("${pair_id}.bam")
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	map2ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	"""
+}
+
+process varCall {
+	errorStrategy 'finish'
+	tag "$pair_id"
+	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
+	maxForks 3
+	input:
+		tuple val(pair_id), file("mapped.bam")
+	output:
+		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi")
+	"""
+	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
 	"""
 }
 
@@ -84,9 +98,9 @@ workflow{
 
     map2Ref(trim.out)
 
-/*    mask(map2Ref.out)
-
-    varCall(map2Ref.out)
+	varCall(map2Ref.out)
+	
+	/*mask(map2Ref.out)
 
     readStats(read_pairs, deduplicate.out, trim.out, map2Ref.out)
 
