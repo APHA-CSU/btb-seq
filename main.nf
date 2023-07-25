@@ -98,6 +98,23 @@ process mask {
 	"""
 }
 
+process readStats{
+	errorStrategy 'finish'
+    tag "$pair_id"
+	maxForks 2
+	input:
+		tuple val(pair_id), file("${pair_id}_*_R1_*.fastq.gz"), file("${pair_id}_*_R2_*.fastq.gz")
+		tuple val(pair_id), file("${pair_id}_uniq_R1.fastq"), file("${pair_id}_uniq_R2.fastq")
+		tuple val(pair_id), file("${pair_id}_trim_R1.fastq"), file("${pair_id}_trim_R2.fastq")
+		tuple val(pair_id), file("${pair_id}.mapped.sorted.bam")
+	output:
+		tuple val(pair_id), file("${pair_id}_stats.csv"), emit: stats
+		tuple val(pair_id), file('outcome.txt'), emit: outcome
+    """
+    readStats.bash "$pair_id"
+    """
+}
+
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
@@ -116,9 +133,9 @@ workflow{
 	
 	mask(varCall.out, map2Ref.out)
 
-    /*readStats(read_pairs, deduplicate.out, trim.out, map2Ref.out)
+    readStats(readPairs, deduplicate.out, trim.out, map2Ref.out)
 
-    vcf2Consensus(varCall.out, mask.out)
+    /*vcf2Consensus(varCall.out, mask.out)
 
     assignCluster(varCall.out, readStats.out)
 
