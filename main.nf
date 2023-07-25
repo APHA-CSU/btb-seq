@@ -140,6 +140,29 @@ process vcf2Consensus {
 	"""
 }
 
+process assignCluster{
+	errorStrategy 'ignore'
+    tag "$pair_id"
+	maxForks 1
+	input:
+		tuple val(pair_id), file("${pair_id}.vcf.gz"), file("${pair_id}.vcf.gz.csi")
+		tuple val(paid_id), file("${pair_id}_stats.csv")
+	output:
+		file("${pair_id}_stage1.csv")
+	"""
+	assignClusterCss.bash $pair_id \
+		$discrimPos \
+		$stage1pat \
+		$min_mean_cov \
+		$min_cov_snp \
+		$alt_prop_snp \
+		$min_qual_snp \
+		$min_qual_nonsnp \
+		$pypath \
+		$ref
+	"""
+}
+
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
@@ -162,9 +185,9 @@ workflow{
 
     vcf2Consensus(mask.out, varCall.out)
 
-    /*assignCluster(varCall.out, readStats.out)
+    assignCluster(varCall.out, readStats.out.stats)
 
-    idNonBovis(trim.out, readStats.out)
+    /*idNonBovis(trim.out, readStats.out)
 
     combineOutput(assignCluster.out, idNonBovis.out)*/
 }
