@@ -115,6 +115,31 @@ process readStats{
     """
 }
 
+process vcf2Consensus {
+	errorStrategy 'finish'
+    tag "$pair_id"
+	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
+	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
+	maxForks 2
+	input:
+		tuple val(pair_id), file("mask.bed"), file("nonmasked-regions.bed")
+		tuple val(paid_id), file("variant.vcf.gz"),	file("variant.vcf.gz.csi")
+	output:
+		tuple val(pair_id), file("${pair_id}_consensus.fas"), file("${pair_id}_snps.tab"), file("${pair_id}_ncount.csv")
+	"""
+	vcf2Consensus.bash $ref \
+		mask.bed \
+		nonmasked-regions.bed \
+		variant.vcf.gz \
+		${pair_id}_consensus.fas \
+		${pair_id}_snps.tab \
+		${pair_id}_filtered.bcf \
+		$params.MIN_ALLELE_FREQUENCY_ALT \
+		$pair_id \
+		$publishDir
+	"""
+}
+
 workflow{
     /*	Collect pairs of fastq files and infer sample names
     Define the input raw sequening data files */
@@ -135,9 +160,9 @@ workflow{
 
     readStats(readPairs, deduplicate.out, trim.out, map2Ref.out)
 
-    /*vcf2Consensus(varCall.out, mask.out)
+    vcf2Consensus(mask.out, varCall.out)
 
-    assignCluster(varCall.out, readStats.out)
+    /*assignCluster(varCall.out, readStats.out)
 
     idNonBovis(trim.out, readStats.out)
 
