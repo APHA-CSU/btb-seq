@@ -7,7 +7,7 @@
 #% DESCRIPTION
 #%    Integration tests for nextflow should be called this way. 
 
-nextflow run bTB-WGS_process.nf \
+nextflow run main.nf \
 --outdir "/results/" \
 --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" \
 --lowmem '"--memory-map"' \
