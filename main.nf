@@ -66,7 +66,7 @@ process map2Ref {
 	output:
     	tuple val(pair_id), path("${pair_id}.bam")
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	bowtieMap.sh $params.bwtref read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
