@@ -199,11 +199,11 @@ workflow{
         .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	    .set { readPairs }
 
-    deduplicate(readPairs)
+	deduplicate(readPairs)
 
-    trim(deduplicate.out)
+	trim(deduplicate.out)
 
-    map2Ref(trim.out)
+	map2Ref(trim.out)
 
 	varCall(map2Ref.out)
 	
@@ -219,9 +219,9 @@ workflow{
 		.join( map2Ref.out )
 		.set {reads_mapped}
 
-    readStats(reads_mapped)
+	readStats(reads_mapped)
 
-    mask.out
+	mask.out
 		.join( varCall.out )
 		.set {mask_vcf}
 
@@ -231,13 +231,13 @@ workflow{
 		.join( readStats.out.stats )
 		.set {vcf_stats}
 
-    assignCluster(vcf_stats)
+	assignCluster(vcf_stats)
 
 	readStats.out.outcome
 		.join( trim.out )
 		.set {outcome_reads}
 
-    idNonBovis(outcome_reads)
+	idNonBovis(outcome_reads)
 
 	assignCluster.out
 		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
@@ -251,5 +251,5 @@ workflow{
 		.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
 		.set {consensusQual}
 
-    combineOutput(assigned, qbovis, consensusQual)
+	combineOutput(assigned, qbovis, consensusQual)
 }
