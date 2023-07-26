@@ -30,4 +30,4 @@ RUN cd ./docker && bash ./install-all-dependancies.bash
 
 ################## ENTRY ######################
 
-CMD nextflow run bTB-WGS_process.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
+CMD nextflow run main.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
