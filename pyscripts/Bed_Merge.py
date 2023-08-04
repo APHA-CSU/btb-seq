@@ -4,10 +4,6 @@ import pandas as pd
 import sys
 import os
 
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
-
 args=sys.argv
 
 if len(args)<2:
@@ -80,5 +76,3 @@ for x in datadriven:
 bedfile = bedfile.sort_values("Start")
 
 bedfile.to_csv('mask.bed', sep='\t', index=False, header=None)
-
-print(dname+"/mask.bed")
