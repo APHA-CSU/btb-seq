@@ -32,8 +32,6 @@ bcf=$7
 MIN_ALLELE_FREQUENCY=$8
 pair_id=$9
 publishDir=${10}
-positions=${11}
-final_mask=${12}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
@@ -47,17 +45,19 @@ fi
 bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLELE_FREQUENCY}" $vcf -Ob -o $bcf
 bcftools index $bcf
 
-#create pos and from this extract snp which are 10 SNPs away, finally create a new combined mask
-bcftools query -f '%POS\n' $bcf > $positions
-python3 $pypath/Bed_Merge.py $mask $positions > $final_mask
+#create pos and from this extract snp which are 10 SNPs away, finally create a new combined mask (location stored in loc.txt and then into location variable)
+bcftools query -f '%POS\n' $bcf > pos.txt
+python3 $pypath/Bed_Merge.py $mask pos.txt > loc.txt
+location=$(< loc.txt)
 
 # Call Consensus
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $final_mask $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $location $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
-#delete pos and new mask files
-rm $positions
-rm $final_mask
+#delete pos and all assosicated new mask files
+rm pos.txt
+rm loc.txt
+rm $location
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
