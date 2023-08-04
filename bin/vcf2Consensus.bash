@@ -48,17 +48,15 @@ bcftools index $bcf
 
 #create pos and from this extract snp which are 10 SNPs away, finally create a new combined mask (location stored in loc.txt and then into location variable)
 bcftools query -f '%POS\n' $bcf > pos.txt
-python3 $pypath/Bed_Merge.py $mask pos.txt > loc.txt
-location=$(< loc.txt)
+python3 $pypath/Bed_Merge.py $mask pos.txt 
 
 # Call Consensus
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $location $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m mask.bed $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 #delete pos and all assosicated new mask files
 rm pos.txt
-rm loc.txt
-rm $location
+rm mask.bed
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
