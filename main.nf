@@ -138,7 +138,8 @@ process vcf2Consensus {
 		$pair_id \
 		$publishDir \
 		$pypath \
-		${pair_id}_pos.txt
+		${pair_id}_pos.txt \
+		${pair_id}_mask.bed
 	"""
 }
 
