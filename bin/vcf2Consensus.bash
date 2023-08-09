@@ -34,6 +34,7 @@ pair_id=$9
 publishDir=${10}
 pypath=${11}
 pos=${12}
+add_mask=${13}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
@@ -49,15 +50,15 @@ bcftools index $bcf
 
 #create pos and from this extract snp which are 10 SNPs away, finally create a new combined mask (location stored in loc.txt and then into location variable)
 bcftools query -f '%POS\n' $bcf > $pos
-python3 $pypath/Bed_Merge.py $mask $pos
+python3 $pypath/Bed_Merge.py $mask $pos $add_mask
 
 # Call Consensus
-bcftools consensus -f ${ref} -e 'TYPE="indel"' -m mask.bed $bcf |
+bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $add_mask $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 #delete pos and all assosicated new mask files
 rm $pos
-rm mask.bed
+rm $add_mask
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
