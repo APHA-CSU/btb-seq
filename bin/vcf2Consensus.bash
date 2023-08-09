@@ -33,6 +33,7 @@ MIN_ALLELE_FREQUENCY=$8
 pair_id=$9
 publishDir=${10}
 pypath=${11}
+pos=${12}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
@@ -47,8 +48,8 @@ bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${MIN_ALLE
 bcftools index $bcf
 
 #create pos and from this extract snp which are 10 SNPs away, finally create a new combined mask (location stored in loc.txt and then into location variable)
-bcftools query -f '%POS\n' $bcf > pos.txt
-python3 $pypath/Bed_Merge.py $mask pos.txt 
+bcftools query -f '%POS\n' $bcf > $pos
+python3 $pypath/Bed_Merge.py $mask $pos
 
 # Call Consensus
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m mask.bed $bcf |
