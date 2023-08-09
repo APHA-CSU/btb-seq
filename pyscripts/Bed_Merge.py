@@ -12,6 +12,7 @@ if len(args)<2:
 else:
     mask = sys.argv[1]
     positions =sys.argv[2]
+    output =sys.argv[3]
 
 f = open(positions).read().split('\n')
 
@@ -75,4 +76,4 @@ for x in datadriven:
 
 bedfile = bedfile.sort_values("Start")
 
-bedfile.to_csv('mask.bed', sep='\t', index=False, header=None)
+bedfile.to_csv(output, sep='\t', index=False, header=None)
