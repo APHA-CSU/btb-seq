@@ -56,7 +56,7 @@ bcftools consensus -f ${ref} -e 'TYPE="indel"' -m mask.bed $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 #delete pos and all assosicated new mask files
-rm pos.txt
+rm $pos
 rm mask.bed
 
 # Count Ns in consensus file
