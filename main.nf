@@ -137,7 +137,8 @@ process vcf2Consensus {
 		$params.MIN_ALLELE_FREQUENCY_ALT \
 		$pair_id \
 		$publishDir \
-		$pypath
+		$pypath \
+		${pair_id}_pos.txt
 	"""
 }
 
