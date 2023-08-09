@@ -57,8 +57,8 @@ bcftools consensus -f ${ref} -e 'TYPE="indel"' -m $add_mask $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
 #delete pos and all assosicated new mask files
-rm $pos
-rm $add_mask
+#rm $pos
+#rm $add_mask
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
