@@ -55,8 +55,6 @@ python3 $pypath/Bed_Merge.py $mask ${pair_id}_pos.txt ${pair_id}_addmask.bed
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m ${pair_id}_addmask.bed $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
-#delete pos and all assosicated new mask files
-rm ${pair_id}_addmask.bed ${pair_id}_pos.txt
 
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
@@ -64,10 +62,13 @@ echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
 #recalculate the regions variable with the new mask so that the snp.tab is correct
-bedtools subtract -a $allsites -b $add_mask > $regions
+bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
 
 bcftools query -R $regions -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' $bcf |
 awk -F, '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$5":"$8+$9" "$4":"$6+$7}' >> $snps
+
+#delete pos and all assosicated new mask files
+rm ${pair_id}_addmask.bed ${pair_id}_pos.txt
