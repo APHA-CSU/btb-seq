@@ -33,8 +33,7 @@ MIN_ALLELE_FREQUENCY=$8
 pair_id=$9
 publishDir=${10}
 pypath=${11}
-pos=${12}
-add_mask=${13}
+allsites=${12}
 
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
@@ -63,6 +62,9 @@ rm ${pair_id}_addmask.bed ${pair_id}_pos.txt
 ncount=$(grep -o 'N' $consensus | wc -l)
 echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
+
+#recalculate the regions variable with the new mask so that the snp.tab is correct
+bedtools subtract -a $allsites -b $add_mask > $regions
 
 # Write SNPs table
 echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > $snps
