@@ -2,9 +2,8 @@
 
 set -eo pipefail
 
-
-read_1=$2
-read_2=$3
+read_1=$1
+read_2=$2
 $ref=$3
 
 bbduk.sh in1=$read_1 in2=$read_2 \
