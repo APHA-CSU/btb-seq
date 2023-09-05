@@ -19,6 +19,7 @@ pair_id=$1
     uniq_R1=$(( $(cat ${pair_id}_uniq_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     rm `readlink ${pair_id}_uniq_R2.fastq`
     trim_R1=$(( $(cat ${pair_id}_trim_R1.fastq | wc -l) / 4 )) # counts number of reads in file
+    decontam_R1=$(( $(zcat clean_R1.fastq.gz | wc -l) / 4 )) # counts number of reads in file
     num_map=$(samtools view -c ${pair_id}.mapped.sorted.bam) # samtools counts the number of mapped reads
     samtools depth -a ${pair_id}.mapped.sorted.bam > depth.txt # samtools outputs depth at each position
     avg_depth=$(awk '{sum+=$3} END { printf "%.3f", sum/NR}' depth.txt)
@@ -33,9 +34,11 @@ pair_id=$1
     num_raw=$(($raw_R1*2))
     num_uniq=$(($uniq_R1*2))
     num_trim=$(($trim_R1*2))
+    num_clean=$(($decontam_R1*2))
     pc_aft_dedup=$(echo "scale=2; ($num_uniq*100/$num_raw)" |bc)
     pc_aft_trim=$(echo "scale=2; ($num_trim*100/$num_uniq)" |bc)
-    pc_mapped=$(echo "scale=2; ($num_map*100/$num_trim)" |bc)
+    pc_clean=$(echo "scale=2; ($num_clean*100/$num_trim)" |bc)
+    pc_mapped=$(echo "scale=2; ($num_map*100/$num_clean)" |bc)
     genome_cov=$(echo "scale=2; (100-($zero_cov*100/$sites))" |bc)
 
 
@@ -60,6 +63,6 @@ pair_id=$1
 
 # Write values to csv file
 
-    echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome" > ${pair_id}_stats.csv
-    echo "${pair_id},"$num_raw","$num_uniq","$pc_aft_dedup","$num_trim","$pc_aft_trim","$num_map","$pc_mapped","$avg_depth","$genome_cov","$flag"" >> ${pair_id}_stats.csv
+    echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,%Clean,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome" > ${pair_id}_stats.csv
+    echo "${pair_id},"$num_raw","$num_uniq","$pc_aft_dedup","$num_trim","$pc_aft_trim","$pc_clean","$num_map","$pc_mapped","$avg_depth","$genome_cov","$flag"" >> ${pair_id}_stats.csv
     echo "$flag" > outcome.txt
