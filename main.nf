@@ -56,6 +56,19 @@ process trim {
 	"""
 }
 
+process decontam {
+	errorStrategy 'finish'
+	tag "$pair_id"
+	maxForks 2
+	input:
+		tuple val(pair_id), path("trimmed_1.fastq"), path("trimmed_2.fastq")
+	output:
+		tuple val(pair_id), path("clean_R1.fastq.gz"), path("clean_R2.fastq.gz")
+	"""
+	decontaminate.sh trimmed_1.fastq trimmed_2.fastq $ref
+	"""
+}
+
 process map2Ref {
     errorStrategy 'finish'
     tag "$pair_id"
@@ -203,7 +216,9 @@ workflow{
 
 	trim(deduplicate.out)
 
-	map2Ref(trim.out)
+	decontam(trim.out)
+
+	map2Ref(decontam.out)
 
 	varCall(map2Ref.out)
 	
