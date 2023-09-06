@@ -118,6 +118,7 @@ process readStats {
 		tuple val(pair_id), path("${pair_id}_*_R1_*.fastq.gz"), path("${pair_id}_*_R2_*.fastq.gz"), 
 		path("${pair_id}_uniq_R1.fastq"), path("${pair_id}_uniq_R2.fastq"),
 		path("${pair_id}_trim_R1.fastq"), path("${pair_id}_trim_R2.fastq"),
+		path("clean_R1.fastq.gz"), path("clean_R2.fastq.gz"),
 		path("${pair_id}.mapped.sorted.bam")
 	output:
 		tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
@@ -231,6 +232,7 @@ workflow{
 	readPairs
 		.join( deduplicate.out )
 		.join( trim.out )
+		.join( decontam.out )
 		.join( map2Ref.out )
 		.set {reads_mapped}
 
