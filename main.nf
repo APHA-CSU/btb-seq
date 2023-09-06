@@ -57,9 +57,11 @@ process trim {
 }
 
 process decontam {
-	errorStrategy 'finish'
+	errorStrategy 'retry'
+	maxRetries 3
 	tag "$pair_id"
 	maxForks 2
+	memory '500 MB'
 	input:
 		tuple val(pair_id), path("trimmed_1.fastq"), path("trimmed_2.fastq")
 	output:
