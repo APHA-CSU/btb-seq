@@ -38,7 +38,7 @@ pair_id=$1
     pc_aft_dedup=$(echo "scale=2; ($num_uniq*100/$num_raw)" |bc)
     pc_aft_trim=$(echo "scale=2; ($num_trim*100/$num_uniq)" |bc)
     pc_clean=$(echo "scale=2; ($num_clean*100/$num_trim)" |bc)
-    pc_mapped=$(echo "scale=2; ($num_map*100/$num_clean)" |bc)
+    pc_mapped=$(echo "scale=2; ($num_map*100/$num_trim)" |bc)
     genome_cov=$(echo "scale=2; (100-($zero_cov*100/$sites))" |bc)
 
 
