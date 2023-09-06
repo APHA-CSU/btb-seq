@@ -48,12 +48,12 @@ pair_id=$1
     minpc=60 # require at least 60% of data maps to genome
     minreads=600000 # require at least 600,000 raw reads per sample
     minafttrim=60 # require at least 60% reads to pass quality filtering steps
-
+    minclean=90 # require at least 90% of reads to be M.bovis
 
 # This section assigns 'flags' based on the number of reads and the proportion mapping to reference genome
     
     if [[ ${pc_aft_trim%%.*} -lt $minafttrim ]]; then flag="LowQualData"
-        elif [[ ${avg_depth%%.*} -ge $mindepth ]] && [[ ${pc_mapped%%.*} -gt $minpc ]]; then flag="Pass"
+        elif [[ ${avg_depth%%.*} -ge $mindepth ]] && [[ ${pc_mapped%%.*} -gt $minpc ]] && [[ ${pc_clean%%.*} -gt %minclean ]]; then flag="Pass"
         elif [[ ${avg_depth%%.*} -lt $mindepth ]] && [[ ${pc_mapped%%.*} -lt $minpc ]] && [[ $num_trim -gt $minreads ]]; then flag="Contaminated"
         elif [[ ${avg_depth%%.*} -lt $mindepth ]] && [[ $num_trim -lt $minreads ]]; then flag="InsufficientData"
 #        elif [ ${pc_mapped%%.*} -lt $minpc ] && [ $num_trim -gt $minreads ]; then flag="q_OtherMycobact"
