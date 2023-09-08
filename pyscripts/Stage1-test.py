@@ -123,9 +123,10 @@ def findGenotypeOneSample(strainsDetailsTittle, strainDetails, pathTBRuns, patte
 # If the match to the first reference dataset is above a given threshold the process moves to the next
 # This is iterated depending on the outcomes
     [strainGSSInfo, strainGSSBritishBTBInfo, strainGSSBTBInfo, strainGSSMic_PinInfo, strainGSSMicrotiInfo,
-     strainGSSPinnipediiInfo] = getSnpsStatsStrain(strainStatsFileName,
-                    [posToExtract, posToExtractBritishBTB, posToExtractBTB, posToExtractMic_Pin, posToExtractMicroti,
-                     posToExtractPinnipedii], pathAux, thMinGoodCov, thCovProp, thqualsnp, thqualnonsnp)
+     strainGSSPinnipediiInfo] = getSnpsStatsStrain(strainStatsFileName, [posToExtract, posToExtractBritishBTB,
+                                                   posToExtractBTB, posToExtractMic_Pin, posToExtractMicroti,
+                                                   posToExtractPinnipedii], pathAux, thMinGoodCov, thCovProp,
+                                                   thqualsnp, thqualnonsnp)
     if meanCov >= qth:
         BTB = getBestMatchPattern(patternsBTBDetails, strainGSSBTBInfo)[0]
         if BTB[0] == "bTB" and BTB[2] >= 70:
@@ -263,7 +264,7 @@ if not os.path.exists(pathAux):
     os.system("mkdir " + pathAux)
 
 
-strainsInfo = readTable(strainDetailsFile, ', ')
+strainsInfo = readTable(strainDetailsFile, ',')
 pfileName = strainsInfo[0].index('Sample')
 pmeanCov = strainsInfo[0].index('MeanDepth')
 ppermap = strainsInfo[0].index('%Mapped')
@@ -271,7 +272,8 @@ totalReads = strainsInfo[0].index('NumRawReads')
 genomeCov = strainsInfo[0].index('GenomeCov')
 outcome = strainsInfo[0].index('Outcome')
 strainsInfo = listT(strainsInfo)
-strainsDetails = listT([strainsInfo[pfileName][1:], strainsInfo[genomeCov][1:], strainsInfo[pmeanCov][1:], strainsInfo[totalReads][1:], strainsInfo[ppermap][1:], strainsInfo[outcome][1:]])
+strainsDetails = listT([strainsInfo[pfileName][1:], strainsInfo[genomeCov][1:], strainsInfo[pmeanCov][1:],
+                        strainsInfo[totalReads][1:], strainsInfo[ppermap][1:], strainsInfo[outcome][1:]])
 
 strainsDetails = [['Sample', 'GenomeCov', 'MeanDepth', 'NumRawReads', 'pcMapped', 'Outcome', ]]+strainsDetails
 print("Processing " + str(len(strainsDetails)) + " samples")
@@ -285,13 +287,18 @@ patternsBTBDetails = listT(readTable(os.path.join(pathPatterns, patternsBTBFile)
 
 
 maxPats = [strainsDetails[0]+["flag","group","CSSTested","matches","mismatches","noCoverage","anomalous"]]
-maxPatsQ = [[[patternsDetails[0][0]]]+[["PredGenotype"], ["M-MM-N-A"]]+[[x] for x in patternsDetails[0][1:]], [[patternsDetails[1][0]]]+[[""], [""]]+[[x] for x in patternsDetails[1][1:]], [[patternsDetails[2][0]]]+[[""], [""]]+[[x] for x in patternsDetails[2][1:]]]
+maxPatsQ = [[[patternsDetails[0][0]]]+[["PredGenotype"], ["M-MM-N-A"]]+[[x] for x in patternsDetails[0][1:]],
+            [[patternsDetails[1][0]]]+[[""], [""]]+[[x] for x in patternsDetails[1][1:]],
+            [[patternsDetails[2][0]]]+[[""], [""]]+[[x] for x in patternsDetails[2][1:]]]
 
 outFileName = "_stage1.csv"
 
 for strainDetails in strainsDetails[1:]:
     print(strainDetails)
-    [maxPat, strainQ] = findGenotypeOneSample(strainsDetails[0], strainDetails, pathTBRuns, patternsDetails, patternsBritishBTBDetails, patternsBTBDetails, patternsMic_PinDetails, patternsMicrotiDetails, patternsPinnipediiDetails, refName, qth, pathAux, thMinGoodCov, thCovProp, thqualsnp, thqualnonsnp)
+    [maxPat, strainQ] = findGenotypeOneSample(strainsDetails[0], strainDetails, pathTBRuns, patternsDetails,
+                                              patternsBritishBTBDetails, patternsBTBDetails, patternsMic_PinDetails,
+                                              patternsMicrotiDetails, patternsPinnipediiDetails, refName, qth, pathAux,
+                                              thMinGoodCov, thCovProp, thqualsnp, thqualnonsnp)
     maxPats = maxPats+[maxPat]
     if strainQ != "NA":
         maxPatsQ = maxPatsQ+[strainQ]
