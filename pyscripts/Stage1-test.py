@@ -195,7 +195,7 @@ def getSnpsStatsStrain(strainStatsFileName, listas, pathAux, thMinGoodCov, thCov
             det = line[7].split(";")
             if "DP4=" in line[7]:
                 call = "n"
-                gcovRF, gcovRR, gcovAF, gcovAR = map(int, [s for s in det if "DP4=" in s][0].split("DP4=")[1].split(", "))
+                gcovRF, gcovRR, gcovAF, gcovAR = map(int, [s for s in det if "DP4=" in s][0].split("DP4=")[1].split(","))
                 if ref.upper() in ["A", "C", "G", "T"] and alt.upper() in ["A", "C", "G", "T"]:
                     if gcovRF+gcovAF > 0 and gcovRR+gcovAR > 0:
                         if ref.upper() == alt.upper() and qual > thqualnonsnp and gcovRF+gcovRR > thMinGoodCov and float(gcovAF)/(gcovRF+gcovAF) < thCovProp and float(gcovAR)/(gcovRR+gcovAR) < thCovProp:
@@ -276,15 +276,15 @@ strainsDetails = listT([strainsInfo[pfileName][1:], strainsInfo[genomeCov][1:], 
 strainsDetails = [['Sample', 'GenomeCov', 'MeanDepth', 'NumRawReads', 'pcMapped', 'Outcome', ]]+strainsDetails
 print("Processing " + str(len(strainsDetails)) + " samples")
 
-patternsDetails = listT(readTable(os.path.join(pathPatterns, patternsDetailsFile), ", "))
-patternsBritishBTBDetails = listT(readTable(os.path.join(pathPatterns, patternsBritishBTBFile), ", "))
-patternsPinnipediiDetails = listT(readTable(os.path.join(pathPatterns, patternsPinnipediiFile), ", "))
-patternsMic_PinDetails = listT(readTable(os.path.join(pathPatterns, patternsMic_PinFile), ", "))
-patternsMicrotiDetails = listT(readTable(os.path.join(pathPatterns, patternsMicrotiFile), ", "))
-patternsBTBDetails = listT(readTable(os.path.join(pathPatterns, patternsBTBFile), ", "))
+patternsDetails = listT(readTable(os.path.join(pathPatterns, patternsDetailsFile), ","))
+patternsBritishBTBDetails = listT(readTable(os.path.join(pathPatterns, patternsBritishBTBFile), ","))
+patternsPinnipediiDetails = listT(readTable(os.path.join(pathPatterns, patternsPinnipediiFile), ","))
+patternsMic_PinDetails = listT(readTable(os.path.join(pathPatterns, patternsMic_PinFile), ","))
+patternsMicrotiDetails = listT(readTable(os.path.join(pathPatterns, patternsMicrotiFile), ","))
+patternsBTBDetails = listT(readTable(os.path.join(pathPatterns, patternsBTBFile), ","))
 
 
-maxPats = [strainsDetails[0]+["flag", "group", "CSSTested", "matches", "mismatches", "noCoverage", "anomalous"]]
+maxPats = [strainsDetails[0]+["flag","group","CSSTested","matches","mismatches","noCoverage","anomalous"]]
 maxPatsQ = [[[patternsDetails[0][0]]]+[["PredGenotype"], ["M-MM-N-A"]]+[[x] for x in patternsDetails[0][1:]], [[patternsDetails[1][0]]]+[[""], [""]]+[[x] for x in patternsDetails[1][1:]], [[patternsDetails[2][0]]]+[[""], [""]]+[[x] for x in patternsDetails[2][1:]]]
 
 outFileName = "_stage1.csv"
