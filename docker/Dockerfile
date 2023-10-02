@@ -27,5 +27,7 @@ RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 # Biotools
 RUN cd ./docker && bash ./install-all-dependancies.bash
 
-# Pull nextflow project
-RUN nextflow pull APHA-CSU/btb-seq
+
+################## ENTRY ######################
+
+CMD nextflow run main.nf --outdir "/results/" --reads "/reads/*_{S*_R1,S*_R2}*.fastq.gz" -with-report "/results/report.html"
