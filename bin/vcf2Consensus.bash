@@ -59,12 +59,13 @@ ncount=$(grep -o 'N' $consensus | wc -l)
 echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
-# handle the case when the regions file is empty otherwise bcftools filter will fail and also recalculate the regions variable with the new mask so that the snp.tab is correct, should also correct issues with contamined samples over running in vcf2consensus
+#recalculate the regions variable with the new mask so that the snp.tab is correct
+#bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
+
+# handle the case when the regions file is empty otherwise bcftools filter will fail
 if [ ! -s $regions ]; then
 	# The file is empty.
-	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions
-else
-	bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
 fi
 
 # Write SNPs table
