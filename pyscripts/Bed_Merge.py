@@ -22,6 +22,26 @@ pos = []
 for x in f:
     pos.append(int(x))
 
+#test if the samples has too many SNPs, if it does it is likey contaminated and will take too long to go through the 10 base SNP filter so output the old mask, will likey be caught by the other filters
+if len(pos) > 5000:
+    bedfile = pd.DataFrame(columns=["Sample","Start","End"])
+    
+    f = open(mask).read().split('\n')
+    f = f[:-1]
+    datadriven = []
+    for x in f:
+        datadriven.append(x.split("\t"))
+
+    for x in datadriven:
+        bedfile.loc[-1] = ["LT708304-Mycobacteriumbovis-AF2122-97",int(x[1]),int(x[2])]
+        bedfile.index = bedfile.index + 1
+        bedfile = bedfile.sort_index()
+
+    bedfile = bedfile.sort_values("Start")
+
+    bedfile.to_csv(output, sep='\t', index=False, header=None)
+    sys.exit()
+
 distance = 10
 remove = []
 counter = 0
