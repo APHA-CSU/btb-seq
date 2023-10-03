@@ -35,7 +35,6 @@ publishDir=${10}
 pypath=${11}
 allsites=${12}
 
-
 # handle the case when the regions file is empty otherwise bcftools filter will fail
 if [ ! -s $regions ]; then
 	# The file is empty.
@@ -55,19 +54,17 @@ python3 $pypath/Bed_Merge.py $mask ${pair_id}_pos.txt ${pair_id}_addmask.bed
 bcftools consensus -f ${ref} -e 'TYPE="indel"' -m ${pair_id}_addmask.bed $bcf |
 sed "/^>/ s/.*/>${pair_id}/" > $consensus
 
-
 # Count Ns in consensus file
 ncount=$(grep -o 'N' $consensus | wc -l)
 echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
-#recalculate the regions variable with the new mask so that the snp.tab is correct
-bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
-
-# handle the case when the regions file is empty otherwise bcftools filter will fail
+# handle the case when the regions file is empty otherwise bcftools filter will fail and also recalculate the regions variable with the new mask so that the snp.tab is correct, should also correct issues with contamined samples over running in vcf2consensus
 if [ ! -s $regions ]; then
 	# The file is empty.
-	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions	
+	echo "LT708304-Mycobacteriumbovis-AF2122-97	-1	-1" > $regions
+else
+	bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
 fi
 
 # Write SNPs table
