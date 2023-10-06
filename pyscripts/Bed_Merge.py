@@ -23,6 +23,7 @@ for x in f:
     pos.append(int(x))
 
 #test if the samples has too many SNPs, if it does it is likey contaminated and will take too long to go through the 10 base SNP filter so output the old mask, will likey be caught by the other filters
+"""
 if len(pos) > 5000:
     bedfile = pd.DataFrame(columns=["Sample","Start","End"])
     
@@ -41,7 +42,7 @@ if len(pos) > 5000:
 
     bedfile.to_csv(output, sep='\t', index=False, header=None)
     sys.exit()
-
+"""
 distance = 10
 remove = []
 counter = 0
