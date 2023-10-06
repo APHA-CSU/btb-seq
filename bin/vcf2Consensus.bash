@@ -60,7 +60,7 @@ echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
 echo -e "${pair_id},$ncount,$publishDir" >> ${pair_id}_ncount.csv
 
 #recalculate the regions variable with the new mask so that the snp.tab is correct
-#bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
+bedtools subtract -a $allsites -b ${pair_id}_addmask.bed > $regions
 
 # handle the case when the regions file is empty otherwise bcftools filter will fail
 if [ ! -s $regions ]; then
