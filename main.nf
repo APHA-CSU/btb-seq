@@ -141,6 +141,7 @@ process vcf2Consensus {
 }
 
 process assignCluster {
+	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:assign_clusters'
 	errorStrategy 'ignore'
     tag "$pair_id"
 	maxForks 1
