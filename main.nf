@@ -15,7 +15,6 @@ stage1pat = file(params.stage1pat)
 adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
-pypath = file(params.pypath)
 kraken2db = file(params.kraken2db)
 
 //Collect name of data folder and analysis run date
@@ -31,6 +30,9 @@ kraken2db = file(params.kraken2db)
 	commitId = "${workflow.commitId}"
 
 process deduplicate {
+    container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:deduplicate'
+    cpus 1
+    memory 2.GB
     errorStrategy 'finish'
     tag "$pair_id"
 	maxForks 2
@@ -44,6 +46,10 @@ process deduplicate {
 }
 
 process trim {
+    // TODO: this is running in the generic container - not working in specific container - need to fix
+    container = "982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:latest"
+    cpus 2
+    memory 2.GB
     errorStrategy 'finish'
     tag "$pair_id"
 	maxForks 2
@@ -57,6 +63,9 @@ process trim {
 }
 
 process map2Ref {
+    container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:map_2_ref'
+    cpus 2
+    memory 2.GB
     errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$publishDir/bam", mode: 'copy', pattern: '*.bam'
@@ -71,6 +80,9 @@ process map2Ref {
 }
 
 process varCall {
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:var_call'
+        cpus 1
+        memory 2.GB
 	errorStrategy 'finish'
 	tag "$pair_id"
 	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
@@ -85,6 +97,9 @@ process varCall {
 }
 
 process mask {
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:mask'
+	cpus 1
+	memory 2.GB
 	errorStrategy 'finish'
 	tag "$pair_id"
 	maxForks 2
@@ -98,6 +113,9 @@ process mask {
 }
 
 process readStats {
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:read_stats'
+        cpus 1
+        memory 2.GB
 	errorStrategy 'finish'
     tag "$pair_id"
 	maxForks 2
@@ -115,6 +133,9 @@ process readStats {
 }
 
 process vcf2Consensus {
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:vcf_2_consensus'
+        cpus 1
+        memory 2.GB
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
@@ -142,6 +163,8 @@ process vcf2Consensus {
 
 process assignCluster {
 	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:assign_clusters'
+        cpus 1
+        memory 2.GB
 	errorStrategy 'ignore'
     tag "$pair_id"
 	maxForks 1
@@ -159,12 +182,14 @@ process assignCluster {
 		$alt_prop_snp \
 		$min_qual_snp \
 		$min_qual_nonsnp \
-		$pypath \
 		$ref
 	"""
 }
 
 process idNonBovis {
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:id_non_bovis'
+	cpus 2
+	memory 8.GB
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
@@ -180,6 +205,9 @@ process idNonBovis {
 }
 
 process combineOutput {
+        cpus 1
+        memory 2.GB
+    	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:combine_output'
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	input:
 		path('assigned_csv')

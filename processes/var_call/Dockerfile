@@ -25,4 +25,4 @@ RUN chmod +x ./bin/*
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
 
 # Biotools
-RUN cd ./docker && bash ./install-all-dependancies.bash
+RUN bash ./install-all-dependancies.bash

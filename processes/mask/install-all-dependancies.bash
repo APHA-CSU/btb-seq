@@ -17,11 +17,12 @@ sudo apt-get -y update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y
     liblzma-dev \
     libcurl4-openssl-dev \
     python3 \
-    bc
+    g++
 
-# python 
+# python
 sudo ln -s /usr/bin/python3 /usr/bin/python
 
 ################## BIOTOOLS ######################
 
+bash -e install-bedtools.sh
 bash -e install-bcftools.sh
