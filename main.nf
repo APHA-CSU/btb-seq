@@ -47,7 +47,7 @@ process deduplicate {
 
 process trim {
     // TODO: this is running in the generic container - not working in specific container - need to fix
-    container = "982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:latest"
+    container = "982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:trim"
     cpus 2
     memory 2.GB
     errorStrategy 'finish'
