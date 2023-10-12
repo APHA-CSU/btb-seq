@@ -32,10 +32,9 @@ kraken2db = file(params.kraken2db)
 process deduplicate {
     container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:deduplicate'
     cpus 1
-    memory 2.GB
+    memory 4.GB
     errorStrategy 'finish'
     tag "$pair_id"
-	maxForks 2
 	input:
 	    tuple val(pair_id), path("pair_1"), path("pair_2")
 	output:
@@ -52,7 +51,6 @@ process trim {
     memory 2.GB
     errorStrategy 'finish'
     tag "$pair_id"
-	maxForks 2
 	input:
 	    tuple val(pair_id), path("read_1.fastq"), path("read_2.fastq")
 	output:
@@ -86,7 +84,6 @@ process varCall {
 	errorStrategy 'finish'
 	tag "$pair_id"
 	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
-	maxForks 3
 	input:
 		tuple val(pair_id), path("mapped.bam")
 	output:
@@ -102,7 +99,6 @@ process mask {
 	memory 2.GB
 	errorStrategy 'finish'
 	tag "$pair_id"
-	maxForks 2
 	input:
 		tuple val(pair_id), path("called.vcf"), path("called.vcf.csi"), path("mapped.bam")
 	output:
@@ -118,7 +114,6 @@ process readStats {
         memory 2.GB
 	errorStrategy 'finish'
     tag "$pair_id"
-	maxForks 2
 	input:
 		tuple val(pair_id), path("${pair_id}_*_R1_*.fastq.gz"), path("${pair_id}_*_R2_*.fastq.gz"), 
 		path("${pair_id}_uniq_R1.fastq"), path("${pair_id}_uniq_R2.fastq"),
@@ -140,7 +135,6 @@ process vcf2Consensus {
     tag "$pair_id"
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
 	publishDir "$publishDir/snpTables/", mode: 'copy', pattern: '*.tab'
-	maxForks 2
 	input:
 		tuple val(pair_id), path("mask.bed"), path("nonmasked-regions.bed"),
 		path("variant.vcf.gz"),	path("variant.vcf.gz.csi")
@@ -167,7 +161,6 @@ process assignCluster {
         memory 2.GB
 	errorStrategy 'ignore'
     tag "$pair_id"
-	maxForks 1
 	input:
 		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi"),
 		path("${pair_id}_stats.csv")
@@ -193,7 +186,6 @@ process idNonBovis {
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
-	maxForks 1
 	input:
 		tuple val(pair_id), path("outcome.txt"), path("trimmed_1.fastq"), path("trimmed_2.fastq")
 	output:
