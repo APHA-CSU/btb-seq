@@ -111,7 +111,7 @@ process mask {
 process readStats {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:read_stats'
         cpus 1
-        memory 2.GB
+        memory 4.GB
 	errorStrategy 'finish'
     tag "$pair_id"
 	input:
