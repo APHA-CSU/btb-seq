@@ -50,7 +50,7 @@ def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_thresho
     finalout_df.fillna('NA', inplace = True)
     finalout_df.set_index('Sample', inplace = True)
     finalout_df.index.astype(str)
-    finalout_df.sort_index(inplace = True)
+    #finalout_df.sort_index(inplace = True)
 
     #Write to csv
     finalout_df.to_csv("{}_FinalOut_{}.csv".format(seq_run, date_out))
