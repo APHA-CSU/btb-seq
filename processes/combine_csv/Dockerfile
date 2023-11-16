@@ -19,7 +19,6 @@ ARG BOVTB_PATH="/BovTB-nf/"
 # Copy repository
 WORKDIR $BOVTB_PATH
 COPY ./ ./
-RUN chmod +x ./bin/*
 
 # Sudo
 RUN apt-get -y update && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo
