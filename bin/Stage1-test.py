@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import csv, pickle, operator, os, sys         
 import collections

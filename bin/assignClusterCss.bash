@@ -17,5 +17,5 @@ min_qual_nonsnp=$8
 ref=$9
 
 bcftools view -R ${discrimPos} -O v -o ${pair_id}.discrimPos.vcf ${pair_id}.vcf.gz
-python3 Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
+Stage1-test.py ${pair_id}_stats.csv ${stage1pat} $ref test ${min_mean_cov} ${min_cov_snp} ${alt_prop_snp} ${min_qual_snp} ${min_qual_nonsnp} ${pair_id}.discrimPos.vcf
 mv _stage1.csv ${pair_id}_stage1.csv
