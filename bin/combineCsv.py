@@ -6,7 +6,6 @@
 import pandas as pd
 import argparse
 import getpass
-import git
 import os
 from datetime import datetime, date
 
@@ -15,7 +14,6 @@ def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_thresho
     date_out = date.today().strftime('%d%b%y')
     user = getpass.getuser()
     scriptpath = os.path.dirname(os.path.abspath(__file__))
-    repo = git.Repo(scriptpath, search_parent_directories=True)
     
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
