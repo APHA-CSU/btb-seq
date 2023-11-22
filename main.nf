@@ -32,7 +32,7 @@ kraken2db = file(params.kraken2db)
 process deduplicate {
     container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:deduplicate'
     cpus 1
-    memory 4.GB
+    memory 6.GB
     errorStrategy 'finish'
     tag "$pair_id"
 	input:
