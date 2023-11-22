@@ -15,4 +15,4 @@
 READS=$1
 RESULTS=$2
 
-nextflow run ./main.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz" -with-report "$RESULTS/report.html"
+nextflow run ./main.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz"  -profile cloud -with-report "$RESULTS/report.html"
