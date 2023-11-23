@@ -33,6 +33,7 @@ process deduplicate {
     container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:deduplicate'
     cpus 1
     memory 6.GB
+    time '5min'
     errorStrategy 'finish'
     tag "$pair_id"
 	input:
@@ -47,7 +48,8 @@ process deduplicate {
 process trim {
     container = "982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:trim"
     cpus 2
-    memory 2.GB
+    memory 4.GB
+    time '5min'
     errorStrategy 'finish'
     tag "$pair_id"
 	input:
@@ -62,7 +64,8 @@ process trim {
 process map2Ref {
     container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:map_2_ref'
     cpus 2
-    memory 2.GB
+    memory 4.GB
+    time '10min'
     errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$publishDir/bam", mode: 'copy', pattern: '*.bam'
@@ -80,6 +83,7 @@ process varCall {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:var_call'
         cpus 1
         memory 2.GB
+	time '10min'
 	errorStrategy 'finish'
 	tag "$pair_id"
 	publishDir "$publishDir/vcf", mode: 'copy', pattern: '*.vcf.gz'
@@ -96,6 +100,7 @@ process mask {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:mask'
 	cpus 1
 	memory 2.GB
+	time '3min'
 	errorStrategy 'finish'
 	tag "$pair_id"
 	input:
@@ -111,6 +116,7 @@ process readStats {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:read_stats'
         cpus 1
         memory 4.GB
+	time '3min'
 	errorStrategy 'finish'
     tag "$pair_id"
 	input:
@@ -130,6 +136,7 @@ process vcf2Consensus {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:vcf_2_consensus'
         cpus 1
         memory 2.GB
+	time '1min'
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$publishDir/consensus/", mode: 'copy', pattern: '*.fas'
@@ -158,6 +165,7 @@ process assignCluster {
 	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:assign_clusters'
         cpus 1
         memory 2.GB
+	time '2min'
 	errorStrategy 'ignore'
     tag "$pair_id"
 	input:
@@ -182,6 +190,7 @@ process idNonBovis {
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:id_non_bovis'
 	cpus 2
 	memory 8.GB
+	time '10min'
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
@@ -198,6 +207,7 @@ process idNonBovis {
 process combineOutput {
         cpus 1
         memory 2.GB
+	time '1min'
     	container '982622767822.dkr.ecr.eu-west-1.amazonaws.com/btb-seq:combine_output'
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	input:
