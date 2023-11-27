@@ -15,4 +15,4 @@
 READS=$1
 RESULTS=$2
 
-nextflow run ./main.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz"  -profile cloud -with-report "$RESULTS/report.html" -with-timeline "$RESULTS/timeline.html" -with-trace
+nextflow run ./main.nf --outdir $RESULTS --reads $READS/"*_{S*_R1,S*_R2}*.fastq.gz"  -profile cloud -with-report "$RESULTS/report.html" -with-timeline "$RESULTS/timeline.html" -with-trace -work-dir s3://s3-hello-nextflow/scratch/
