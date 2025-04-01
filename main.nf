@@ -64,10 +64,12 @@ process map2Ref {
 	maxForks 2
 	input:
     	tuple val(pair_id), path("read_1.fastq"), path("read_2.fastq")
+		path("ref.fas")
 	output:
     	tuple val(pair_id), path("${pair_id}.bam")
+	script:
 	"""
-	map2Ref.bash $ref read_1.fastq read_2.fastq ${pair_id}.bam
+	map2Ref.bash ref.fas read_1.fastq read_2.fastq ${pair_id}.bam
 	"""
 }
 
@@ -202,13 +204,17 @@ workflow{
 
 	Channel
 		.fromPath( params.adapters )
-		.set {adapters}
+		.set { adapters }
+
+	Channel
+		.fromPath( params.ref )
+		.set { ref }
 
 	deduplicate(readPairs)
 
 	trim(deduplicate.out, adapters)
 
-	map2Ref(trim.out)
+	map2Ref(trim.out, ref)
 
 	varCall(map2Ref.out)
 	
