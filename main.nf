@@ -7,8 +7,8 @@ params.lowmem = ""
 params.reads = "$PWD/*_{S*_R1,S*_R2}*.fastq.gz"
 params.outdir = "$PWD"
 
-ref = file(params.ref)
-refgbk = file(params.refgbk)
+//ref = file(params.ref)
+//refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
 allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
