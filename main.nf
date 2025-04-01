@@ -80,10 +80,12 @@ process varCall {
 	maxForks 3
 	input:
 		tuple val(pair_id), path("mapped.bam")
+		path("ref.fas")
 	output:
 		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi")
+	script:
 	"""
-	varCall.bash $ref mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
+	varCall.bash ref.fas mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
 	"""
 }
 
@@ -128,11 +130,13 @@ process vcf2Consensus {
 	input:
 		tuple val(pair_id), path("mask.bed"), path("nonmasked-regions.bed"),
 		path("variant.vcf.gz"),	path("variant.vcf.gz.csi")
+		path("ref.fas")
 	output:
 		tuple val(pair_id), path("${pair_id}_consensus.fas"), path("${pair_id}_snps.tab"), emit: consensus
 		path("${pair_id}_ncount.csv"), emit: nCount
+	script:
 	"""
-	vcf2Consensus.bash $ref \
+	vcf2Consensus.bash ref.fas \
 		mask.bed \
 		nonmasked-regions.bed \
 		variant.vcf.gz \
@@ -222,7 +226,7 @@ workflow{
 
 	map2Ref(trim.out, ref)
 
-	varCall(map2Ref.out)
+	varCall(map2Ref.out, ref)
 	
 	varCall.out
 		.join( map2Ref.out )
@@ -242,7 +246,7 @@ workflow{
 		.join( varCall.out )
 		.set {mask_vcf}
 
-	vcf2Consensus(mask_vcf)
+	vcf2Consensus(mask_vcf, ref)
 
 	varCall.out
 		.join( readStats.out.stats )
