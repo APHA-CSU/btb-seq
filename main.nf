@@ -10,7 +10,7 @@ params.outdir = "$PWD"
 //ref = file(params.ref)
 //refgbk = file(params.refgbk)
 //rptmask = file(params.rptmask)
-allsites = file(params.allsites)
+//allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
 //adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
@@ -96,11 +96,12 @@ process mask {
 	input:
 		tuple val(pair_id), path("called.vcf"), path("called.vcf.csi"), path("mapped.bam")
 		path("rptmask.bed")
+		path("allsites.bed")
 	output:
 		tuple val(pair_id), path("mask.bed"), path("nonmasked-regions.bed")
 	script:
 	"""
-	mask.bash rptmask.bed called.vcf mask.bed nonmasked-regions.bed mapped.bam $allsites $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
+	mask.bash rptmask.bed called.vcf mask.bed nonmasked-regions.bed mapped.bam allsites.bed $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
 	"""
 }
 
@@ -220,6 +221,10 @@ workflow{
 		.fromPath( params.rptmask)
 		.set { rptmask }
 
+	Channel
+		.fromPath( params.allsites)
+		.set { allsites }
+
 	deduplicate(readPairs)
 
 	trim(deduplicate.out, adapters)
@@ -232,7 +237,7 @@ workflow{
 		.join( map2Ref.out )
 		.set {vcf_bam}
 
-	mask(vcf_bam, rptmask)
+	mask(vcf_bam, rptmask, allsites)
 
 	readPairs
 		.join( deduplicate.out )
