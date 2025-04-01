@@ -12,7 +12,7 @@ refgbk = file(params.refgbk)
 rptmask = file(params.rptmask)
 allsites = file(params.allsites)
 stage1pat = file(params.stage1pat)
-adapters = file(params.adapters)
+//adapters = file(params.adapters)
 discrimPos = file(params.discrimPos)
 
 pypath = file(params.pypath)
@@ -49,10 +49,11 @@ process trim {
 	maxForks 2
 	input:
 	    tuple val(pair_id), path("read_1.fastq"), path("read_2.fastq")
+		path("adapters.fas")
 	output:
 	    tuple val(pair_id), path("trimmed_1.fastq"), path("trimmed_2.fastq")
 	"""
-	trim.bash $adapters read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
+	trim.bash adapters.fas read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
 	"""
 }
 
@@ -199,9 +200,13 @@ workflow{
         .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	    .set { readPairs }
 
+	Channel
+		.fromPath( params.adapters )
+		.set {adapters}
+
 	deduplicate(readPairs)
 
-	trim(deduplicate.out)
+	trim(deduplicate.out, adapters)
 
 	map2Ref(trim.out)
 
