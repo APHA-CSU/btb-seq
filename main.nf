@@ -155,14 +155,15 @@ process assignCluster {
     tag "$pair_id"
 	maxForks 1
 	input:
-		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi"),
-		path("${pair_id}_stats.csv")
+		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi"), path("${pair_id}_stats.csv")
+		path("discrim.tsv")
+		path("patterns")
 	output:
 		path("${pair_id}_stage1.csv")
 	"""
 	assignClusterCss.bash $pair_id \
-		$discrimPos \
-		$stage1pat \
+		discrim.tsv \
+		patterns \
 		$min_mean_cov \
 		$min_cov_snp \
 		$alt_prop_snp \
@@ -218,12 +219,21 @@ workflow{
 		.set { ref }
 
 	Channel
-		.fromPath( params.rptmask)
+		.fromPath( params.rptmask )
 		.set { rptmask }
 
 	Channel
-		.fromPath( params.allsites)
+		.fromPath( params.allsites )
 		.set { allsites }
+
+	Channel
+		.fromPath( params.discrimPos )
+		.set { discrim }
+
+	Channel
+		.fromPath( params.stage1pat )
+		.set { patterns }
+
 
 	deduplicate(readPairs)
 
@@ -257,7 +267,7 @@ workflow{
 		.join( readStats.out.stats )
 		.set {vcf_stats}
 
-	assignCluster(vcf_stats)
+	assignCluster(vcf_stats, discrim, patterns)
 
 	readStats.out.outcome
 		.join( trim.out )
