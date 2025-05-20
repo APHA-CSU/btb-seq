@@ -33,11 +33,12 @@ RUN apt-get -y update && apt-get install --yes --no-install-recommends \
     python3-pip \
     python3-pandas \
     python3-numpy \
+    python3-venv \
     python3-biopython \
     python3-git \
     python-is-python3
 
-RUN wget https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 && \
+RUN wget https://github.com/samtools/samtools/releases/download/1.21/samtools-1.21.tar.bz2 --no-check-certificate && \
     tar xjf samtools-1.21.tar.bz2 && \
     rm -f samtools-1.21.tar.bz2 && \
     cd samtools-1.21 && \
@@ -45,7 +46,7 @@ RUN wget https://github.com/samtools/samtools/releases/download/1.21/samtools-1.
     make install && \
     cd ..
 
-RUN wget https://github.com/samtools/bcftools/releases/download/1.21/bcftools-1.21.tar.bz2 && \
+RUN wget https://github.com/samtools/bcftools/releases/download/1.21/bcftools-1.21.tar.bz2 --no-check-certificate && \
     tar xjf bcftools-1.21.tar.bz2 && \
     rm -f bcftools-1.21.tar.bz2 && \
     cd bcftools-1.21 && \
@@ -53,7 +54,7 @@ RUN wget https://github.com/samtools/bcftools/releases/download/1.21/bcftools-1.
     make install && \
     cd ..
 
-RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.31.1/bedtools-2.31.1.tar.gz && \
+RUN wget https://github.com/arq5x/bedtools2/releases/download/v2.31.1/bedtools-2.31.1.tar.gz --no-check-certificate && \
     tar xzf bedtools-2.31.1.tar.gz && \
     rm -f bedtools-2.31.1.tar.gz && \
     cd bedtools2 && \
@@ -78,15 +79,17 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/refs/tags/v3.1.tar.gz 
     tar xvf v3.1.tar.gz && \
     rm -f v3.1.tar.gz && \
     cd Bracken-3.1/ && \
-    ./install_bracken.sh ../Bracken && \
+    sh ./install_bracken.sh && \
     cd .. && \
     ln -s $PWD/Bracken-3.1/bracken /usr/local/bin/bracken
 
-RUN git clone https://github.com/lh3/bwa.git && \
-    cd bwa && git checkout v0.7.19 && \
+RUN wget https://github.com/lh3/bwa/archive/refs/tags/v0.7.19.tar.gz --no-check-certificate && \
+    tar xvf v0.7.19.tar.gz && \
+    rm -f v0.7.19.tar.gz && \
+    cd bwa-0.7.19 \
     make && \
     cd .. && \
-    ln -s $PWD/bwa/bwa /usr/local/bin/bwa
+    ln -s $PWD/bwa-0.7.19/bwa /usr/local/bin/bwa
 
 RUN wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz --no-check-certificate && \
     tar xzf FastUniq-1.1.tar.gz && rm -f FastUniq-1.1.tar.gz && \
@@ -95,6 +98,6 @@ RUN wget https://sourceforge.net/projects/fastuniq/files/FastUniq-1.1.tar.gz --n
     cd ../.. && \
     ln -s $PWD/FastUniq/source/fastuniq /usr/local/bin/fastuniq
 
-RUN wget https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip && \
+RUN wget https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip --no-check-certificate && \
     unzip Trimmomatic-0.39.zip && rm Trimmomatic-0.39.zip && \
     ln -s $PWD/Trimmomatic-0.39/trimmomatic-0.39.jar /usr/local/bin/trimmomatic.jar
