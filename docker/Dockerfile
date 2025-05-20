@@ -86,7 +86,7 @@ RUN wget https://github.com/jenniferlu717/Bracken/archive/refs/tags/v3.1.tar.gz 
 RUN wget https://github.com/lh3/bwa/archive/refs/tags/v0.7.19.tar.gz --no-check-certificate && \
     tar xvf v0.7.19.tar.gz && \
     rm -f v0.7.19.tar.gz && \
-    cd bwa-0.7.19 \
+    cd bwa-0.7.19 && \
     make && \
     cd .. && \
     ln -s $PWD/bwa-0.7.19/bwa /usr/local/bin/bwa
