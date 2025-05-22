@@ -4,13 +4,13 @@ nextflow.enable.dsl=2
 
 /* Define variables */
 params.lowmem = ""
-params.reads = "${PWD}/*_{S*_R1,S*_R2}*.fastq.gz"
-params.outdir = "${PWD}"
+params.reads = "${env('PWD')}/*_{S*_R1,S*_R2}*.fastq.gz"
+params.outdir = "${env('PWD')}"
 
 params.DataDir = params.reads.tokenize('/')[-2]
-	println(params.DataDir)
 params.today = new Date().format('ddMMMYY')
 
+params.user = "UnknownUser"
 
 process deduplicate {
     errorStrategy 'finish'
@@ -179,7 +179,7 @@ process combineOutput {
 		path('*.csv')
 	script:
 	"""
-	combineCsv.py assigned_csv qbovis_csv ncount_csv $params.dataDir ${workflow.commitId}
+	combineCsv.py assigned_csv qbovis_csv ncount_csv $params.DataDir ${workflow.commitId} $params.user
 	"""
 }
 
