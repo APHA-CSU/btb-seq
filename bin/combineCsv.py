@@ -5,17 +5,11 @@
 
 import pandas as pd
 import argparse
-import getpass
-#import git
-import os
-from datetime import datetime, date
+from datetime import date
 
-def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_threshold, abundance_threshold):
+def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, user, read_threshold, abundance_threshold):
 
     date_out = date.today().strftime('%d%b%y')
-    user = 'me' #os.getuid()
-    scriptpath = os.path.dirname(os.path.abspath(__file__))
-    #repo = git.Repo(scriptpath, search_parent_directories=True)
     
     #Read Assigned Clade csv and replace blank cells  with 'NA'
     assigned_df = pd.read_csv(assigned_csv)
@@ -56,7 +50,7 @@ def combine(assigned_csv, bovis_csv, ncount_csv, seq_run, commitId, read_thresho
 
     #Append log info
     with open("{}_FinalOut_{}.csv".format(seq_run, date_out), "a") as outFile:
-        outFile.write("# Operator: " +user +"\n" +"# BovTB-nf commit: " +commitId)
+        outFile.write("# Operator: " +user +"\n" +"# btb-seq commit: " +commitId)
         outFile.close
 
 if __name__ == '__main__':
@@ -66,6 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('ncount_csv', help='path to ncount.csv')
     parser.add_argument('seq_run', help='Unique sequencer run number')
     parser.add_argument('commitId', help='Nextflow capture of git commit')
+    parser.add_argument('user', help='user captured on command line')
     parser.add_argument('--read_threshold', type=int, default=500, help='threshold for number of M.bovis reads')
     parser.add_argument('--abundance_threshold', type=int, default=1, help='threshold for M.bovis abundance')
 
