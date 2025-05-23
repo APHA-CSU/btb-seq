@@ -163,6 +163,19 @@ process assignCluster {
 	"""
 }
 
+process newcladeassign {
+	input:
+	tuple val(pair_id), file(consensus.fas), file(CSStable.csv)
+
+	output:
+	tuple val(pair_id), file(cladematch.csv)
+
+	script:
+	"""
+	assignClade.py consensus.fas CSStable.csv
+	"""
+}
+
 process idNonBovis {
 	errorStrategy 'finish'
     tag "$pair_id"
@@ -232,6 +245,12 @@ workflow{
 		.set {vcf_stats}
 
 	assignCluster(vcf_stats)
+
+	vcf2Consensus.out
+		.combine( CSStable )
+		.set {typing_data}
+	
+	newcladeassign(typing_data)
 
 	readStats.out.outcome
 		.join( trim.out )
