@@ -1,0 +1,20 @@
+{
+    "Should generate fastq files from gzipped input files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "tinyreads",
+                        "dedup_1.fastq:md5,8a424d8d8ca95e0bd2c55b663a2bebdc",
+                        "dedup_2.fastq:md5,d690d4f6f937607963a36d61ac16d28d"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-05-27T17:03:30.654983781"
+    }
+}

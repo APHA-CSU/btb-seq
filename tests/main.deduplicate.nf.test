@@ -1,0 +1,27 @@
+nextflow_process {
+
+    name "Test Process deduplicate"
+    script "main.nf"
+    process "deduplicate"
+
+    test("Should generate fastq files from gzipped input files") {
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = ["tinyreads", file("${projectDir}/tests/data/tinyreads/tinyreads_S1_R1_X.fastq.gz"), file("${projectDir}/tests/data/tinyreads/tinyreads_S1_R2_X.fastq.gz")]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
