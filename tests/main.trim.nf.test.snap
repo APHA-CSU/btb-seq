@@ -1,0 +1,20 @@
+{
+    "Should run trimmomatic on input fastq files": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "tinyreads",
+                        "trimmed_1.fastq:md5,eacc1b8541fb536dd55f34429e713a10",
+                        "trimmed_2.fastq:md5,6b14d13c7709c0f140797b2d9b4b96e0"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-05-27T17:27:13.282109242"
+    }
+}
