@@ -31,7 +31,7 @@ commands:
       - setup_remote_docker
       - run: |
           TAG=<< parameters.tag >>
-          docker build -t aphacsubot/btb-seq:$TAG -f ./docker/Dockerfile .
+          docker build -t aphacsubot/btb-seq:$TAG -f ./Dockerfile .
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker push aphacsubot/btb-seq:$TAG
 
@@ -41,7 +41,7 @@ jobs:
   build:
     docker:
       # Circleci base ubuntu image
-      - image: &build_img cimg/base:2020.01
+      - image: &build_img cimg/base:2024.04
 
     steps:
       - build-and-push:
