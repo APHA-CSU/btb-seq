@@ -12,7 +12,7 @@ nextflow_process {
             }
             process {
                 """
-                input[0] = ["tinyreads", file("${projectDir}/tests/data/tinyreads/dedup_1.fastq"), file("${projectDir}/tests/data/tinyreads/dedup_2.fastq"), file("${projectDir}/references/adapter.fasta")]
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/dedup_1.fastq"), file("${projectDir}/tests/data/phix_test/dedup_2.fastq"), file("${projectDir}/references/adapter.fasta")]
                 """
             }
         }
