@@ -4,9 +4,9 @@
             {
                 "0": [
                     [
-                        "tinyreads",
-                        "dedup_1.fastq:md5,8a424d8d8ca95e0bd2c55b663a2bebdc",
-                        "dedup_2.fastq:md5,d690d4f6f937607963a36d61ac16d28d"
+                        "phix-m",
+                        "dedup_1.fastq:md5,7d9905e045f407dabc8bbd4d5381bec0",
+                        "dedup_2.fastq:md5,42428d34a8a970ae76de468de8dd737b"
                     ]
                 ]
             }
@@ -15,6 +15,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-27T17:03:30.654983781"
+        "timestamp": "2025-06-02T23:17:22.573193219"
     }
 }
