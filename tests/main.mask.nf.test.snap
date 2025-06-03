@@ -1,0 +1,20 @@
+{
+    "Should produce a combined mask in bed format": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "phix-m",
+                        "mask.bed:md5,4b54b435aa263ded9638ecd156c07a47",
+                        "nonmasked-regions.bed:md5,2a316abd21ca2a33a22a2e74e9c24826"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-06-03T16:02:30.17006282"
+    }
+}

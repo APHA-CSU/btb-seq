@@ -1,0 +1,32 @@
+nextflow_process {
+
+    name "Test Process mask"
+    script "main.nf"
+    process "mask"
+
+    test("Should produce a combined mask in bed format") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                // outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz"), 
+                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi"), 
+                            file("${projectDir}/tests/data/phix_test/phix-800.bam"), 
+                            file("${projectDir}/tests/data/phix_test/phixEndmask.bed"), 
+                            file("${projectDir}/tests/data/phix_test/phixAllsites.bed")]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
