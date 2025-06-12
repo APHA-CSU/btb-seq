@@ -75,6 +75,11 @@ RUN mkdir -p /opt/Kraken2/db  && \
     tar xvf minikraken2_v1_8GB_201904.tgz -C /opt/Kraken2/db/  && \
     rm -f minikraken2_v1_8GB_201904.tgz
 
+RUN mkdir -p /opt/Kraken2/test-db  && \
+    wget https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20250402.tar.gz -nv --no-check-certificate && \
+    tar xvf k2_viral_20250402.tar.gz -C /opt/Kraken2/test-db/ && \
+    rm -f k2_viral_20250402.tar.gz
+
 RUN wget https://github.com/jenniferlu717/Bracken/archive/refs/tags/v3.1.tar.gz --no-check-certificate && \
     tar xvf v3.1.tar.gz && \
     rm -f v3.1.tar.gz && \
