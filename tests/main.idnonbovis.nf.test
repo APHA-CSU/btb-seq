@@ -1,0 +1,29 @@
+nextflow_process {
+
+    name "Test Process idNonBovis"
+    script "main.nf"
+    process "idNonBovis"
+
+    test("Should run Kraken and Bracken to classify input fastq files") {
+
+        when {
+            params {
+                kraken2db = "/opt/Kraken2/test-db/"
+            }
+            process {
+                """
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/outcome.txt"),
+                            file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"),
+                            file("${projectDir}/tests/data/phix_test/trimmed_2.fastq")]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

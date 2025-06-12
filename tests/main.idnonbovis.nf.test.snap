@@ -1,0 +1,39 @@
+{
+    "Should run Kraken and Bracken to classify input fastq files": {
+        "content": [
+            {
+                "0": [
+                    "phix-m_bovis.csv:md5,2d181b21051a51392da003389706eded"
+                ],
+                "1": [
+                    [
+                        "phix-m",
+                        [
+                            "phix-m_CheckRequired-S1_brackensort.tab:md5,e0902240b1c6a98c6dd5f16613759495",
+                            "phix-m_CheckRequired_brackensort.tab:md5,26dbaaef1d704d8feef94d4e8daa01e3"
+                        ],
+                        "phix-m_CheckRequired_kraken2.tab:md5,b47b5b7d1a5dfed118889d533b35840c"
+                    ]
+                ],
+                "krakenOut": [
+                    [
+                        "phix-m",
+                        [
+                            "phix-m_CheckRequired-S1_brackensort.tab:md5,e0902240b1c6a98c6dd5f16613759495",
+                            "phix-m_CheckRequired_brackensort.tab:md5,26dbaaef1d704d8feef94d4e8daa01e3"
+                        ],
+                        "phix-m_CheckRequired_kraken2.tab:md5,b47b5b7d1a5dfed118889d533b35840c"
+                    ]
+                ],
+                "queryBovis": [
+                    "phix-m_bovis.csv:md5,2d181b21051a51392da003389706eded"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-06-12T15:34:24.286004178"
+    }
+}
