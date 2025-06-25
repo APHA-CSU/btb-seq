@@ -16,7 +16,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Nextflow latest-edge
+      - name: Setup Nextflow latest
         uses: nf-core/setup-nextflow@v1
         with:
           version: "latest"
