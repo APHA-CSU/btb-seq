@@ -26,6 +26,6 @@ jobs:
       id: build-and-push
       uses: docker/build-push-action@v5
       with:
-        context: ./docker
+        context: .
         push: true
         tags: aphacsubot/btb-seq:master
