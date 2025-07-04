@@ -38,3 +38,4 @@ jobs:
         with:
           name: bam file
           path: /home/runner/work/**/.nf-test/**/*.bam
+          include-hidden-files: true
