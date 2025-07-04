@@ -27,7 +27,7 @@ jobs:
           sudo mv nf-test /usr/local/bin/
 
       - name: individual map2ref test
-        run: nf-test test tests/main.map2ref.nf.test
+        run: nf-test test --debug --verbose tests/main.map2ref.nf.test
 
       - name: Run Tests
         run: nf-test test --ci
