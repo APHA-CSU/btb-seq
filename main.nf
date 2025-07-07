@@ -154,11 +154,12 @@ process assignCluster {
 }
 
 process newcladeassign {
+	tag "$pair_id"
+	maxForks 1
 	input:
-	tuple val(pair_id), file(consensus.fas), file(CSStable.csv)
-
+		tuple val(pair_id), path("consensus.fas"), path("snps.tab"), path("CSStable.csv")
 	output:
-	tuple val(pair_id), file(cladematch.csv)
+		tuple val(pair_id), file("cladematch.csv")
 
 	script:
 	"""
@@ -285,7 +286,7 @@ workflow{
 
 	assignCluster(vcf_stats)
 
-	vcf2Consensus.out
+	vcf2Consensus.out.consensus
 		.combine( CSStable )
 		.set {typing_data}
 	
@@ -300,6 +301,10 @@ workflow{
 	assignCluster.out
 		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 		.set {assigned}
+
+	newcladeassign.out
+		.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", storeDir: params.outdir, sort: true, keepHeader: true )
+		.set {newclade}
 
 	idNonBovis.out.queryBovis
 		.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
