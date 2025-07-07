@@ -36,5 +36,5 @@ else
 echo "ID not required"
 echo "Sample,ID,TotalReads,Abundance" > ${pair_id}_bovis.csv
 fi
-#rm `readlink trimmed_1.fastq`
-#rm `readlink trimmed_2.fastq`
+rm `readlink trimmed_1.fastq`
+rm `readlink trimmed_2.fastq`
