@@ -229,6 +229,9 @@ workflow{
 		.fromPath( params.stage1pat )
 		.set { patterns }
 
+	Channel
+		.fromPath( params.csstable)
+		.set { CSStable }
 
 	deduplicate(readPairs)
 
