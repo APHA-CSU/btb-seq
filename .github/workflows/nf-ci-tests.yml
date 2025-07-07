@@ -14,28 +14,17 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'zulu'
+          distribution: 'temurin'
 
       - name: Setup Nextflow latest
         uses: nf-core/setup-nextflow@v1
         with:
-          version: '25.04.2'
+          version: 'latest'
 
       - name: Install nf-test
         run: |
           wget -qO- https://get.nf-test.com | bash
           sudo mv nf-test /usr/local/bin/
 
-      - name: individual map2ref test
-        run: nf-test test --debug --verbose tests/main.map2ref.nf.test
-
       - name: Run Tests
         run: nf-test test --ci
-
-      - name: Archive test outputs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: bam file
-          path: /home/runner/work/**/.nf-test/**/*.bam
-          include-hidden-files: true
