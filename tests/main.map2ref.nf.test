@@ -9,17 +9,18 @@ nextflow_process {
         when {
             params {
                 outdir = "tests/results"
+                ref = "${projectDir}/tests/data/phix_test/phix-m.fas"
             }
             process {
                 """
-                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"), file("${projectDir}/tests/data/phix_test/trimmed_2.fastq"), file("${projectDir}/data/phiX_test/phix-m.fas")]
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"), file("${projectDir}/tests/data/phix_test/trimmed_2.fastq"), file("${projectDir}/tests/data/phix_test/ref.fas")]
                 """
             }
         }
 
         then {
             assert process.success
-            assert snapshot(process.out).match()
+            assert snapshot(process.out[0].collect { bam(it[1]).getReadsMD5() }).match()
         }
 
     }
