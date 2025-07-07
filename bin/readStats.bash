@@ -17,8 +17,8 @@ pair_id=$1
     rm ${pair_id}_*_R1_*.fastq.gz
     rm ${pair_id}_*_R2_*.fastq.gz
     uniq_R1=$(( $(cat ${pair_id}_uniq_R1.fastq | wc -l) / 4 )) # counts number of reads in file
-    trim_R1=$(( $(cat ${pair_id}_trim_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     rm `readlink ${pair_id}_uniq_R2.fastq`
+    trim_R1=$(( $(cat ${pair_id}_trim_R1.fastq | wc -l) / 4 )) # counts number of reads in file
     num_map=$(samtools view -c ${pair_id}.mapped.sorted.bam) # samtools counts the number of mapped reads
     samtools depth -a ${pair_id}.mapped.sorted.bam > depth.txt # samtools outputs depth at each position
     avg_depth=$(awk '{sum+=$3} END { printf "%.3f", sum/NR}' depth.txt)
