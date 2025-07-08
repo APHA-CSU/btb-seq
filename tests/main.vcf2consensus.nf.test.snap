@@ -1,0 +1,18 @@
+{
+    "Should produce a masked consensus fasta file from input vcf and bed files": {
+        "content": [
+            [
+                [
+                    "phix-m",
+                    "phix-m_consensus.fas:md5,bd746f7f7cd7c614e7a3aa54dd79ff0d",
+                    "phix-m_snps.tab:md5,0cd4e870c32929ae285754f3c1bf1bf9"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-06-03T23:04:14.705275033"
+    }
+}

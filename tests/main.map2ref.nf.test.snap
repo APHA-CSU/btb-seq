@@ -1,0 +1,14 @@
+{
+    "Should map reads to reference genome": {
+        "content": [
+            [
+                "38099c66f6cf3ce80ec36c2b25c5a426"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.2"
+        },
+        "timestamp": "2025-07-07T15:13:14.902146073"
+    }
+}

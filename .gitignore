@@ -1,4 +1,6 @@
 .nextflow.log*
+.nf-test.log
+.nf-test/
 .nextflow/
 .DS_Store
 temp/
