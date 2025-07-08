@@ -1,0 +1,30 @@
+nextflow_process {
+
+    name "Test Process varCall"
+    script "main.nf"
+    process "varCall"
+
+    test("Should produce vcf output from bam input") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                // outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/phix-800.bam"), file("${projectDir}/tests/data/phix_test/phix-m.fas")]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert path(process.out[0].get(0).get(1)).linesGzip.contains('#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	mapped.bam')
+            assert path(process.out[0][0][1]).linesGzip.contains('phiX174-addedmutations	11	.	T	G	99.4152	.	DP=5;AD=0,5;VDB=0.00376034;SGB=-0.590765;MQ0F=0;AC=1;AN=1;DP4=0,0,5,0;MQ=60	GT:PL:AD:GQ	1:129,0:0,5:127')
+            assert path(process.out[0][0][1]).linesGzip.contains('phiX174-addedmutations	124	.	A	T	140.416	.	DP=10;AD=0,10;VDB=0.467235;SGB=-0.670168;MQ0F=0;AC=1;AN=1;DP4=0,0,10,0;MQ=60	GT:PL:AD:GQ	1:170,0:0,10:127')
+        }
+
+    }
+
+}
