@@ -159,7 +159,7 @@ process newcladeassign {
 	input:
 		tuple val(pair_id), path("consensus.fas"), path("snps.tab"), path("CSStable.csv")
 	output:
-		tuple val(pair_id), file("*_cladematch.csv")
+		path("${pair_id}_cladematch.csv")
 
 	script:
 	"""
@@ -303,7 +303,7 @@ workflow{
 		.set {assigned}
 
 	newcladeassign.out
-		.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", storeDir: "${params.outdir}", sort: true, keepHeader: true )
+		.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
 		.set {newclade}
 
 	idNonBovis.out.queryBovis
