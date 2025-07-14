@@ -36,8 +36,8 @@ bcftools filter -i "(ALT!='.' && INFO/AD[1] < ${MIN_READ_DEPTH} && INFO/AD[0]/(I
     (ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) < ${MIN_ALLELE_FREQUENCY_ALT} && INFO/AD[0]/(INFO/AD[0]+INFO/AD[1]) <= ${MIN_ALLELE_FREQUENCY_REF})" $vcf -ov -o quality-mask.vcf
 bedtools merge -i quality-mask.vcf > quality-mask.bed
 
-# mash regions where there is zero coverage
-bedtools genomecov -bga -ibam $bam | grep -w "0\$" || true | cut -f -3 > zerocov.bed
+# mask regions where there is zero coverage
+bedtools genomecov -bga -ibam $bam | (grep -w "0\$" || true) | cut -f -3 > zerocov.bed
 
 # Merge with exisiting known repeat regions
 cat quality-mask.bed zerocov.bed $rpt_mask | 
