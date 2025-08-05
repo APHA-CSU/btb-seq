@@ -98,7 +98,7 @@ process readStats {
 		tuple val(pair_id), path('outcome.txt'), emit: outcome
     script:
 	"""
-    readStats.bash "$pair_id"
+    readStats.bash "$pair_id" $params.rmInter
     """
 }
 

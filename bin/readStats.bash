@@ -10,6 +10,7 @@ set -eo pipefail
 
 #  Define inputs - sample name
 pair_id=$1
+rm_inter=$2
 
 # Count reads in each catagory; in fastq files each read consists of four lines
 
@@ -24,6 +25,9 @@ pair_id=$1
     zero_cov=$(awk 'BEGIN {count=0} $3<1 {++count} END {print count}' depth.txt)
     sites=$(awk '{++count} END {print count}' depth.txt)
     rm depth.txt
+    if $rm_inter = 'true';
+        then rm `readlink ${pair_id}_uniq_R2.fastq`
+    fi
     
 
 
