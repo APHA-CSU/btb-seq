@@ -10,8 +10,8 @@ set -eo pipefail
 
 pair_id=$1
 kraken2db=$2
-lowmem=$3
-rm_inter=$4
+rm_inter=$3
+lowmem=$4
 
 outcome=$(cat outcome.txt)
 if [ $outcome != "Pass" ]; then

@@ -179,7 +179,7 @@ process idNonBovis {
 		tuple val(pair_id), path("${pair_id}_*_brackensort.tab"), path("${pair_id}_*_kraken2.tab"), optional: true, emit: krakenOut
 	script:
 	"""
-	idNonBovis.bash $pair_id $params.kraken2db $params.lowmem $params.rmInter
+	idNonBovis.bash $pair_id $params.kraken2db $params.rmInter $params.lowmem 
 	"""
 }
 
