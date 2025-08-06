@@ -153,6 +153,20 @@ process assignCluster {
 	"""
 }
 
+process newcladeassign {
+	tag "$pair_id"
+	maxForks 1
+	input:
+		tuple val(pair_id), path("consensus.fas"), path("snps.tab"), path("CSStable.csv")
+	output:
+		path("${pair_id}_cladematch.csv")
+
+	script:
+	"""
+	assignClade.py consensus.fas CSStable.csv
+	"""
+}
+
 process idNonBovis {
 	errorStrategy 'finish'
     tag "$pair_id"
@@ -216,6 +230,9 @@ workflow{
 		.fromPath( params.stage1pat )
 		.set { patterns }
 
+	Channel
+		.fromPath( params.csstable)
+		.set { CSStable }
 
 	deduplicate(readPairs)
 
@@ -269,6 +286,12 @@ workflow{
 
 	assignCluster(vcf_stats)
 
+	vcf2Consensus.out.consensus
+		.combine( CSStable )
+		.set {typing_data}
+	
+	newcladeassign(typing_data)
+
 	readStats.out.outcome
 		.join( trim.out )
 		.set {outcome_reads}
@@ -278,6 +301,10 @@ workflow{
 	assignCluster.out
 		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 		.set {assigned}
+
+	newcladeassign.out
+		.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
+		.set {newclade}
 
 	idNonBovis.out.queryBovis
 		.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
