@@ -197,6 +197,20 @@ process combineOutput {
 	"""
 }
 
+process combineNewOutput {
+	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
+	input:
+		path('assigned_csv')
+		path('qbovis_csv')
+		path('ncount_csv')
+	output:
+		path('*.csv')
+	script:
+	"""
+	newcombineCsv.py assigned_csv qbovis_csv ncount_csv $params.DataDir ${workflow.commitId} $params.user
+	"""
+}
+
 workflow{
 
 	/* Collect pairs of fastq files and infer sample names
@@ -315,4 +329,6 @@ workflow{
 		.set {consensusQual}
 
 	combineOutput(assigned, qbovis, consensusQual)
+
+	combineNewOutput(newclade, qbovis, consensusQual)
 }
