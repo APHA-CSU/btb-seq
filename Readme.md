@@ -10,12 +10,12 @@
 To get started quickly, just install [Nextflow](https://www.nextflow.io/) and [Docker](https://www.docker.com/) and run the pipeline using the following:
 
 ```
-nextflow run APHA-CSU/btb-seq -with-docker aphacsubot/btb-seq --reads='path/to/input/directory' --outdir='path/to/output/directory'
+nextflow run APHA-CSU/btb-seq -with-docker aphacsubot/btb-seq --reads='path/to/input/directory/*{_R1,_R2}*.fastq.gz' --outdir='path/to/output/directory'
 ```
 
 This will pull the code from this github repository and run the analysis using the pre-prepared docker image containing all required dependencies [here](https://hub.docker.com/r/aphacsubot/btb-seq).
 
-To run the pipeline on a batch of samples, a directory containing raw `.fastq.gz` files is required (and defined using `--reads`). Each read-pair sample is represented by a pair of files named `*_R1*.fastq.gz` and `*_R2*.fastq.gz`. For example, to batch two samples named `bovis-a` and `bovis-b`, a directory containing `bovis-a_R1.fastq.gz`, `bovis-a_R2.fastq.gz`, `bovis-b_R1.fastq.gz` and `bovis-b_R2.fastq.gz`, is required.  This can be also be an AWS s3 uri (denoted using `s3://..`) if required
+To run the pipeline on a batch of samples, a directory containing raw `.fastq.gz` files is required (and defined using `--reads`). Each read-pair sample is represented by a pair of files named `*_R1*.fastq.gz` and `*_R2*.fastq.gz`. For example, to batch two samples named `bovis-a` and `bovis-b`, a directory containing `bovis-a_R1.fastq.gz`, `bovis-a_R2.fastq.gz`, `bovis-b_R1.fastq.gz` and `bovis-b_R2.fastq.gz`, is required.  This can be also be an AWS s3 uri (denoted using `s3://..`) if required.
 
 Pipeline output is stored in a results directory (which can also be an s3 uri) that contains:
 - A summary csv file (`FinalOut.csv`) that contains the `Outcome` (see below), WGS Group (Clade) and other high-level metrics for each sample. 
@@ -23,28 +23,6 @@ Pipeline output is stored in a results directory (which can also be an s3 uri) t
 - Mapped `.bam` files
 - Variant call `.vcf` files
 - Kraken2/Bracken classification of non-*M. bovis* contaminants
-
-## Local Installation
-
-Clone this github repository
-```
-git clone https://github.com/APHA-CSU/btb-seq
-```
-
-To install the software dependencies required in ubuntu, run
-```
-bash install.bash
-```
-
-This script installs the following dependencies and adds symlinks to the `$PATH`: 
--	`nextflow`
--	`FastUniq`
--	`Trimmomatic`
--	`bwa`
--	`samtools` and `bcftools`
--	`bedtools`
--	`Kraken2` (and database)
--	`Bracken`
 
 ## Pipeline details
 
