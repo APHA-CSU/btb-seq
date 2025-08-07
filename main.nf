@@ -95,6 +95,7 @@ process readStats {
 		path("${pair_id}.mapped.sorted.bam")
 	output:
 		tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
+		path("${pair_id}_stats.csv"), emit: stats_table
 		tuple val(pair_id), path('outcome.txt'), emit: outcome
     script:
 	"""
@@ -201,13 +202,14 @@ process combineNewOutput {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	input:
 		path('assigned_csv')
+		path('stats_csv')
 		path('qbovis_csv')
 		path('ncount_csv')
 	output:
 		path('*.csv')
 	script:
 	"""
-	newcombineCsv.py assigned_csv qbovis_csv ncount_csv $params.DataDir ${workflow.commitId} $params.user
+	newcombineCsv.py assigned_csv stats_csv qbovis_csv ncount_csv $params.DataDir ${workflow.commitId} $params.user
 	"""
 }
 
@@ -312,6 +314,10 @@ workflow{
 
 	idNonBovis(outcome_reads)
 
+	readStats.out.stats_table
+		.collectFile( name: "${params.DataDir}_stats_${params.today}.csv", sort: true, keepHeader: true )
+		.set {stats}
+	
 	assignCluster.out
 		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
 		.set {assigned}
@@ -330,5 +336,5 @@ workflow{
 
 	combineOutput(assigned, qbovis, consensusQual)
 
-	combineNewOutput(newclade, qbovis, consensusQual)
+	combineNewOutput(newclade, stats, qbovis, consensusQual)
 }
