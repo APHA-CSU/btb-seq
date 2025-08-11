@@ -1,0 +1,69 @@
+process READSTATS {
+	errorStrategy 'finish'
+    tag "$pair_id"
+	maxForks 2
+	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/stats", mode: 'copy', pattern: '*'
+	
+	input:
+		tuple val(pair_id), path(raw1), path(raw2), path(dedup1), path(dedup2), path(trim1), path(trim2), path(bam)
+
+	output:
+		tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
+		tuple val(pair_id), path("${pair_id}_outcome.txt"), emit: outcome
+    
+    script:
+
+        """
+        # Error handling
+        set -eo pipefail
+
+        # Assign the pair_id variable
+        pair_id="${pair_id}"
+
+        # Count reads in each category; in fastq files each read consists of four lines
+        raw_R1=\$(( \$(zcat ${raw1} | wc -l) / 4 ))
+        uniq_R1=\$(( \$(cat ${dedup1} | wc -l) / 4 ))
+        trim_R1=\$(( \$(cat ${trim1} | wc -l) / 4 ))
+        num_map=\$(samtools view -c ${bam})
+        samtools depth -a ${bam} > depth.txt
+        avg_depth=\$(awk '{sum+=\$3} END { printf "%.3f", sum/NR}' depth.txt)
+        zero_cov=\$(awk 'BEGIN {count=0} \$3<1 {++count} END {print count}' depth.txt)
+        sites=\$(awk '{++count} END {print count}' depth.txt)
+        rm depth.txt
+        rm ${raw1}
+        rm ${raw2}
+
+        # Calculate values and percentages
+        num_raw=\$((\$raw_R1*2))
+        num_uniq=\$((\$uniq_R1*2))
+        num_trim=\$((\$trim_R1*2))
+        pc_aft_dedup=\$(echo "scale=2; (\$num_uniq*100/\$num_raw)" | bc)
+        pc_aft_trim=\$(echo "scale=2; (\$num_trim*100/\$num_uniq)" | bc)
+        pc_mapped=\$(echo "scale=2; (\$num_map*100/\$num_trim)" | bc)
+        genome_cov=\$(echo "scale=2; (100-(\$zero_cov*100/\$sites))" | bc)
+
+        # Define thresholds for flag assignment
+        mindepth=10
+        minpc=60
+        minreads=600000
+        minafttrim=60
+
+        # Assign flags based on thresholds
+        if [[ \${pc_aft_trim%%.*} -lt \$minafttrim ]]; then
+            flag="LowQualData"
+        elif [[ \${avg_depth%%.*} -ge \$mindepth ]] && [[ \${pc_mapped%%.*} -gt \$minpc ]]; then
+            flag="Pass"
+        elif [[ \${avg_depth%%.*} -lt \$mindepth ]] && [[ \${pc_mapped%%.*} -lt \$minpc ]] && [[ \$num_trim -gt \$minreads ]]; then
+            flag="Contaminated"
+        elif [[ \${avg_depth%%.*} -lt \$mindepth ]] && [[ \$num_trim -lt \$minreads ]]; then
+            flag="InsufficientData"
+        else
+            flag="CheckRequired"
+        fi
+
+        # Write values to CSV file
+        echo "Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome" > "${pair_id}_stats.csv"
+        echo "${pair_id},\${num_raw},\${num_uniq},\${pc_aft_dedup},\${num_trim},\${pc_aft_trim},\${num_map},\${pc_mapped},\${avg_depth},\${genome_cov},\${flag}" >> "${pair_id}_stats.csv"
+        echo "\${flag}" > "${pair_id}_outcome.txt"
+        """
+}
