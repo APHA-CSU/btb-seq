@@ -35,6 +35,26 @@ The pipeline processes data in several stages, as shown below. During the pre-pr
 
 ![btb-seq](https://user-images.githubusercontent.com/9665142/173056645-d13ccafa-4738-4281-9a4f-13ff477e765f.png)
 
+```mermaid
+flowchart TD
+    A[Start: Locate Reads] --> B[DEDUPLICATE]
+    B --> C[TRIM]
+    C --> D[MAP2REF]
+    D --> E[VARCALL]
+    E --> F[MASK]
+    F --> G[VCF2CON]
+    A --> H[READSTATS]
+    B --> H
+    C --> H
+    D --> H
+    E --> I[ASSIGNCLUSTER]
+    H --> I
+    G --> J[NEWCLADEASSIGN]
+    H --> K[IDNONBOVIS]
+    I --> L[COMBINEOUTPUT]
+    K --> L
+    G --> L
+```
 
 ## Validation
 
