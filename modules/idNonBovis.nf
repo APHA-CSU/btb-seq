@@ -10,7 +10,7 @@ process IDNONBOVIS {
 		val (lowmem)
 	
 	output:
-		tuple val(pair_id), path("${pair_id}_bovis.csv"), emit: queryBovis
+		path("${pair_id}_bovis.csv"), emit: queryBovis
 		tuple val(pair_id), path("${pair_id}_*_brackensort.tab"), path("${pair_id}_*_kraken2.tab"), optional: true, emit: krakenOut
 	
 	script:

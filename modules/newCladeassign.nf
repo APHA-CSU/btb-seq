@@ -7,7 +7,7 @@ process NEWCLADEASSIGN {
 		path (css)
 	
 	output:
-		tuple val(pair_id), path("${pair_id}_cladematch.csv")
+		path("${pair_id}_cladematch.csv")
 
 	script:
 	"""

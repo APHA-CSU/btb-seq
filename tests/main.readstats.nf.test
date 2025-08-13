@@ -2,7 +2,7 @@ nextflow_process {
 
     name "Test Process readStats"
     script "main.nf"
-    process "readStats"
+    process "READSTATS"
 
     test("Should generate stats on data processing") {
 

@@ -16,7 +16,7 @@ process ASSIGNCLUSTER {
 		val (pypath)
 	
 	output:
-		tuple val(pair_id), path("${pair_id}_stage1.csv")
+		path("${pair_id}_stage1.csv")
 	
 	script:
 	"""

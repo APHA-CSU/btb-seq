@@ -6,15 +6,15 @@ process MAP2REF {
 	cleanup = false
 	
 	input:
-		tuple val(pair_id), path(trimmed)
+		tuple val(pair_id), path(trim1), path(trim2)
         val ref
 	
 	output:
-    	tuple val (pair_id), path ("*.mapped.sorted.bam")
+    	tuple val (pair_id), path("${pair_id}.mapped.sorted.bam")
 	
 	script:
 	"""
-	bwa mem -M -E 2 -t2 ${ref} ${trimmed[0]} ${trimmed[1]} |
+	bwa mem -M -E 2 -t2 ${ref} ${trim1} ${trim2} |
 	samtools view -@2 -ShuF 2308 - |
 	samtools sort -@2 - -o ${pair_id}.mapped.sorted.bam
 	"""

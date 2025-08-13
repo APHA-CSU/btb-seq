@@ -5,19 +5,19 @@ process TRIM {
     cleanup = false
 	
 	input:
-		tuple val(pair_id), path(uniq)
+		tuple val(pair_id), path(uniq1), path(uniq2)
         val adapters
 	
 	output:
-	    tuple val(pair_id), path("*trim_*.fastq")
+	    tuple val(pair_id), path("${pair_id}_trim_R1.fastq"), path("${pair_id}_trim_R2.fastq")
 	
 	script:
 	"""
 	java -jar /usr/local/bin/trimmomatic.jar PE \
     -threads 2 \
     -phred33 \
-    ${uniq[0]} \
-    ${uniq[1]} \
+    ${uniq1} \
+    ${uniq2} \
     ${pair_id}_trim_R1.fastq \
     fail1.fastq \
     ${pair_id}_trim_R2.fastq \

@@ -5,8 +5,8 @@
                 "0": [
                     [
                         "phix-m",
-                        "mask.bed:md5,4b54b435aa263ded9638ecd156c07a47",
-                        "nonmasked-regions.bed:md5,2a316abd21ca2a33a22a2e74e9c24826"
+                        "phix-m.mask.bed:md5,4b54b435aa263ded9638ecd156c07a47",
+                        "phix-m.nonmasked-regions.bed:md5,2a316abd21ca2a33a22a2e74e9c24826"
                     ]
                 ]
             }

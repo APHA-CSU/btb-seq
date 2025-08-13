@@ -1,4 +1,4 @@
-process VCF2CON {
+process VCF2CONSENSUS {
 	errorStrategy 'finish'
     tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/consensus/", mode: 'copy', pattern: '*.fas'

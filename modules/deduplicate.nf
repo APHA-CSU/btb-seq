@@ -5,10 +5,10 @@ process DEDUPLICATE {
 	cleanup = false
 	
 	input:
-		tuple val(pair_id), path(read1), path(read2)
+        tuple val(pair_id), path(read1), path(read2)
 	
 	output:
-	    tuple val(pair_id), path("*_uniq_*.fastq")
+        tuple val(pair_id), path("${pair_id}_uniq_R1.fastq"), path("${pair_id}_uniq_R2.fastq")
 	
 	script:
 	"""

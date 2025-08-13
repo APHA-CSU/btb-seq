@@ -89,8 +89,8 @@ include { TRIM } from './modules/trim'
 include { MAP2REF } from './modules/map2Ref'
 include { VARCALL } from './modules/varCall'
 include { MASK } from './modules/mask'
-include { VCF2CON } from './modules/vcf2Consensus'
-include { ASSIGNCLUSTER } from './modules/assignCluster'
+include { VCF2CONSENSUS } from './modules/vcf2Consensus'
+include { ASSIGNCLUSTER  } from './modules/assignCluster'
 include { NEWCLADEASSIGN } from './modules/newCladeassign'
 include { READSTATS } from './modules/readStats'
 include { IDNONBOVIS } from './modules/idNonBovis'
@@ -100,14 +100,18 @@ include { COMBINEOUTPUT } from './modules/combineOutput'
 workflow {
 	ch_reads = Channel.fromFilePairs(params.reads, flat: true).ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	deduplicate_ch = DEDUPLICATE(ch_reads)
-	trim_ch = TRIM(deduplicate_ch, params.adapters)
-	map2ref_ch = MAP2REF(trim_ch, params.ref)
-	varcall_ch = VARCALL(map2ref_ch, params.ref, params.MAP_QUAL, params.BASE_QUAL, params.PLOIDY)
-	mask_ch = MASK(varcall_ch, map2ref_ch, params.rptmask, params.allsites, params.MIN_READ_DEPTH, params.MIN_ALLELE_FREQUENCY_ALT, params.MIN_ALLELE_FREQUENCY_REF)
-	vcf2con_ch = VCF2CON(params.ref, mask_ch.join(varcall_ch), params.MIN_ALLELE_FREQUENCY_ALT, params.outdir, params.today)
-	readstats_ch = READSTATS(ch_reads.join(deduplicate_ch.map { pair_id, dedup -> tuple(pair_id, dedup[0], dedup[1]) }).join(trim_ch.map { pair_id, trim -> tuple(pair_id, trim[0], trim[1]) }).join(map2ref_ch))
-	assigncluster_ch = ASSIGNCLUSTER(varcall_ch.join(readstats_ch.stats), params.discrimPos, params.stage1pat, params.ref, params.min_mean_cov, params.min_cov_snp, params.alt_prop_snp, params.min_qual_snp, params.min_qual_nonsnp, params.pypath)
-	assignclade_ch = NEWCLADEASSIGN(vcf2con_ch.consensus, params.csstable)
-    idnonbovis_ch = IDNONBOVIS(readstats_ch.outcome.join(trim_ch).map { pair_id, outcome, trim -> tuple (pair_id, outcome, trim[0], trim[1])}, params.kraken2db, params.lowmem)
-	combineoutput_ch = COMBINEOUTPUT(assigncluster_ch, idnonbovis_ch.queryBovis, vcf2con_ch.nCount, params.DataDir, params.user) 
+  trim_ch = TRIM(deduplicate_ch, params.adapters)
+	map2Ref_ch = MAP2REF(trim_ch, params.ref)
+	varCall_ch = VARCALL(map2Ref_ch, params.ref, params.MAP_QUAL, params.BASE_QUAL, params.PLOIDY)
+	mask_ch = MASK(varCall_ch, map2Ref_ch, params.rptmask, params.allsites, params.MIN_READ_DEPTH, params.MIN_ALLELE_FREQUENCY_ALT, params.MIN_ALLELE_FREQUENCY_REF)
+	vcf2Consensus_ch = VCF2CONSENSUS(params.ref, mask_ch.join(varCall_ch), params.MIN_ALLELE_FREQUENCY_ALT, params.outdir, params.today)
+	readStats_ch = READSTATS(ch_reads.join(deduplicate_ch).join(trim_ch).join(map2Ref_ch))
+	assignCluster_ch = ASSIGNCLUSTER(varCall_ch.join(readStats_ch.stats), params.discrimPos, params.stage1pat, params.ref, params.min_mean_cov, params.min_cov_snp, params.alt_prop_snp, params.min_qual_snp, params.min_qual_nonsnp, params.pypath)
+	newcladeassign_ch = NEWCLADEASSIGN(vcf2Consensus_ch.consensus, params.csstable)
+  idNonBovis_ch = IDNONBOVIS(readStats_ch.outcome.join(trim_ch), params.kraken2db, params.lowmem)
+  assignCluster_ch.collectFile(name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true).set{assigned}
+  newcladeassign_ch.collectFile(name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}").set{newclade}
+  idNonBovis_ch.queryBovis.collectFile(name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true).set {qbovis}
+  vcf2Consensus_ch.nCount.collectFile(name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true).set {consensusQual}
+  combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual, params.DataDir, params.user)
 }

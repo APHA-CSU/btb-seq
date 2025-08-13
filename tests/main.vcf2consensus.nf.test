@@ -2,23 +2,28 @@ nextflow_process {
 
     name "Test Process vcf2Consensus"
     script "main.nf"
-    process "vcf2Consensus"
+    process "VCF2CONSENSUS"
 
     test("Should produce a masked consensus fasta file from input vcf and bed files") {
 
         when {
             params {
-                // define parameters here. Example:
-                // outdir = "tests/results"
+                ref = "${projectDir}/tests/data/phix_test/phix-m.fas"
+                min_freq_alt = 0.8
+                outdir = "${env('PWD')}"
+                today = ""
             }
             process {
                 """
-                input[0] = ["phix-m",
+                input[0] = params.ref
+                input[1] = ["phix-m",
                             file("${projectDir}/tests/data/phix_test/mask.bed"),
                             file("${projectDir}/tests/data/phix_test/nonmasked-regions.bed"),
                             file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz"), 
-                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi"),
-                            file("${projectDir}/tests/data/phix_test/phix-m.fas")]
+                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi")]
+                input[2] = params.min_freq_alt
+                input[3] = params.outdir
+                input[4] = params.today
                 """
             }
         }
@@ -26,7 +31,7 @@ nextflow_process {
         then {
             assert process.success
             assert snapshot(process.out.consensus).match()
-            assert path(process.out.nCount[0]).readLines().contains('Sample,Ncount,ResultLoc')
+            assert path(process.out.nCount[0][1]).readLines().first() == 'Sample,Ncount,ResultLoc'     
         }
 
     }

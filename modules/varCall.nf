@@ -13,14 +13,14 @@ process VARCALL {
         val (ploidy)
 	
 	output:
-		tuple val (pair_id), path ("*vcf.gz"), path ("*csi")
+		tuple val (pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi")
 	
 	script:
 	"""
 	samtools index ${bam}
 	bcftools mpileup -q ${quality} -Q ${base_qual} -a INFO/AD -Ou -f ${ref} ${bam} |
-    bcftools call --ploidy ${ploidy} -mf GQ - -Ou |
-    bcftools norm -f ${ref} - -Oz -o ${pair_id}.vcf.gz
+    	bcftools call --ploidy ${ploidy} -mf GQ - -Ou |
+    	bcftools norm -f ${ref} - -Oz -o ${pair_id}.vcf.gz
 	bcftools index ${pair_id}.vcf.gz
 	"""
 }

@@ -13,7 +13,7 @@ process MASK {
         val (min_freq_ref)
 	
 	output:
-        tuple val(pair_id), path("*.mask.bed"),  path("*.nonmasked-regions.bed")
+        tuple val(pair_id), path("${pair_id}.mask.bed"), path("${pair_id}.nonmasked-regions.bed")
 	
 	script:
 	"""

@@ -1,16 +1,16 @@
 process READSTATS {
-	errorStrategy 'finish'
+    errorStrategy 'finish'
     tag "$pair_id"
-	maxForks 2
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/stats", mode: 'copy', pattern: '*'
-	
-	input:
-		tuple val(pair_id), path(raw1), path(raw2), path(dedup1), path(dedup2), path(trim1), path(trim2), path(bam)
+    maxForks 2
+    publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/stats", mode: 'copy', pattern: '*'
 
-	output:
-		tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
-		tuple val(pair_id), path("${pair_id}_outcome.txt"), emit: outcome
-    
+    input:
+        tuple val(pair_id), path(raw1), path(raw2), path(dedup1), path(dedup2), path(trim1), path(trim2), path(bam)
+
+    output:
+        tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
+        tuple val(pair_id), path("${pair_id}_outcome.txt"), emit: outcome
+
     script:
 
         """
@@ -25,10 +25,17 @@ process READSTATS {
         uniq_R1=\$(( \$(cat ${dedup1} | wc -l) / 4 ))
         trim_R1=\$(( \$(cat ${trim1} | wc -l) / 4 ))
         num_map=\$(samtools view -c ${bam})
+        
+        #Add ifelse to prevent empty bam errors stopping run
         samtools depth -a ${bam} > depth.txt
-        avg_depth=\$(awk '{sum+=\$3} END { printf "%.3f", sum/NR}' depth.txt)
-        zero_cov=\$(awk 'BEGIN {count=0} \$3<1 {++count} END {print count}' depth.txt)
-        sites=\$(awk '{++count} END {print count}' depth.txt)
+        sites=\$(wc -l < depth.txt || echo 0)
+        if [ "\$sites" -gt 0 ]; then
+            avg_depth=\$(awk '{sum+=\$3} END { printf "%.3f", (NR>0)?sum/NR:0 }' depth.txt)
+            zero_cov=\$(awk '\$3<1 {c++} END {print (c+0)}' depth.txt)
+        else
+            avg_depth=0
+            zero_cov=0
+        fi
         rm depth.txt
         rm ${raw1}
         rm ${raw2}
