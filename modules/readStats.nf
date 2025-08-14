@@ -2,10 +2,10 @@ process READSTATS {
     errorStrategy 'finish'
     tag "$pair_id"
     maxForks 2
-    publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/stats", mode: 'copy', pattern: '*'
 
     input:
-        tuple val(pair_id), path(raw1), path(raw2), path(dedup1), path(dedup2), path(trim1), path(trim2), path(bam)
+        tuple val(pair_id), path(raw1), path(raw2), path(uniq1), path(uniq2), path(trim1), path(trim2), path(bam)
+        val (rm_inter)
 
     output:
         tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
@@ -22,7 +22,7 @@ process READSTATS {
 
         # Count reads in each category; in fastq files each read consists of four lines
         raw_R1=\$(( \$(zcat ${raw1} | wc -l) / 4 ))
-        uniq_R1=\$(( \$(cat ${dedup1} | wc -l) / 4 ))
+        uniq_R1=\$(( \$(cat ${uniq1} | wc -l) / 4 ))
         trim_R1=\$(( \$(cat ${trim1} | wc -l) / 4 ))
         num_map=\$(samtools view -c ${bam})
         
@@ -36,9 +36,12 @@ process READSTATS {
             avg_depth=0
             zero_cov=0
         fi
+        
+        #Cleanup deduplicated reads - removed 
         rm depth.txt
-        rm ${raw1}
-        rm ${raw2}
+        if [ ${rm_inter} = 'true' ]; then
+            rm -f -- "\$(readlink -f -- \"${uniq1}\")" "\$(readlink -f -- \"${uniq2}\")"
+        fi
 
         # Calculate values and percentages
         num_raw=\$((\$raw_R1*2))

@@ -10,6 +10,7 @@ nextflow_process {
             params {
                 kraken2db = "/opt/Kraken2/test-db/"
                 lowmem = ""
+                rmInter = false
             }
             process {
                 """
@@ -18,6 +19,7 @@ nextflow_process {
                             file("${projectDir}/tests/data/phix_test/trimmed_2.fastq")]
                 input[1] = params.kraken2db
                 input[2] = params.lowmem
+                input[3] = params.rmInter
                 """
             }
         }

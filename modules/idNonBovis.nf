@@ -8,6 +8,7 @@ process IDNONBOVIS {
 		tuple val(pair_id), path(outcome), path(trim1), path(trim2)
 		val (kraken2db)
 		val (lowmem)
+        val (rm_inter)
 	
 	output:
 		path("${pair_id}_bovis.csv"), emit: queryBovis
@@ -54,5 +55,10 @@ process IDNONBOVIS {
         echo "ID not required"
         echo "Sample,ID,TotalReads,Abundance" > "${pair_id}_bovis.csv"
     fi
+
+    if [ ${rm_inter} = 'true' ]; then
+        rm -f -- "\$(readlink -f -- \"${trim1}\")" "\$(readlink -f -- \"${trim2}\")"
+    fi
+
 	"""
 }

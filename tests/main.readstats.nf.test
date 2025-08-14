@@ -8,8 +8,7 @@ nextflow_process {
 
         when {
             params {
-                // define parameters here. Example:
-                // outdir = "tests/results"
+                rmInter = false
             }
             process {
                 """
@@ -20,6 +19,7 @@ nextflow_process {
                             file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"),
                             file("${projectDir}/tests/data/phix_test/trimmed_2.fastq"),
                             file("${projectDir}/tests/data/phix_test/phix-800.bam"),]
+                input[1] = params.rmInter 
                 """
             }
         }

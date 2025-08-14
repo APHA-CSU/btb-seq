@@ -5,6 +5,7 @@ nextflow.enable.dsl=2
 params.lowmem = ""
 params.reads = "${env('PWD')}/*_{S*_R1,S*_R2}*.fastq.gz"
 params.outdir = "${env('PWD')}"
+params.rmInter = true
 params.help = false
 
 /* Define run information */
@@ -105,10 +106,10 @@ workflow {
 	varCall_ch = VARCALL(map2Ref_ch, params.ref, params.MAP_QUAL, params.BASE_QUAL, params.PLOIDY)
 	mask_ch = MASK(varCall_ch, map2Ref_ch, params.rptmask, params.allsites, params.MIN_READ_DEPTH, params.MIN_ALLELE_FREQUENCY_ALT, params.MIN_ALLELE_FREQUENCY_REF)
 	vcf2Consensus_ch = VCF2CONSENSUS(params.ref, mask_ch.join(varCall_ch), params.MIN_ALLELE_FREQUENCY_ALT, params.outdir, params.today)
-	readStats_ch = READSTATS(ch_reads.join(deduplicate_ch).join(trim_ch).join(map2Ref_ch))
+	readStats_ch = READSTATS(ch_reads.join(deduplicate_ch).join(trim_ch).join(map2Ref_ch), params.rmInter)
 	assignCluster_ch = ASSIGNCLUSTER(varCall_ch.join(readStats_ch.stats), params.discrimPos, params.stage1pat, params.ref, params.min_mean_cov, params.min_cov_snp, params.alt_prop_snp, params.min_qual_snp, params.min_qual_nonsnp, params.pypath)
 	newcladeassign_ch = NEWCLADEASSIGN(vcf2Consensus_ch.consensus, params.csstable)
-  idNonBovis_ch = IDNONBOVIS(readStats_ch.outcome.join(trim_ch), params.kraken2db, params.lowmem)
+  idNonBovis_ch = IDNONBOVIS(readStats_ch.outcome.join(trim_ch), params.kraken2db, params.lowmem, params.rmInter)
   assignCluster_ch.collectFile(name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true).set{assigned}
   newcladeassign_ch.collectFile(name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}").set{newclade}
   idNonBovis_ch.queryBovis.collectFile(name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true).set {qbovis}
