@@ -1,3 +1,0 @@
-add removal of intermediate files
-add additional tests on final steps
-re-format btb-forestry? - add ena upload
