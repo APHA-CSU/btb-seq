@@ -1,7 +1,8 @@
-nextflow_pipeline {
+nextflow_workflow {
 
   name "Test Workflow main.nf"
   script "main.nf"
+  workflow "btb_seq"
 
   test("Test integration (especially combining multiple samples)") {
 
@@ -16,19 +17,12 @@ nextflow_pipeline {
     }
 
     then {
-      assert workflow.success
+            assert workflow.success
 
-      def outDir = new File("${params.outdir}/Results_${params.dataDir}_${params.today}")
-      assert outDir.exists() && outDir.isDirectory()
-
-      def csvs = outDir.listFiles()?.findAll { it.name.endsWith('.csv') }?.sort { it.name } ?: []
-      assert !csvs.isEmpty()
-
-      def snap = [
-        published: csvs*.name,
-        heads    : csvs.collectEntries { f -> [(f.name): f.readLines().take(5)] }
-      ]
-      assert snapshot(snap).match()
+            with(workflow.out.combineoutput_ch) {
+                assert size() >= 1
+                assert path(get(0)).md5 == "21adc8b3b449b47704a5c7333709bf29"
+            }
     }
   }
 }

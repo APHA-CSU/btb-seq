@@ -8,7 +8,7 @@ import pandas as pd
 import argparse
 
 
-def assign(samplefas, CSStable):
+def assign(samplefas, CSStable, outfile):
 
     CSSpos = []
     CSS_df = pd.read_csv(CSStable, dtype=object)
@@ -84,14 +84,14 @@ def assign(samplefas, CSStable):
     'noCoverage' = sampleCSS.count('N')
     'anomalous' = gap counts - as above
     """
-    
-    sortedScore_df.head(1).to_csv("{}_cladematch.csv".format(samplefullseq.id), index=False)
+    sortedScore_df.head(1).to_csv(outfile, index=False)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('samplefas')
     parser.add_argument('CSStable')
+    parser.add_argument('outfile')
 
     args = parser.parse_args()
 

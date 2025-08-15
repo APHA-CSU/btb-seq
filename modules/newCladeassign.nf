@@ -11,6 +11,6 @@ process NEWCLADEASSIGN {
 
 	script:
 	"""
-	assignClade.py ${consensus} ${css} > "${pair_id}_cladematch.csv"
+	assignClade.py ${consensus} ${css} ${pair_id}_cladematch.csv
 	"""
 }

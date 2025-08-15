@@ -98,7 +98,7 @@ include { IDNONBOVIS } from './modules/idNonBovis'
 include { COMBINEOUTPUT } from './modules/combineOutput'
 
 /* define workflow */
-workflow {
+workflow btb_seq {
 	ch_reads = Channel.fromFilePairs(params.reads, flat: true).ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	deduplicate_ch = DEDUPLICATE(ch_reads)
   trim_ch = TRIM(deduplicate_ch, params.adapters)
@@ -114,5 +114,11 @@ workflow {
   newcladeassign_ch.collectFile(name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}").set{newclade}
   idNonBovis_ch.queryBovis.collectFile(name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true).set {qbovis}
   vcf2Consensus_ch.nCount.collectFile(name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true).set {consensusQual}
-  combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual, params.DataDir, params.user)
+  combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual, params.DataDir, params.user) 
+  emit: 
+    combineoutput_ch
+}
+
+workflow {
+    btb_seq()
 }
