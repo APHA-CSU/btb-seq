@@ -1,0 +1,2 @@
+Sample,NumRawReads,NumDedupReads,%afterDedup,NumTrimReads,%afterTrim,NumMappedReads,%Mapped,MeanDepth,GenomeCov,Outcome
+phix-m_S900,1600,1598,99.87,1452,90.86,0,0,0,,InsufficientData

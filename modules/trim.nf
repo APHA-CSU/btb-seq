@@ -2,7 +2,6 @@ process TRIM {
     errorStrategy 'finish'
     tag "$pair_id"
 	maxForks 2
-    cleanup = false
 	
 	input:
 		tuple val(pair_id), path(uniq1), path(uniq2)

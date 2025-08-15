@@ -1,0 +1,2 @@
+Sample,GenomeCov,MeanDepth,NumRawReads,pcMapped,Outcome,flag,group,CSSTested,matches,mismatches,noCoverage,anomalous
+phix-m_S800,,0,1600,0,InsufficientData,LowCoverage,NA,NA,NA,NA,NA,NA

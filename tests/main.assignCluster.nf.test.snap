@@ -1,0 +1,16 @@
+{
+    "Should assign cluster": {
+        "content": [
+            {
+                "0": [
+                    "phix-m_stage1.csv:md5,942042048a4e2f12092ce811362944f3"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.6"
+        },
+        "timestamp": "2025-08-15T10:02:34.901428933"
+    }
+}

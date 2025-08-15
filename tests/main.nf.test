@@ -1,0 +1,34 @@
+nextflow_pipeline {
+
+  name "Test Workflow main.nf"
+  script "main.nf"
+
+  test("Test integration (especially combining multiple samples)") {
+
+    when {
+      params {
+        reads = "${projectDir}/tests/data/phix_test/combine_tests/*{R1,R2}*.fastq.gz"
+        outdir = "${projectDir}/.nf-test/out"
+        dataDir = "combine_tests"     
+        today  = "15Aug25"
+        user   = "UnknownUser"
+      }
+    }
+
+    then {
+      assert workflow.success
+
+      def outDir = new File("${params.outdir}/Results_${params.dataDir}_${params.today}")
+      assert outDir.exists() && outDir.isDirectory()
+
+      def csvs = outDir.listFiles()?.findAll { it.name.endsWith('.csv') }?.sort { it.name } ?: []
+      assert !csvs.isEmpty()
+
+      def snap = [
+        published: csvs*.name,
+        heads    : csvs.collectEntries { f -> [(f.name): f.readLines().take(5)] }
+      ]
+      assert snapshot(snap).match()
+    }
+  }
+}
