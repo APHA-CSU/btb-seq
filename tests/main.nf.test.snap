@@ -3,16 +3,16 @@
         "content": [
             {
                 "published": [
-                    "combine_tests_AssignedClade_15Aug25.csv",
+                        "combine_tests_AssignedClade_15Aug25.csv",
                     "combine_tests_FinalOut_15Aug25.csv"
                 ],
                 "heads": {
                     "combine_tests_AssignedClade_15Aug25.csv": [
                         "        Sample     flag     group  ...  mismatches  nocoverage  anomolous",
-                        "0  phix-m_S800  Outlier     B1-11  ...         0.0       100.0        0.0",
-                        "1  phix-m_S800  Outlier     B2-11  ...         0.0       100.0        0.0",
-                        "2  phix-m_S800  Outlier     B3-11  ...         0.0       100.0        0.0",
-                        "3  phix-m_S800  Outlier     B4-11  ...         0.0       100.0        0.0"
+                        "0  phix-m_S900  Outlier     B1-11  ...         0.0       100.0        0.0",
+                        "1  phix-m_S900  Outlier     B2-11  ...         0.0       100.0        0.0",
+                        "2  phix-m_S900  Outlier     B3-11  ...         0.0       100.0        0.0",
+                        "3  phix-m_S900  Outlier     B4-11  ...         0.0       100.0        0.0"
                     ],
                     "combine_tests_FinalOut_15Aug25.csv": [
                         "Sample,GenomeCov,MeanDepth,NumRawReads,pcMapped,Outcome,flag,group,CSSTested,matches,mismatches,noCoverage,anomalous,Ncount,ResultLoc,ID,TotalReads,Abundance",
@@ -28,6 +28,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.6"
         },
-        "timestamp": "2025-08-15T10:21:24.389086417"
+        "timestamp": "2025-08-15T12:09:03.599435684"
     }
 }
