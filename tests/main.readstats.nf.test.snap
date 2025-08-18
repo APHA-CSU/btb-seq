@@ -9,6 +9,9 @@
                     ]
                 ],
                 "1": [
+                    "phix-m_stats.csv:md5,d6cd5066345828d9dd1ecf1afc498ba1"
+                ],
+                "2": [
                     [
                         "phix-m",
                         "outcome.txt:md5,fbb6e44cb0ecb2c8284885dae762318d"
@@ -25,6 +28,9 @@
                         "phix-m",
                         "phix-m_stats.csv:md5,d6cd5066345828d9dd1ecf1afc498ba1"
                     ]
+                ],
+                "stats_table": [
+                    "phix-m_stats.csv:md5,d6cd5066345828d9dd1ecf1afc498ba1"
                 ]
             }
         ],
@@ -32,6 +38,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-06-03T16:21:56.621229756"
+        "timestamp": "2025-08-18T13:24:09.236830606"
     }
 }
