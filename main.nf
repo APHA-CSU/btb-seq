@@ -110,11 +110,12 @@ workflow btb_seq {
 	assignCluster_ch = ASSIGNCLUSTER(varCall_ch.join(readStats_ch.stats), params.discrimPos, params.stage1pat, params.ref, params.min_mean_cov, params.min_cov_snp, params.alt_prop_snp, params.min_qual_snp, params.min_qual_nonsnp, params.pypath)
 	newcladeassign_ch = NEWCLADEASSIGN(vcf2Consensus_ch.consensus, params.csstable)
   idNonBovis_ch = IDNONBOVIS(readStats_ch.outcome.join(trim_ch), params.kraken2db, params.lowmem, params.rmInter)
-  assignCluster_ch.collectFile(name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true).set{assigned}
-  newcladeassign_ch.collectFile(name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}").set{newclade}
-  idNonBovis_ch.queryBovis.collectFile(name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true).set {qbovis}
-  vcf2Consensus_ch.nCount.collectFile(name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true).set {consensusQual}
-  combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual, params.DataDir, params.user) 
+  assignCluster_ch.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true ).set {assigned}
+	newcladeassign_ch.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" ).set {newclade}
+	idNonBovis_ch.queryBovis.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true ).set {qbovis}
+	vcf2Consensus_ch.nCount.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true ).set {consensusQual}
+  combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual)
+
   emit: 
     combineoutput_ch
 }

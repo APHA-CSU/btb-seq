@@ -6,14 +6,12 @@ process COMBINEOUTPUT {
 		path(assigned)
 		path(qbovis)
 		path(ncount)
-		val(DataDir) 
-		val(user)
-	
+
 	output:
 		path('*.csv')
 	
 	script:
 	"""
-	combineCsv.py ${assigned} ${qbovis} ${ncount} ${DataDir} ${workflow.commitId} ${user}
+	combineCsv.py ${assigned} ${qbovis} ${ncount} ${params.DataDir} ${workflow.commitId} ${params.user}
 	"""
 }

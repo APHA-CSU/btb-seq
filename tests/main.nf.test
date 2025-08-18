@@ -4,13 +4,12 @@ nextflow_workflow {
   script "main.nf"
   workflow "btb_seq"
 
-  test("Test integration (especially combining multiple samples)") {
+  test("Should integrate all modules") {
 
     when {
       params {
         reads = "${projectDir}/tests/data/phix_test/combine_tests/*{R1,R2}*.fastq.gz"
-        outdir = "${projectDir}/.nf-test/out"
-        dataDir = "combine_tests"     
+        dataDir = "test"     
         today  = "15Aug25"
         user   = "UnknownUser"
       }
@@ -18,10 +17,9 @@ nextflow_workflow {
 
     then {
             assert workflow.success
-
             with(workflow.out.combineoutput_ch) {
                 assert size() >= 1
-                assert path(get(0)).md5 == "21adc8b3b449b47704a5c7333709bf29"
+                assert path(get(0)).md5 == "a7bc09e28573973b7e37e224fabd7821"
             }
     }
   }

@@ -2,7 +2,6 @@ process READSTATS {
     errorStrategy 'finish'
     tag "$pair_id"
     maxForks 2
-    publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/stats", mode: 'copy', pattern: '*'
 
     input:
         tuple val(pair_id), path(raw1), path(raw2), path(uniq1), path(uniq2), path(trim1), path(trim2), path(bam)
@@ -38,7 +37,7 @@ process READSTATS {
             zero_cov=0
         fi
         
-        #Cleanup deduplicated reads - removed 
+        # Cleanup deduplicated reads 
         rm depth.txt
         if [ ${rm_inter} = 'true' ]; then
             rm -f -- "\$(readlink -f -- \"${uniq1}\")" "\$(readlink -f -- \"${uniq2}\")"

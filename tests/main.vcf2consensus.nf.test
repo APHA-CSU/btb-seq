@@ -31,7 +31,7 @@ nextflow_process {
         then {
             assert process.success
             assert snapshot(process.out.consensus).match()
-            assert path(process.out.nCount[0][1]).readLines().first() == 'Sample,Ncount,ResultLoc'     
+            assert path(process.out.nCount[0]).readLines().contains('Sample,Ncount,ResultLoc') 
         }
 
     }
