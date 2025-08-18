@@ -10,7 +10,8 @@ set -eo pipefail
 
 pair_id=$1
 kraken2db=$2
-lowmem=$3
+rm_inter=$3
+lowmem=$4
 
 outcome=$(cat outcome.txt)
 if [ $outcome != "Pass" ]; then
@@ -40,4 +41,9 @@ echo "${pair_id},"$BovPos"" >> ${pair_id}_bovis.csv
 else
 echo "ID not required"
 echo "Sample,ID,TotalReads,Abundance" > ${pair_id}_bovis.csv
+fi
+
+if [ $rm_inter = 'true' ]; then
+    rm `readlink trimmed_1.fastq`
+    rm `readlink trimmed_2.fastq`
 fi
