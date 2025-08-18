@@ -26,13 +26,10 @@ def combine(assigned_csv, stats_csv, bovis_csv, ncount_csv, seq_run, commitId, u
     stats_df.rename(columns={'%Mapped': 'pcMapped'}, inplace=True)
     stats_df = stats_df[['Sample', 'GenomeCov', 'MeanDepth', 'NumRawReads', 'pcMapped', 'Outcome']]
 
-    #TODO - edit stats_df to match columns in current finalout csv ###
-
     # Read BovPos csv and change ID to either 'Negative' or 'Mycobacterium bovis',
     # depending on number and relative abundance of M.bovis reads.
     # Thresholds set by comparison with output from spoligotyping.
     # Fill empty value cells with zero 
-    # TODO: Potential that not all scenarios are covered by the options below, so need to add default ID outcome
     bovis_df = pd.read_csv(bovis_csv)
     bovis_df['Sample']=bovis_df['Sample'].astype(object)
     qbovis_df = bovis_df.round(2)
