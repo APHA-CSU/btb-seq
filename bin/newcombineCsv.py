@@ -20,9 +20,11 @@ def combine(assigned_csv, stats_csv, bovis_csv, ncount_csv, seq_run, commitId, u
     ncount_df = pd.read_csv(ncount_csv)
     ncount_df['Sample']=ncount_df['Sample'].astype(object)
 
-    # Read stats csv
+    # Read stats csv, extract and rename columns
     stats_df = pd.read_csv(stats_csv)
     stats_df['Sample']=stats_df['Sample'].astype(object)
+    stats_df.rename(columns={'%Mapped': 'pcMapped'}, inplace=True)
+    stats_df = stats_df[['Sample', 'GenomeCov', 'MeanDepth', 'NumRawReads', 'pcMapped', 'Outcome']]
 
     #TODO - edit stats_df to match columns in current finalout csv ###
 
