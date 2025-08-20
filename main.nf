@@ -99,6 +99,8 @@ include { COMBINEOUTPUT } from './modules/combineOutput'
 
 /* define workflow */
 workflow btb_seq {
+  main:
+  
 	ch_reads = Channel.fromFilePairs(params.reads, flat: true).ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
 	deduplicate_ch = DEDUPLICATE(ch_reads)
   trim_ch = TRIM(deduplicate_ch, params.adapters)
