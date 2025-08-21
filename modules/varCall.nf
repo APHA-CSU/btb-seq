@@ -3,7 +3,6 @@ process VARCALL {
 	tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.vcf.gz'
 	maxForks 3
-	cleanup = false
 
 	input:
 		tuple val(pair_id), path(bam)

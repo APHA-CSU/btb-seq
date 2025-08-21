@@ -3,7 +3,6 @@ process MAP2REF {
     tag "$pair_id"
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/bam", mode: 'copy', pattern: '*.bam'
 	maxForks 2
-	cleanup = false
 	
 	input:
 		tuple val(pair_id), path(trim1), path(trim2)
