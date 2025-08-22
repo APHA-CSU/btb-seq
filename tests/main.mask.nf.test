@@ -17,13 +17,13 @@ nextflow_process {
             process {
                 """
                 input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz"), 
-                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi")] 
-                input[1] = ["phix-m", file("${projectDir}/tests/data/phix_test/phix-800.bam")] 
-                input[2] = params.rptmask
-                input[3] = params.allsites
-                input[4] = params.MIN_READ_DEPTH
-                input[5] = params.MIN_ALLELE_FREQUENCY_ALT
-                input[6] = params.MIN_ALLELE_FREQUENCY_REF
+                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi"), 
+                            file("${projectDir}/tests/data/phix_test/phix-800.bam")] 
+                input[1] = params.rptmask
+                input[2] = params.allsites
+                input[3] = params.MIN_READ_DEPTH
+                input[4] = params.MIN_ALLELE_FREQUENCY_ALT
+                input[5] = params.MIN_ALLELE_FREQUENCY_REF
                 """
             }
         }

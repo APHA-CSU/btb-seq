@@ -106,7 +106,7 @@ workflow btb_seq {
   trim_ch = TRIM(deduplicate_ch, params.adapters)
 	map2Ref_ch = MAP2REF(trim_ch, params.ref)
 	varCall_ch = VARCALL(map2Ref_ch, params.ref, params.MAP_QUAL, params.BASE_QUAL, params.PLOIDY)
-	mask_ch = MASK(varCall_ch, map2Ref_ch, params.rptmask, params.allsites, params.MIN_READ_DEPTH, params.MIN_ALLELE_FREQUENCY_ALT, params.MIN_ALLELE_FREQUENCY_REF)
+	mask_ch = MASK(varCall_ch.join(map2Ref_ch), params.rptmask, params.allsites, params.MIN_READ_DEPTH, params.MIN_ALLELE_FREQUENCY_ALT, params.MIN_ALLELE_FREQUENCY_REF)
 	vcf2Consensus_ch = VCF2CONSENSUS(params.ref, mask_ch.join(varCall_ch), params.MIN_ALLELE_FREQUENCY_ALT, params.outdir, params.today)
 	readStats_ch = READSTATS(ch_reads.join(deduplicate_ch).join(trim_ch).join(map2Ref_ch), params.rmInter)
 	assignCluster_ch = ASSIGNCLUSTER(varCall_ch.join(readStats_ch.stats), params.discrimPos, params.stage1pat, params.ref, params.min_mean_cov, params.min_cov_snp, params.alt_prop_snp, params.min_qual_snp, params.min_qual_nonsnp, params.pypath)

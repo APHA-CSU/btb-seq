@@ -4,8 +4,7 @@ process MASK {
 	maxForks 2
 	
 	input:
-        tuple val(pair_id), path(vcf), path(csi)
-        tuple val(pair_id), path(bam)
+        tuple val(pair_id), path(vcf), path(csi), path(bam)
         path (rptmask_bed)
         path (allsites_bed)
         val (min_read_depth)
