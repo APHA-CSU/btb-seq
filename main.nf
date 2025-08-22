@@ -47,7 +47,8 @@ params.MIN_ALLELE_FREQUENCY_REF = 0.7
 params.kraken2db = "/opt/Kraken2/db/minikraken2_v1_8GB/"
 
 /* Print help message if --help is passed */
-if (params.help) {
+workflow help {
+  if (params.help){
     println """
     Usage: nextflow run main.nf [options]
 
@@ -82,6 +83,7 @@ if (params.help) {
       nextflow run main.nf --reads '/path/to/data/*_{S*_R1,S*_R2}*.fastq.gz' -with-docker aphacsubot/btb-seq:master'
     """
     exit 0
+  }
 }
 
 /* set modules */
@@ -123,5 +125,6 @@ workflow btb_seq {
 }
 
 workflow {
+    help ()
     btb_seq()
 }
