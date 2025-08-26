@@ -9,6 +9,7 @@ process READSTATS {
 
     output:
         tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
+        tuple path("${pair_id}_stats.csv"), emit: stats_table
         tuple val(pair_id), path("${pair_id}_outcome.txt"), emit: outcome
 
     script:

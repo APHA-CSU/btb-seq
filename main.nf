@@ -98,6 +98,7 @@ include { NEWCLADEASSIGN } from './modules/newCladeassign'
 include { READSTATS } from './modules/readStats'
 include { IDNONBOVIS } from './modules/idNonBovis'
 include { COMBINEOUTPUT } from './modules/combineOutput'
+include { NEWOUTPUTCOMBINE } from './modules/newOutputCombine'
 
 /* define workflow */
 workflow btb_seq {
@@ -118,7 +119,16 @@ workflow btb_seq {
 	newcladeassign_ch.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" ).set {newclade}
 	idNonBovis_ch.queryBovis.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true ).set {qbovis}
 	vcf2Consensus_ch.nCount.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true ).set {consensusQual}
+  READSTATS.out.stats_table
+    .collectFile( name: "${params.DataDir}_stats_${params.today}.csv", sort: true, keepHeader: true )
+		.set {stats}
   combineoutput_ch = COMBINEOUTPUT(assigned, qbovis, consensusQual)
+  NEWOUTPUTCOMBINE(
+    newclade,
+    stats,
+    qbovis,
+    consensusQual
+    )
 
   emit: 
     combineoutput_ch
