@@ -17,7 +17,7 @@ nextflow_workflow {
 
     then {
             assert workflow.success
-            with(workflow.out.combineoutput_ch) {
+            with(workflow.out.COMBINEOUTPUT) {
                 assert size() >= 1
                 def lines = path(get(0)).readLines()
                 assert lines.size() >= 2
