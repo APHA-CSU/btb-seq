@@ -1,0 +1,29 @@
+nextflow_process {
+
+    name "Test Process NEWCLADEASSIGN"
+    script "modules/newCladeassign.nf"
+    process "NEWCLADEASSIGN"
+
+    test("Should assign clade") {
+
+        when {
+            params {
+                css = "${projectDir}/references/CSSwithref.csv"
+            }
+            process {
+                """
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800_consensus.fas"),
+                            file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800_snps.tab")]
+		        input[1] = params.css
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

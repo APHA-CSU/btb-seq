@@ -1,318 +1,208 @@
 #!/usr/bin/env nextflow
-
 nextflow.enable.dsl=2
 
 /* Define variables */
 params.lowmem = ""
 params.reads = "${env('PWD')}/*_{S*_R1,S*_R2}*.fastq.gz"
 params.outdir = "${env('PWD')}"
+params.rmInter = true
+params.help = false
 
+/* Define run information */
 params.DataDir = params.reads.tokenize('/')[-2]
 params.today = new Date().format('ddMMMYY')
-
 params.user = "UnknownUser"
 
-process deduplicate {
-    errorStrategy 'finish'
-    tag "$pair_id"
-	maxForks 2
-	input:
-	    tuple val(pair_id), path("pair_1"), path("pair_2")
-	output:
-	    tuple val(pair_id), path("dedup_1.fastq"), path("dedup_2.fastq")
-	script:
-	"""
-	deduplicate.bash pair_1 pair_2 dedup_1.fastq dedup_2.fastq
-	"""
-}
+/* location of reference information */
+params.ref = "$projectDir/references/Mycbovis-2122-97_LT708304.fas"
+params.refgbk = "$projectDir/references/Mycbovis-2122-97_LT708304.gb"
+params.rptmask = "$projectDir/references/DataDrivenMerge20.bed"
+params.allsites = "$projectDir/references/All-sites.bed"
+params.adapters = "$projectDir/references/adapter.fasta"
+params.discrimPos = "$projectDir/references/DiscrimPos.tsv"
+params.csstable = "$projectDir/references/CSSwithref.csv"
 
-process trim {
-    errorStrategy 'finish'
-    tag "$pair_id"
-	maxForks 2
-	input:
-	    tuple val(pair_id), path("read_1.fastq"), path("read_2.fastq"), path("adapters.fas")
-	output:
-	    tuple val(pair_id), path("trimmed_1.fastq"), path("trimmed_2.fastq")
-	script:
-	"""
-	trim.bash adapters.fas read_1.fastq read_2.fastq trimmed_1.fastq trimmed_2.fastq
-	"""
-}
+/* params for original assignCluster process */
+params.stage1pat = "$projectDir/references/Stage1_patterns/"
+params.pypath = "$projectDir/pyscripts/"
 
-process map2Ref {
-    errorStrategy 'finish'
-    tag "$pair_id"
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/bam", mode: 'copy', pattern: '*.bam'
-	maxForks 2
-	input:
-    	tuple val(pair_id), path("read_1.fastq"), path("read_2.fastq"), path("ref.fas")
-	output:
-    	tuple val(pair_id), path("${pair_id}.bam")
-	script:
-	"""
-	map2Ref.bash $params.ref read_1.fastq read_2.fastq ${pair_id}.bam
-	"""
-}
+/* quality thresholds */
+params.min_mean_cov = 8
+params.min_cov_snp = 5
+params.alt_prop_snp = 0.2
+params.min_qual_snp = 150
+params.min_qual_nonsnp = 0
 
-process varCall {
-	errorStrategy 'finish'
-	tag "$pair_id"
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/vcf", mode: 'copy', pattern: '*.vcf.gz'
-	maxForks 3
-	input:
-		tuple val(pair_id), path("mapped.bam"), path("ref.fas")
-	output:
-		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi")
-	script:
-	"""
-	varCall.bash ref.fas mapped.bam ${pair_id}.vcf.gz $params.MAP_QUAL $params.BASE_QUAL $params.PLOIDY
-	"""
-}
+/* quality thresholds (variant calling) */
+params.MAP_QUAL = 0
+params.BASE_QUAL = 10
+params.PLOIDY = "1"
 
-process mask {
-	errorStrategy 'finish'
-	tag "$pair_id"
-	maxForks 2
-	input:
-		tuple val(pair_id), path("called.vcf"), path("called.vcf.csi"), path("mapped.bam"), path("rptmask.bed"), path("allsites.bed")
-	output:
-		tuple val(pair_id), path("mask.bed"), path("nonmasked-regions.bed")
-	script:
-	"""
-	mask.bash rptmask.bed called.vcf mask.bed nonmasked-regions.bed mapped.bam allsites.bed $params.MIN_READ_DEPTH $params.MIN_ALLELE_FREQUENCY_ALT $params.MIN_ALLELE_FREQUENCY_REF
-	"""
-}
+/* quality thresholds (snp filtering) */
+params.MIN_READ_DEPTH = 8
+params.MIN_ALLELE_FREQUENCY_ALT = 0.8
+params.MIN_ALLELE_FREQUENCY_REF = 0.7
 
-process readStats {
-	errorStrategy 'finish'
-    tag "$pair_id"
-	maxForks 2
-	input:
-		tuple val(pair_id), path("${pair_id}_*_R1_*.fastq.gz"), path("${pair_id}_*_R2_*.fastq.gz"), 
-		path("${pair_id}_uniq_R1.fastq"), path("${pair_id}_uniq_R2.fastq"),
-		path("${pair_id}_trim_R1.fastq"), path("${pair_id}_trim_R2.fastq"),
-		path("${pair_id}.mapped.sorted.bam")
-	output:
-		tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
-		tuple val(pair_id), path('outcome.txt'), emit: outcome
-    script:
-	"""
-    readStats.bash "$pair_id" $params.rmInter
+/* location of dependancies */
+params.kraken2db = "/opt/Kraken2/db/minikraken2_v1_8GB/"
+
+/* Print help message if --help is passed */
+workflow help {
+  if (params.help){
+    println """
+    Usage: nextflow run main.nf [options]
+
+    Options:
+      --reads                  Path to input FASTQ files (default: ${params.reads})
+      --outdir                 Output directory (default: ${params.outdir})
+      --lowmem                 Enable low memory mode for Kraken2 (default: ${params.lowmem})
+      --kraken2db              Path to Kraken2 database (default: ${params.kraken2db})
+      --ref                    Path to reference genome (default: ${params.ref})
+      --refgbk                 Path to reference GenBank file (default: ${params.refgbk})
+      --rptmask                Path to repeat mask file (default: ${params.rptmask})
+      --allsites               Path to all-sites BED file (default: ${params.allsites})
+      --adapters               Path to adapter sequences file (default: ${params.adapters})
+      --discrimPos             Path to discrimination positions file (default: ${params.discrimPos})
+      --csstable               Path to CSS table file (default: ${params.csstable})
+      --stage1pat              Path to Stage1 patterns directory (default: ${params.stage1pat})
+      --pypath                 Path to Python scripts directory (default: ${params.pypath})
+      --min_mean_cov           Minimum mean coverage (default: ${params.min_mean_cov})
+      --min_cov_snp            Minimum coverage for SNPs (default: ${params.min_cov_snp})
+      --alt_prop_snp           Minimum alternate proportion for SNPs (default: ${params.alt_prop_snp})
+      --min_qual_snp           Minimum quality for SNPs (default: ${params.min_qual_snp})
+      --min_qual_nonsnp        Minimum quality for non-SNPs (default: ${params.min_qual_nonsnp})
+      --MAP_QUAL               Minimum mapping quality (default: ${params.MAP_QUAL})
+      --BASE_QUAL              Minimum base quality (default: ${params.BASE_QUAL})
+      --PLOIDY                 Ploidy value for variant calling (default: ${params.PLOIDY})
+      --MIN_READ_DEPTH         Minimum read depth for SNP filtering (default: ${params.MIN_READ_DEPTH})
+      --MIN_ALLELE_FREQUENCY_ALT Minimum alternate allele frequency (default: ${params.MIN_ALLELE_FREQUENCY_ALT})
+      --MIN_ALLELE_FREQUENCY_REF Minimum reference allele frequency (default: ${params.MIN_ALLELE_FREQUENCY_REF})
+      --help                   Print this help message and exit
+
+    Example:
+      nextflow run main.nf --reads '/path/to/data/*_{S*_R1,S*_R2}*.fastq.gz' -with-docker aphacsubot/btb-seq:master'
     """
+    exit 0
+  }
 }
 
-process vcf2Consensus {
-	errorStrategy 'finish'
-    tag "$pair_id"
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/consensus/", mode: 'copy', pattern: '*.fas'
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/snpTables/", mode: 'copy', pattern: '*.tab'
-	maxForks 2
-	input:
-		tuple val(pair_id), path("mask.bed"), path("nonmasked-regions.bed"),
-		path("variant.vcf.gz"),	path("variant.vcf.gz.csi"), path("ref.fas")
-	output:
-		tuple val(pair_id), path("${pair_id}_consensus.fas"), path("${pair_id}_snps.tab"), emit: consensus
-		path("${pair_id}_ncount.csv"), emit: nCount
-	script:
-	"""
-	vcf2Consensus.bash ref.fas \
-		mask.bed \
-		nonmasked-regions.bed \
-		variant.vcf.gz \
-		${pair_id}_consensus.fas \
-		${pair_id}_snps.tab \
-		${pair_id}_filtered.bcf \
-		$params.MIN_ALLELE_FREQUENCY_ALT \
-		$pair_id \
-		$params.outdir/Results_${params.DataDir}_${params.today}/
-	"""
+/* set modules */
+include { DEDUPLICATE } from './modules/deduplicate'
+include { TRIM } from './modules/trim'
+include { MAP2REF } from './modules/map2Ref'
+include { VARCALL } from './modules/varCall'
+include { MASK } from './modules/mask'
+include { VCF2CONSENSUS } from './modules/vcf2Consensus'
+include { ASSIGNCLUSTER  } from './modules/assignCluster'
+include { NEWCLADEASSIGN } from './modules/newCladeassign'
+include { READSTATS } from './modules/readStats'
+include { IDNONBOVIS } from './modules/idNonBovis'
+include { COMBINEOUTPUT } from './modules/combineOutput'
+
+/* define workflow */
+workflow btb_seq {
+  main:
+  
+	ch_reads = Channel.fromFilePairs (
+    params.reads, flat: true)
+    .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
+	DEDUPLICATE (
+    ch_reads
+    )
+  TRIM (
+    DEDUPLICATE.out, 
+    params.adapters
+    )
+	MAP2REF (
+    TRIM.out, 
+    params.ref
+    )
+  VARCALL (
+    MAP2REF.out, 
+    params.ref, 
+    params.MAP_QUAL, 
+    params.BASE_QUAL, 
+    params.PLOIDY
+    )
+	MASK (
+    VARCALL.out
+    .join(MAP2REF.out), 
+    params.rptmask, 
+    params.allsites, 
+    params.MIN_READ_DEPTH, 
+    params.MIN_ALLELE_FREQUENCY_ALT, 
+    params.MIN_ALLELE_FREQUENCY_REF
+    )
+	VCF2CONSENSUS (
+    params.ref, 
+    MASK.out
+    .join(VARCALL.out), 
+    params.MIN_ALLELE_FREQUENCY_ALT, 
+    params.outdir, 
+    params.today
+    )
+	READSTATS (
+    ch_reads
+    .join(DEDUPLICATE.out)
+    .join(TRIM.out)
+    .join(MAP2REF.out), 
+    params.rmInter
+    )
+	ASSIGNCLUSTER (
+    VARCALL.out
+    .join(READSTATS.out.stats), 
+    params.discrimPos, 
+    params.stage1pat, 
+    params.ref, 
+    params.min_mean_cov, 
+    params.min_cov_snp, 
+    params.alt_prop_snp, 
+    params.min_qual_snp, 
+    params.min_qual_nonsnp, 
+    params.pypath
+    )
+	NEWCLADEASSIGN (
+    VCF2CONSENSUS.out.consensus, 
+    params.csstable
+    )
+  IDNONBOVIS (
+    READSTATS.out.outcome
+    .join(TRIM.out), 
+    params.kraken2db, 
+    params.lowmem, 
+    params.rmInter
+    )
+  ASSIGNCLUSTER.out
+    .collectFile ( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", 
+    sort: true, 
+    keepHeader: true )
+    .set {assigned}
+	NEWCLADEASSIGN.out
+    .collectFile ( name: "${params.DataDir}_AssignedClade_${params.today}.csv", 
+    keepHeader: true, 
+    storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
+    .set {newclade}
+	IDNONBOVIS.out
+    .queryBovis.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", 
+    sort: true, 
+    keepHeader: true )
+    .set {qbovis}
+	VCF2CONSENSUS.out
+    .nCount.collectFile ( name: "${params.DataDir}_Ncount_${params.today}.csv", 
+    sort: true, 
+    keepHeader: true )
+    .set {consensusQual}
+  COMBINEOUTPUT (
+    assigned, 
+    qbovis, 
+    consensusQual
+    )
+
+  emit: 
+    COMBINEOUTPUT = COMBINEOUTPUT.out
 }
 
-process assignCluster {
-	errorStrategy 'ignore'
-    tag "$pair_id"
-	maxForks 1
-	input:
-		tuple val(pair_id), path("${pair_id}.vcf.gz"), path("${pair_id}.vcf.gz.csi"), path("${pair_id}_stats.csv"),
-		path("discrim.tsv"), path("patterns"), path("ref.fas")
-	output:
-		path("${pair_id}_stage1.csv")
-	script:
-	"""
-	assignClusterCss.bash $pair_id \
-		discrim.tsv \
-		patterns \
-		$params.min_mean_cov \
-		$params.min_cov_snp \
-		$params.alt_prop_snp \
-		$params.min_qual_snp \
-		$params.min_qual_nonsnp \
-		$params.pypath \
-		ref.fas
-	"""
-}
-
-process newcladeassign {
-	tag "$pair_id"
-	maxForks 1
-	input:
-		tuple val(pair_id), path("consensus.fas"), path("snps.tab"), path("CSStable.csv")
-	output:
-		path("${pair_id}_cladematch.csv")
-
-	script:
-	"""
-	assignClade.py consensus.fas CSStable.csv
-	"""
-}
-
-process idNonBovis {
-	errorStrategy 'finish'
-    tag "$pair_id"
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}/NonBovID", mode: 'copy', pattern: '*.tab'
-	maxForks 1
-	input:
-		tuple val(pair_id), path("outcome.txt"), path("trimmed_1.fastq"), path("trimmed_2.fastq")
-	output:
-		path("${pair_id}_bovis.csv"), emit: queryBovis
-		tuple val(pair_id), path("${pair_id}_*_brackensort.tab"), path("${pair_id}_*_kraken2.tab"), optional: true, emit: krakenOut
-	script:
-	"""
-	idNonBovis.bash $pair_id $params.kraken2db $params.rmInter $params.lowmem 
-	"""
-}
-
-process combineOutput {
-	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
-	input:
-		path('assigned_csv')
-		path('qbovis_csv')
-		path('ncount_csv')
-	output:
-		path('*.csv')
-	script:
-	"""
-	combineCsv.py assigned_csv qbovis_csv ncount_csv $params.DataDir ${workflow.commitId} $params.user
-	"""
-}
-
-workflow{
-
-	/* Collect pairs of fastq files and infer sample names
-    Define the input raw sequening data files */
-    Channel
-        .fromFilePairs( params.reads, flat: true )
-        .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
-	    .set { readPairs }
-	
-	Channel
-		.fromPath( params.adapters )
-		.set { adapters }
-
-	Channel
-		.fromPath( params.ref )
-		.set { ref }
-
-	Channel
-		.fromPath( params.rptmask )
-		.set { rptmask }
-
-	Channel
-		.fromPath( params.allsites )
-		.set { allsites }
-
-	Channel
-		.fromPath( params.discrimPos )
-		.set { discrim }
-
-	Channel
-		.fromPath( params.stage1pat )
-		.set { patterns }
-
-	Channel
-		.fromPath( params.csstable)
-		.set { CSStable }
-
-	deduplicate(readPairs)
-
-	deduplicate.out
-		.combine( adapters )
-		.set { trimin }
-
-	trim(trimin)
-
-	trim.out
-		.combine( ref )
-		.set { map2refin }
-
-	map2Ref(map2refin)
-
-	map2Ref.out
-		.combine( ref )
-		.set { varCallin }
-
-	varCall(varCallin)
-	
-	varCall.out
-		.join( map2Ref.out )
-		.combine( rptmask )
-		.combine( allsites )
-		.set {vcf_bam}
-
-	mask(vcf_bam)
-
-	readPairs
-		.join( deduplicate.out )
-		.join( trim.out )
-		.join( map2Ref.out )
-		.set {reads_mapped}
-
-	readStats(reads_mapped)
-
-	mask.out
-		.join( varCall.out )
-		.combine( ref )
-		.set {mask_vcf}
-
-	vcf2Consensus(mask_vcf)
-
-	varCall.out
-		.join( readStats.out.stats )
-		.combine( discrim )
-		.combine( patterns )
-		.combine( ref )
-		.set {vcf_stats}
-
-	assignCluster(vcf_stats)
-
-	vcf2Consensus.out.consensus
-		.combine( CSStable )
-		.set {typing_data}
-	
-	newcladeassign(typing_data)
-
-	readStats.out.outcome
-		.join( trim.out )
-		.set {outcome_reads}
-
-	idNonBovis(outcome_reads)
-
-	assignCluster.out
-		.collectFile( name: "${params.DataDir}_AssignedWGSCluster_${params.today}.csv", sort: true, keepHeader: true )
-		.set {assigned}
-
-	newcladeassign.out
-		.collectFile( name: "${params.DataDir}_AssignedClade_${params.today}.csv", keepHeader: true, storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
-		.set {newclade}
-
-	idNonBovis.out.queryBovis
-		.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", sort: true, keepHeader: true )
-		.set {qbovis}
-
-	vcf2Consensus.out.nCount
-		.collectFile( name: "${params.DataDir}_Ncount_${params.today}.csv", sort: true, keepHeader: true)
-		.set {consensusQual}
-
-	combineOutput(assigned, qbovis, consensusQual)
+workflow {
+    help ()
+    btb_seq()
 }

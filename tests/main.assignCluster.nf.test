@@ -1,0 +1,46 @@
+nextflow_process {
+
+    name "Test Process ASSIGNCLUSTER"
+    script "main.nf"
+    process "ASSIGNCLUSTER"
+
+    test("Should assign cluster") {
+
+        when {
+            params {
+                discrimPos = "${projectDir}/references/DiscrimPos.tsv"
+		        stage1pat = "${projectDir}/references/Stage1_patterns/"
+                ref = "${projectDir}/references/Mycbovis-2122-97_LT708304.fas"
+                min_mean_cov = 8
+		        min_cov_snp = 5
+		        alt_prop_snp = 0.2
+		        min_qual_snp = 150
+		        min_qual_nonsnp = 0
+		        pypath = "${projectDir}/pyscripts"
+            }
+            process {
+                """
+		        input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800.vcf.gz"),
+                            file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800.vcf.gz.csi"), 
+                            file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800_stats.csv")]
+		        input[1] = params.discrimPos
+		        input[2] = params.stage1pat
+		        input[3] = params.ref
+		        input[4] = params.min_mean_cov
+		        input[5] = params.min_cov_snp
+		        input[6] = params.alt_prop_snp
+		        input[7] = params.min_qual_snp
+		        input[8] = params.min_qual_nonsnp
+		        input[9] = params.pypath
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}

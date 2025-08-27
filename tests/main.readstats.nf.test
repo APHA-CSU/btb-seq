@@ -2,14 +2,13 @@ nextflow_process {
 
     name "Test Process readStats"
     script "main.nf"
-    process "readStats"
+    process "READSTATS"
 
     test("Should generate stats on data processing") {
 
         when {
             params {
-                // define parameters here. Example:
-                // outdir = "tests/results"
+                rmInter = false
             }
             process {
                 """
@@ -20,6 +19,7 @@ nextflow_process {
                             file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"),
                             file("${projectDir}/tests/data/phix_test/trimmed_2.fastq"),
                             file("${projectDir}/tests/data/phix_test/phix-800.bam"),]
+                input[1] = params.rmInter 
                 """
             }
         }

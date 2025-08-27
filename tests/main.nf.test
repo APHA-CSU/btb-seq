@@ -1,0 +1,30 @@
+nextflow_workflow {
+
+  name "Test Workflow main.nf"
+  script "main.nf"
+  workflow "btb_seq"
+
+  test("Should integrate all modules") {
+
+    when {
+      params {
+        reads = "${projectDir}/tests/data/phix_test/combine_tests/*{R1,R2}*.fastq.gz"
+        dataDir = "test"     
+        today  = "15Aug25"
+        user   = "UnknownUser"
+      }
+    }
+
+    then {
+            assert workflow.success
+            with(workflow.out.COMBINEOUTPUT) {
+                assert size() >= 1
+                def lines = path(get(0)).readLines()
+                assert lines.size() >= 2
+                assert lines[0].startsWith('Sample,GenomeCov,MeanDepth,NumRawReads,pcMapped,Outcome,flag,group,CSSTested,matches,mismatches,noCoverage,anomalous,Ncount,ResultLoc,ID,TotalReads,Abundance')
+                assert lines[1].startsWith('phix-m_S800,NA,0,1600,0,InsufficientData,LowCoverage,NA,NA,NA,NA,NA,NA,4349904,')
+                assert lines[2].startsWith('phix-m_S900,NA,0,1600,0,InsufficientData,LowCoverage,NA,NA,NA,NA,NA,NA,4349904,')
+            }
+    }
+  }
+}

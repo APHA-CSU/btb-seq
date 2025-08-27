@@ -5,8 +5,8 @@
                 "0": [
                     [
                         "phix-m",
-                        "trimmed_1.fastq:md5,0772e0ad75f321e8b478fd7d4a8e4248",
-                        "trimmed_2.fastq:md5,d069fdf6066ba6d941ed2ffee4b79640"
+                        "phix-m_trim_R1.fastq:md5,0772e0ad75f321e8b478fd7d4a8e4248",
+                        "phix-m_trim_R2.fastq:md5,d069fdf6066ba6d941ed2ffee4b79640"
                     ]
                 ]
             }

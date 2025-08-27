@@ -2,17 +2,19 @@ nextflow_process {
 
     name "Test Process trim"
     script "main.nf"
-    process "trim"
+    process "TRIM"
 
     test("Should run trimmomatic on input fastq files") {
 
         when {
             params {
                 outdir = "tests/results"
+                adapters "${projectDir}/references/adapter.fasta"
             }
             process {
                 """
-                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/dedup_1.fastq"), file("${projectDir}/tests/data/phix_test/dedup_2.fastq"), file("${projectDir}/references/adapter.fasta")]
+                input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/dedup_1.fastq"), file("${projectDir}/tests/data/phix_test/dedup_2.fastq")]
+                input[1] = params.adapters
                 """
             }
         }

@@ -2,22 +2,28 @@ nextflow_process {
 
     name "Test Process mask"
     script "main.nf"
-    process "mask"
+    process "MASK"
 
     test("Should produce a combined mask in bed format") {
 
         when {
             params {
-                // define parameters here. Example:
-                // outdir = "tests/results"
+                rptmask = "${projectDir}/tests/data/phix_test/phixEndmask.bed"
+                allsites = "${projectDir}/tests/data/phix_test/phixAllsites.bed"
+                MIN_READ_DEPTH = 8
+                MIN_ALLELE_FREQUENCY_ALT = 0.8
+                MIN_ALLELE_FREQUENCY_REF = 0.7
             }
             process {
                 """
                 input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz"), 
                             file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi"), 
-                            file("${projectDir}/tests/data/phix_test/phix-800.bam"), 
-                            file("${projectDir}/tests/data/phix_test/phixEndmask.bed"), 
-                            file("${projectDir}/tests/data/phix_test/phixAllsites.bed")]
+                            file("${projectDir}/tests/data/phix_test/phix-800.bam")] 
+                input[1] = params.rptmask
+                input[2] = params.allsites
+                input[3] = params.MIN_READ_DEPTH
+                input[4] = params.MIN_ALLELE_FREQUENCY_ALT
+                input[5] = params.MIN_ALLELE_FREQUENCY_REF
                 """
             }
         }

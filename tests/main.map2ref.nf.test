@@ -2,7 +2,7 @@ nextflow_process {
 
     name "Test Process map2Ref"
     script "main.nf"
-    process "map2Ref"
+    process "MAP2REF"
 
     test("Should map reads to reference genome") {
 
@@ -14,6 +14,7 @@ nextflow_process {
             process {
                 """
                 input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/trimmed_1.fastq"), file("${projectDir}/tests/data/phix_test/trimmed_2.fastq"), file("${projectDir}/tests/data/phix_test/ref.fas")]
+                input[1] = params.ref
                 """
             }
         }
