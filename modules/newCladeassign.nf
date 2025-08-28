@@ -3,7 +3,7 @@ process NEWCLADEASSIGN {
 	maxForks 1
 	
 	input:
-		tuple val(pair_id), path(consensus), path (snps)
+		tuple val(pair_id), path(consensus), path(snps)
 		path params.csstable
 	
 	output:
