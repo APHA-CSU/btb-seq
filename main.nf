@@ -193,6 +193,9 @@ workflow btb_seq {
     sort: true, 
     keepHeader: true )
     .set {consensusQual}
+  READSTATS.out.stats_table
+    .collectFile( name: "${params.DataDir}_stats_${params.today}.csv", sort: true, keepHeader: true )
+		.set {stats}
   COMBINEOUTPUT (
     assigned, 
     qbovis, 
@@ -204,7 +207,7 @@ workflow btb_seq {
     qbovis,
     consensusQual
   )
-  
+
   emit: 
     COMBINEOUTPUT = COMBINEOUTPUT.out
 }
