@@ -6,7 +6,7 @@ process IDNONBOVIS {
 	
 	input:
 		tuple val(pair_id), path(outcome), path(trim1), path(trim2)
-		path params.kraken2db
+		val params.kraken2db
 		val lowmem
         val rm_inter
 	

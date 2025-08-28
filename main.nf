@@ -168,9 +168,9 @@ workflow btb_seq {
     )
   IDNONBOVIS (
     READSTATS.out.outcome
-    .join(TRIM.out), 
+    .join(TRIM.out),
     params.kraken2db, 
-    params.lowmem, 
+    params.lowmem,
     params.rmInter
     )
   ASSIGNCLUSTER.out
