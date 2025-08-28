@@ -4,13 +4,13 @@ process NEWCLADEASSIGN {
 	
 	input:
 		tuple val(pair_id), path(consensus), path (snps)
-		path (css)
+		path params.csstable
 	
 	output:
 		path("${pair_id}_cladematch.csv")
 
 	script:
 	"""
-	assignClade.py ${consensus} ${css} ${pair_id}_cladematch.csv
+	assignClade.py ${consensus} ${params.csstable} ${pair_id}_cladematch.csv
 	"""
 }

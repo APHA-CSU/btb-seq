@@ -3,9 +3,9 @@ process COMBINEOUTPUT {
 	tag "Combining outputs"
 	
 	input:
-		path(assigned)
-		path(qbovis)
-		path(ncount)
+		path assigned
+		path qbovis
+		path ncount
 
 	output:
 		path('*.csv')
