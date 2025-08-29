@@ -20,7 +20,7 @@ params.rptmask = "$projectDir/references/DataDrivenMerge20.bed"
 params.allsites = "$projectDir/references/All-sites.bed"
 params.adapters = "$projectDir/references/adapter.fasta"
 params.discrimPos = "$projectDir/references/DiscrimPos.tsv"
-params.csstable = "$projectDir/references/CSSwithref.csv"
+params.csstable = "$projectDir/references/AllCSSwithref.csv"
 
 /* params for original assignCluster process */
 params.stage1pat = "$projectDir/references/Stage1_patterns/"
