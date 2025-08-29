@@ -98,6 +98,7 @@ include { NEWCLADEASSIGN } from './modules/newCladeassign'
 include { READSTATS } from './modules/readStats'
 include { IDNONBOVIS } from './modules/idNonBovis'
 include { COMBINEOUTPUT } from './modules/combineOutput'
+include { NEWOUTPUTCOMBINE } from './modules/newOutputCombine'
 
 /* define workflow */
 workflow btb_seq {
@@ -167,9 +168,9 @@ workflow btb_seq {
     )
   IDNONBOVIS (
     READSTATS.out.outcome
-    .join(TRIM.out), 
+    .join(TRIM.out),
     params.kraken2db, 
-    params.lowmem, 
+    params.lowmem,
     params.rmInter
     )
   ASSIGNCLUSTER.out
@@ -179,8 +180,7 @@ workflow btb_seq {
     .set {assigned}
 	NEWCLADEASSIGN.out
     .collectFile ( name: "${params.DataDir}_AssignedClade_${params.today}.csv", 
-    keepHeader: true, 
-    storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
+    keepHeader: true )
     .set {newclade}
 	IDNONBOVIS.out
     .queryBovis.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", 
@@ -192,11 +192,20 @@ workflow btb_seq {
     sort: true, 
     keepHeader: true )
     .set {consensusQual}
+  READSTATS.out.stats_table
+    .collectFile( name: "${params.DataDir}_stats_${params.today}.csv", sort: true, keepHeader: true )
+		.set {stats}
   COMBINEOUTPUT (
     assigned, 
     qbovis, 
     consensusQual
     )
+  NEWOUTPUTCOMBINE(
+    newclade,
+    stats,
+    qbovis,
+    consensusQual
+  )
 
   emit: 
     COMBINEOUTPUT = COMBINEOUTPUT.out

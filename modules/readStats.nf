@@ -5,10 +5,11 @@ process READSTATS {
 
     input:
         tuple val(pair_id), path(raw1), path(raw2), path(uniq1), path(uniq2), path(trim1), path(trim2), path(bam)
-        val (rm_inter)
+        val rm_inter
 
     output:
         tuple val(pair_id), path("${pair_id}_stats.csv"), emit: stats
+        path("${pair_id}_stats.csv"), emit: stats_table
         tuple val(pair_id), path("${pair_id}_outcome.txt"), emit: outcome
 
     script:

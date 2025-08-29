@@ -5,7 +5,7 @@ process TRIM {
 	
 	input:
 		tuple val(pair_id), path(uniq1), path(uniq2)
-        val adapters
+        path params.adapters
 	
 	output:
 	    tuple val(pair_id), path("${pair_id}_trim_R1.fastq"), path("${pair_id}_trim_R2.fastq")
@@ -21,7 +21,7 @@ process TRIM {
     fail1.fastq \
     ${pair_id}_trim_R2.fastq \
     fail2.fastq \
-    ILLUMINACLIP:${adapters}:2:30:10 \
+    ILLUMINACLIP:${params.adapters}:2:30:10 \
     SLIDINGWINDOW:10:20 \
     MINLEN:36
 
