@@ -180,8 +180,7 @@ workflow btb_seq {
     .set {assigned}
 	NEWCLADEASSIGN.out
     .collectFile ( name: "${params.DataDir}_AssignedClade_${params.today}.csv", 
-    keepHeader: true, 
-    storeDir: "${params.outdir}/Results_${params.DataDir}_${params.today}" )
+    keepHeader: true )
     .set {newclade}
 	IDNONBOVIS.out
     .queryBovis.collectFile( name: "${params.DataDir}_BovPos_${params.today}.csv", 
