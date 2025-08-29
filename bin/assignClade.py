@@ -63,10 +63,10 @@ def assign(samplefas, CSStable, outfile):
     sortedScore_df = data.sort_values('Score', ascending=False).head(10)
     
     
-    sortedScore_df.loc[(sortedScore_df['Score'] > 3150), 'flag'] = 'Match'
-    sortedScore_df.loc[(sortedScore_df['Score'] > 2800) & (sortedScore_df['Score'] <= 3150),
+    sortedScore_df.loc[(sortedScore_df['Score'] > 5000), 'flag'] = 'Match'
+    sortedScore_df.loc[(sortedScore_df['Score'] > 4000) & (sortedScore_df['Score'] <= 5000),
                        'flag'] = 'Tentative'
-    sortedScore_df.loc[(sortedScore_df['Score'] <= 2800), 'flag'] = 'Outlier'
+    sortedScore_df.loc[(sortedScore_df['Score'] <= 4000), 'flag'] = 'Outlier'
     
     #sortedScore_df.loc[(sortedScore_df['flag'] == 'Outlier'), 'group'] = 'NoMatch'
     print(sortedScore_df)
