@@ -2,6 +2,7 @@
 
 <img src="https://user-images.githubusercontent.com/6979169/130202823-9a2484d0-c13f-4d86-9685-4bfe04bbf8c2.png" width="90">
 
+[![CI tests using nf-test](https://github.com/APHA-CSU/btb-seq/workflows/CI%20tests%20using%20nf-test/badge.svg)](https://github.com/APHA-CSU/btb-seq/actions)
 
 `btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
 
@@ -32,8 +33,6 @@ The pipeline processes data in several stages, as shown below. During the pre-pr
 - **Contaminated**: The sample contains contaminants
 - **Insufficient Data**: The sample contains insufficient data to allow accurate identification of *M. bovis* 
 - **Check Required**: Further scrutiny of the output is needed as quality thresholds fall below certain criteria but is likely to contain *M. bovis*.  
-
-![btb-seq](https://user-images.githubusercontent.com/9665142/173056645-d13ccafa-4738-4281-9a4f-13ff477e765f.png)
 
 ```mermaid
 flowchart TD
