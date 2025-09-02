@@ -6,7 +6,6 @@ process MAP2REF {
 	
 	input:
 		tuple val(pair_id), path(trim1), path(trim2)
-        path params.ref
 	
 	output:
     	tuple val (pair_id), path("${pair_id}.mapped.sorted.bam")

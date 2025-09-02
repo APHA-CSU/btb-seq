@@ -5,8 +5,8 @@ process MASK {
 	
 	input:
         tuple val(pair_id), path(vcf), path(csi), path(bam)
-        path params.rptmask
-        path params.allsites
+        path rptmask
+        path allsites
         val min_read_depth
         val min_freq_alt 
         val min_freq_ref
@@ -26,12 +26,12 @@ process MASK {
 	bedtools genomecov -bga -ibam ${bam} | (grep -w "0\$" || true) | cut -f -3 > ${pair_id}.zerocov.bed
 
 	# Merge with exisiting known repeat regions
-	cat ${pair_id}.quality-mask.bed ${pair_id}.zerocov.bed ${params.rptmask} | 
+	cat ${pair_id}.quality-mask.bed ${pair_id}.zerocov.bed ${rptmask} | 
 	sort -k1,1 -k2,2n |
 	bedtools merge > ${pair_id}.mask.bed
 
 	# Make bedfile of sites to keep
-	bedtools subtract -a ${params.allsites} -b ${pair_id}.mask.bed > ${pair_id}.nonmasked-regions.bed
+	bedtools subtract -a ${allsites} -b ${pair_id}.mask.bed > ${pair_id}.nonmasked-regions.bed
 
 	# Cleanup
 	rm ${pair_id}.quality-mask.vcf ${pair_id}.quality-mask.bed ${pair_id}.zerocov.bed
