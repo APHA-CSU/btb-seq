@@ -75,17 +75,20 @@ flowchart TD
         K[IDNONBOVIS<br/>Kraken2 species ID]
     end
     
-    %% Output collection
-    subgraph output ["Output Collection"]
+    %% Individual outputs
+    subgraph individual ["Individual Outputs"]
+        direction TB
+        OUT1[WGS Cluster CSV]
+        OUT2[Clade Assignment CSV]
+        OUT3[Bovis Positive CSV]
+        OUT4[N-count Quality CSV]
+    end
+    
+    %% Final output collection
+    subgraph output ["Final Output Collection"]
         direction TB
         L[COMBINEOUTPUT<br/>Merge all results]
-        subgraph results ["Final Results"]
-            OUT1[WGS Cluster CSV]
-            OUT2[Clade Assignment CSV]
-            OUT3[Bovis Positive CSV]
-            OUT4[N-count Quality CSV]
-            OUT5[Combined Results]
-        end
+        OUT5[Combined Results]
     end
     
     %% Data flow
@@ -109,12 +112,13 @@ flowchart TD
     H --> K
     C --> K
     
-    %% Output generation
+    %% Individual output generation
     I --> OUT1
     J --> OUT2
     K --> OUT3
     G --> OUT4
     
+    %% Final collection
     OUT1 --> L
     OUT3 --> L
     OUT4 --> L
