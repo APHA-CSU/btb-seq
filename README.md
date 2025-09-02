@@ -1,8 +1,6 @@
 # **btb-seq**
 
-<img src="https://user-images.githubusercontent.com/6979169/130202823-9a2484d0-c13f-4d86-9685-4bfe04bbf8c2.png" width="90">
-
-[![CI tests using nf-test](https://github.com/APHA-CSU/btb-seq/workflows/btb-seq%20CI/badge.svg)](https://github.com/APHA-CSU/btb-seq/actions)
+<img src="https://user-images.githubusercontent.com/6979169/130202823-9a2484d0-c13f-4d86-9685-4bfe04bbf8c2.png" width="90"> [![CI tests using nf-test](https://github.com/APHA-CSU/btb-seq/workflows/btb-seq%20CI/badge.svg)](https://github.com/APHA-CSU/btb-seq/actions)
 
 `btb-seq` is the pipeline for APHA's processing of raw *Mycobacterium bovis* Whole Genome Sequencing (WGS) data. The pipeline uses [nextflow](https://www.nextflow.io/docs/latest/getstarted.html) to process batches (1 or more samples) of paired-end `fastq.gz` read files generated on an Illumina sequencer. 
 
@@ -36,23 +34,103 @@ The pipeline processes data in several stages, as shown below. During the pre-pr
 
 ```mermaid
 flowchart TD
-    A[Start: Locate Reads] --> B[DEDUPLICATE]
-    B --> C[TRIM]
-    C --> D[MAP2REF]
-    D --> E[VARCALL]
-    E --> F[MASK]
-    F --> G[VCF2CON]
-    A --> H[READSTATS]
+    %% Input files
+    subgraph inputs ["Input Data"]
+        direction TB
+        A[FASTQ Reads<br/>*_R1/*_R2]
+        subgraph ref ["Reference Files"]
+            REF[Reference Genome]
+            REFGBK[GenBank File]
+            RPTMASK[Repeat Mask]
+            ALLSITES[All Sites BED]
+            ADAPTERS[Adapter Sequences]
+            DISCRIM[Discrimination Positions]
+            CSS[CSS Table]
+            STAGE1[Stage1 Patterns]
+        end
+    end
+    
+    %% Quality control and preprocessing
+    subgraph qc ["Quality Control & Preprocessing"]
+        direction TB
+        B[DEDUPLICATE<br/>Remove duplicates]
+        C[TRIM<br/>Adapter trimming]
+        H[READSTATS<br/>Calculate statistics]
+    end
+    
+    %% Alignment and variant calling
+    subgraph align ["Alignment & Variant Calling"]
+        direction TB
+        D[MAP2REF<br/>BWA alignment]
+        E[VARCALL<br/>GATK variant calling]
+        F[MASK<br/>Apply quality filters]
+    end
+    
+    %% Consensus and classification
+    subgraph classify ["Consensus & Classification"]
+        direction TB
+        G[VCF2CONSENSUS<br/>Generate consensus]
+        I[ASSIGNCLUSTER<br/>WGS cluster assignment]
+        J[NEWCLADEASSIGN<br/>Clade assignment]
+        K[IDNONBOVIS<br/>Kraken2 species ID]
+    end
+    
+    %% Output collection
+    subgraph output ["Output Collection"]
+        direction TB
+        L[COMBINEOUTPUT<br/>Merge all results]
+        subgraph results ["Final Results"]
+            OUT1[WGS Cluster CSV]
+            OUT2[Clade Assignment CSV]
+            OUT3[Bovis Positive CSV]
+            OUT4[N-count Quality CSV]
+            OUT5[Combined Results]
+        end
+    end
+    
+    %% Data flow
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    
+    %% Stats collection
+    A --> H
     B --> H
     C --> H
     D --> H
-    E --> I[ASSIGNCLUSTER]
+    
+    %% Classification branches
+    E --> I
     H --> I
-    G --> J[NEWCLADEASSIGN]
-    H --> K[IDNONBOVIS]
-    I --> L[COMBINEOUTPUT]
-    K --> L
-    G --> L
+    G --> J
+    H --> K
+    C --> K
+    
+    %% Output generation
+    I --> OUT1
+    J --> OUT2
+    K --> OUT3
+    G --> OUT4
+    
+    OUT1 --> L
+    OUT3 --> L
+    OUT4 --> L
+    L --> OUT5
+    
+    %% Reference inputs (dotted lines for clarity)
+    REF -.-> D
+    REF -.-> E
+    REF -.-> G
+    REF -.-> I
+    ADAPTERS -.-> C
+    RPTMASK -.-> F
+    ALLSITES -.-> F
+    DISCRIM -.-> I
+    CSS -.-> J
+    STAGE1 -.-> I
 ```
 
 ## Validation
