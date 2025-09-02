@@ -12,6 +12,7 @@ nextflow_process {
                 min_freq_alt = 0.8
                 outdir = "${env('PWD')}"
                 today = ""
+                dataDir = "test"
             }
             process {
                 """
@@ -24,6 +25,7 @@ nextflow_process {
                 input[2] = params.min_freq_alt
                 input[3] = params.outdir
                 input[4] = params.today
+                input[5] = params.dataDir
                 """
             }
         }

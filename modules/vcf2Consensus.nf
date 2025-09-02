@@ -11,7 +11,7 @@ process VCF2CONSENSUS {
 		val min_freq_alt
         val outdir
         val today
-        path DataDir
+        val DataDir
 	
 	output:
 		tuple val (pair_id), path("${pair_id}_consensus.fas"), path("${pair_id}_snps.tab"), emit: consensus
@@ -31,7 +31,7 @@ process VCF2CONSENSUS {
 
     echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv
     N_count=\$(grep -o "N" ${pair_id}_consensus.fas  | wc -l)
-    echo -e "${pair_id},\${N_count},$outdir/Results_${DataDir}_${today}/" >> ${pair_id}_ncount.csv
+    echo -e "${pair_id},\${N_count},${outdir}/Results_${DataDir}_${today}/" >> ${pair_id}_ncount.csv
 
     echo -e 'CHROM\tPOS\tTYPE\tREF\tALT\tEVIDENCE' > ${pair_id}_snps.tab
     bcftools query -R ${nonmasked_bed} -e 'TYPE="REF"' -f '%CHROM,%POS,%TYPE,%REF,%ALT,%DP4\n' ${pair_id}_filtered.bcf |  

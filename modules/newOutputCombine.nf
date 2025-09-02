@@ -7,7 +7,7 @@ process NEWOUTPUTCOMBINE {
         path stats
 		path qbovis
 		path ncount
-		path DataDir
+		val DataDir
 		val user
 
 	output:
