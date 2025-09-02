@@ -6,11 +6,11 @@ process VCF2CONSENSUS {
 	maxForks 2
 	
 	input:
-		path (ref)
+		path params.ref
 		tuple val(pair_id), path (mask_bed), path (nonmasked_bed), path (vcf), path (csi)
-		val (min_freq_alt)
-        val (outdir)
-        val (today)
+		val min_freq_alt
+        val outdir
+        val today
 	
 	output:
 		tuple val (pair_id), path("${pair_id}_consensus.fas"), path("${pair_id}_snps.tab"), emit: consensus
@@ -25,7 +25,7 @@ process VCF2CONSENSUS {
     bcftools filter -i "ALT!='.' && INFO/AD[1]/(INFO/AD[0]+INFO/AD[1]) >= ${min_freq_alt}" ${vcf} -Ob -o ${pair_id}_filtered.bcf
     bcftools index ${pair_id}_filtered.bcf
 
-    bcftools consensus -f ${ref} -e 'TYPE="indel"' -m ${mask_bed} ${pair_id}_filtered.bcf |
+    bcftools consensus -f ${params.ref} -e 'TYPE="indel"' -m ${mask_bed} ${pair_id}_filtered.bcf |
     sed "/^>/ s/.*/>${pair_id}/" > ${pair_id}_consensus.fas 
 
     echo -e "Sample,Ncount,ResultLoc" > ${pair_id}_ncount.csv

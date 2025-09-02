@@ -1,9 +1,10 @@
-process COMBINEOUTPUT {
+process NEWOUTPUTCOMBINE {
 	publishDir "$params.outdir/Results_${params.DataDir}_${params.today}", mode: 'copy', pattern: '*.csv'
 	tag "Combining outputs"
 	
 	input:
 		path assigned
+        path stats
 		path qbovis
 		path ncount
 
@@ -12,6 +13,6 @@ process COMBINEOUTPUT {
 	
 	script:
 	"""
-	combineCsv.py ${assigned} ${qbovis} ${ncount} ${params.DataDir} ${workflow.commitId} ${params.user}
+	newcombineCsv.py ${assigned} ${stats} ${qbovis} ${ncount} ${params.DataDir} ${workflow.commitId} ${params.user}
 	"""
 }
