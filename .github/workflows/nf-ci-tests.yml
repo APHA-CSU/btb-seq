@@ -1,4 +1,4 @@
-name: CI tests using nf-test
+name: btb-seq CI
 
 on: [push, pull_request]
 

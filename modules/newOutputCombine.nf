@@ -7,12 +7,14 @@ process NEWOUTPUTCOMBINE {
         path stats
 		path qbovis
 		path ncount
+		val DataDir
+		val user
 
 	output:
 		path('*.csv')
 	
 	script:
 	"""
-	newcombineCsv.py ${assigned} ${stats} ${qbovis} ${ncount} ${params.DataDir} ${workflow.commitId} ${params.user}
+	newcombineCsv.py ${assigned} ${stats} ${qbovis} ${ncount} ${DataDir} ${workflow.commitId} ${user}
 	"""
 }

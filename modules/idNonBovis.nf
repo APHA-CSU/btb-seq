@@ -6,7 +6,7 @@ process IDNONBOVIS {
 	
 	input:
 		tuple val(pair_id), path(outcome), path(trim1), path(trim2)
-		val params.kraken2db
+		val kraken2db
 		val lowmem
         val rm_inter
 	
@@ -23,7 +23,7 @@ process IDNONBOVIS {
     outcome=\$(cat ${outcome})
     if [[ "\$outcome" != "Pass" ]]; then
         # Run Kraken2
-        kraken2 --threads 2 --quick ${lowmem} --db ${params.kraken2db} --output - --report interim_kraken2.tab --paired ${trim1} ${trim2}
+        kraken2 --threads 2 --quick ${lowmem} --db ${kraken2db} --output - --report interim_kraken2.tab --paired ${trim1} ${trim2}
 
         # Process Kraken2 output
         sed 's/\\t\\t1\\troot/\\tR\\t1\\troot/g' interim_kraken2.tab |
@@ -34,11 +34,11 @@ process IDNONBOVIS {
         set +e
 
         # Run Bracken for level S
-        bracken -d ${params.kraken2db} -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
+        bracken -d ${kraken2db} -r 150 -l S -t 10 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"_bracken.out
         sed 1d ${pair_id}_"\$outcome"_bracken.out | sort -t \$'\\t' -k7,7 -nr - | head -20 > ${pair_id}_"\$outcome"_brackensort.tab
 
         # Run Bracken for level S1
-        bracken -d ${params.kraken2db} -r 150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
+        bracken -d ${kraken2db} -r 150 -l S1 -i ${pair_id}_"\$outcome"_kraken2.tab -o ${pair_id}_"\$outcome"-S1_bracken.out
         ( sed -u 1q; sort -t \$'\\t' -k7,7 -nr ) < ${pair_id}_"\$outcome"-S1_bracken.out > ${pair_id}_"\$outcome"-S1_brackensort.tab
 
         set -e

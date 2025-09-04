@@ -115,8 +115,7 @@ workflow btb_seq {
     params.adapters
     )
 	MAP2REF (
-    TRIM.out, 
-    params.ref
+    TRIM.out
     )
   VARCALL (
     MAP2REF.out, 
@@ -140,7 +139,8 @@ workflow btb_seq {
     .join(VARCALL.out), 
     params.MIN_ALLELE_FREQUENCY_ALT, 
     params.outdir, 
-    params.today
+    params.today,
+    params.DataDir
     )
 	READSTATS (
     ch_reads
@@ -198,13 +198,17 @@ workflow btb_seq {
   COMBINEOUTPUT (
     assigned, 
     qbovis, 
-    consensusQual
+    consensusQual,
+    params.DataDir,
+    params.user
     )
   NEWOUTPUTCOMBINE(
     newclade,
     stats,
     qbovis,
-    consensusQual
+    consensusQual,
+    params.DataDir,
+    params.user
   )
 
   emit: 
