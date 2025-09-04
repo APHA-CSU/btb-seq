@@ -8,13 +8,13 @@ nextflow_process {
 
         when {
             params {
-                css = "${projectDir}/references/CSSwithref.csv"
+                csstable = "${projectDir}/references/CSSwithref.csv"
             }
             process {
                 """
                 input[0] = ["phix-m", file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800_consensus.fas"),
                             file("${projectDir}/tests/data/phix_test/combine_tests/phix-m_S800_snps.tab")]
-		        input[1] = params.css
+		        input[1] = params.csstable
                 """
             }
         }
