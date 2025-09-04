@@ -45,7 +45,7 @@ def combine(assigned_csv, stats_csv, bovis_csv, ncount_csv, seq_run, commitId, u
     finalout_df = pd.merge(pd.merge(pd.merge(stats_df, assignedround_df, on='Sample', how='left'), ncount_df, on = 'Sample', how = 'left'), qbovis_df, on = 'Sample', how = 'outer')
     finalout_df.loc[(finalout_df['group'] == 'nonbTB' ) | (finalout_df['group'] == 'MicPin' ) | (finalout_df['group'] == 'Pinnipedii' ), 'ID' ] = 'Other Mycobacteria'
     finalout_df.loc[(finalout_df['group'] == 'Microti' ), 'ID' ] = 'Mycobacterium microti'
-    finalout_df.loc[(finalout_df['group'] == 'C.*' ), 'ID' ] = 'Mycobacterium caprae'
+    finalout_df.loc[(finalout_df['group'].str.contains('C')), 'ID' ] = 'Mycobacterium caprae'
     finalout_df['ID'].fillna('Mycobacterium bovis', inplace = True)
     finalout_df.fillna('NA', inplace = True)
     finalout_df.set_index('Sample', inplace = True)
