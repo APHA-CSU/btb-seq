@@ -64,11 +64,23 @@ def assign(samplefas, CSStable, outfile):
     
     
     sortedScore_df.loc[(sortedScore_df['Score'] > 5000), 'flag'] = 'Match'
-    sortedScore_df.loc[(sortedScore_df['Score'] > 4000) & (sortedScore_df['Score'] <= 5000),
-                       'flag'] = 'Tentative'
-    sortedScore_df.loc[(sortedScore_df['Score'] <= 4000), 'flag'] = 'Outlier'
+    sortedScore_df.loc[(sortedScore_df['Score'] > 4000) & (sortedScore_df['Score'] <= 5000)
+                       & (sortedScore_df['group'].str.contains('B')), 'flag'] = 'Tentative'
     
-    #sortedScore_df.loc[(sortedScore_df['flag'] == 'Outlier'), 'group'] = 'NoMatch'
+    # Due to inherently lower score for M microti and M caprae anything above 4000 should be 
+    # 'Match' for these clades 
+    sortedScore_df.loc[(sortedScore_df['Score'] > 4000) & (sortedScore_df['Score'] <= 5000)
+                       & (sortedScore_df['group'].str.contains('C')), 'flag'] = 'Match'
+    sortedScore_df.loc[(sortedScore_df['Score'] > 4000) & (sortedScore_df['Score'] <= 5000)
+                       & (sortedScore_df['group'].str.contains('Microti')), 'flag'] = 'Match'
+    
+    sortedScore_df.loc[(sortedScore_df['Score'] <= 4000), 'flag'] = 'Outlier'
+
+    # Change group displayed based on flags - low scores should not be associated with
+    # specific groups
+    sortedScore_df.loc[(sortedScore_df['flag'] == 'Outlier'), 'group'] = 'NA'
+    sortedScore_df.loc[(sortedScore_df['flag'] == 'Tentative'), 'group'] = 'bTB'
+
     print(sortedScore_df)
 
     
