@@ -32,20 +32,23 @@ def combine(assigned_csv, stats_csv, bovis_csv, ncount_csv, seq_run, commitId, u
     # Fill empty value cells with zero 
     bovis_df = pd.read_csv(bovis_csv)
     bovis_df['Sample']=bovis_df['Sample'].astype(object)
+    bovis_df['ID']=bovis_df['ID'].astype(object)
+    
     qbovis_df = bovis_df.round(2)
+
     qbovis_df.loc[(qbovis_df['TotalReads'] >= read_threshold) & (qbovis_df['Abundance'] >= abundance_threshold), 'ID'] = 'Mycobacterium bovis'
     qbovis_df.loc[(qbovis_df['TotalReads'] < read_threshold) & (qbovis_df['Abundance'] < abundance_threshold), 'ID'] = 'Negative'
     qbovis_df.loc[(qbovis_df['TotalReads'] < read_threshold) & (qbovis_df['Abundance'] > abundance_threshold), 'ID'] = 'Inconclusive'
     qbovis_df.loc[(qbovis_df['TotalReads'] > read_threshold) & (qbovis_df['Abundance'] < abundance_threshold), 'ID'] = 'Inconclusive'
-    qbovis_df['TotalReads'].fillna('0', inplace = True)
-    qbovis_df['Abundance'].fillna('0', inplace = True)
+    qbovis_df['TotalReads'].astype(object).fillna('0', inplace = True)
+    qbovis_df['Abundance'].astype(object).fillna('0', inplace = True)
     qbovis_df['ID'].fillna('Negative', inplace = True)
 
     #Merge dataframes fill with appropriate Mycobacterium ID (Other, microti, bovis, caprae), then any remaining blank cells with 'NA'
     finalout_df = pd.merge(pd.merge(pd.merge(stats_df, assignedround_df, on='Sample', how='left'), ncount_df, on = 'Sample', how = 'left'), qbovis_df, on = 'Sample', how = 'outer')
     finalout_df.loc[(finalout_df['group'] == 'nonbTB' ) | (finalout_df['group'] == 'MicPin' ) | (finalout_df['group'] == 'Pinnipedii' ), 'ID' ] = 'Other Mycobacteria'
     finalout_df.loc[(finalout_df['group'] == 'Microti' ), 'ID' ] = 'Mycobacterium microti'
-    finalout_df.loc[(finalout_df['group'].str.contains('C')), 'ID' ] = 'Mycobacterium caprae'
+    finalout_df.loc[(finalout_df['group'].astype(str).str.contains('C')), 'ID' ] = 'Mycobacterium caprae'
     finalout_df['ID'].fillna('Mycobacterium bovis', inplace = True)
     finalout_df.fillna('NA', inplace = True)
     finalout_df.set_index('Sample', inplace = True)
