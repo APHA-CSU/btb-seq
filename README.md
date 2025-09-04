@@ -144,7 +144,7 @@ This pipeline has been accredited by the UK Accreditation Service (UKAS) to ISO1
 
 ## Automated Tests (Continuous integration)
 
-The automated tests provided here ensure the software runs as expected. When changes are made to the code, these tests verify the pipeline is behaving as intended. The tests are automatically run by `.circleci` on each commit to the github repository. 
+The automated tests provided here ensure the software runs as expected. When changes are made to the code, these tests verify the pipeline is behaving as intended. The tests are automatically run by `nf-test` on each commit to the github repository. 
 
 ### How to run tests
 
