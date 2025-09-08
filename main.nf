@@ -115,7 +115,8 @@ workflow btb_seq {
     params.adapters
     )
 	MAP2REF (
-    TRIM.out
+    TRIM.out,
+    params.ref
     )
   VARCALL (
     MAP2REF.out, 
