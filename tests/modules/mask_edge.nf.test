@@ -18,7 +18,7 @@ nextflow_process {
                 """
                 input[0] = ["edge-cases", file("${projectDir}/tests/data/edge-cases.vcf.gz"), 
                             file("${projectDir}/tests/data/edge-cases.vcf.gz.csi"), 
-                            file("${projectDir}/tests/data/edge-cases.sam")] 
+                            file("${projectDir}/tests/data/edge-cases.bam")] 
                 input[1] = params.rptmask
                 input[2] = params.allsites
                 input[3] = params.MIN_READ_DEPTH
