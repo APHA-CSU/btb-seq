@@ -4,11 +4,11 @@ nextflow_process {
     script "main.nf"
     process "VCF2CONSENSUS"
 
-    test("Should produce a masked consensus fasta file from input vcf and bed files") {
+    test("Should produce a masked consensus fasta file from edge-cases input vcf and bed files") {
 
         when {
             params {
-                ref = "${projectDir}/tests/data/phix_test/phix-m.fas"
+                ref = "${projectDir}/tests/data/edge-cases.fas"
                 min_freq_alt = 0.8
                 outdir = "${env('PWD')}"
                 today = ""
@@ -17,11 +17,11 @@ nextflow_process {
             process {
                 """
                 input[0] = params.ref
-                input[1] = ["phix-m",
-                            file("${projectDir}/tests/data/phix_test/mask.bed"),
-                            file("${projectDir}/tests/data/phix_test/nonmasked-regions.bed"),
-                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz"), 
-                            file("${projectDir}/tests/data/phix_test/phix-m.vcf.gz.csi")]
+                input[1] = ["edge-cases",
+                            file("${projectDir}/tests/data/edge-cases.mask.bed"),
+                            file("${projectDir}/tests/data/edge-cases.nonmasked-regions.bed"),
+                            file("${projectDir}/tests/data/edge-cases.vcf.gz"), 
+                            file("${projectDir}/tests/data/edge-cases.vcf.gz.csi")]
                 input[2] = params.min_freq_alt
                 input[3] = params.outdir
                 input[4] = params.today

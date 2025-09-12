@@ -1,0 +1,18 @@
+{
+    "Should produce a masked consensus fasta file from edge-cases input vcf and bed files": {
+        "content": [
+            [
+                [
+                    "edge-cases",
+                    "edge-cases_consensus.fas:md5,ecd4a72e678ab69391155a45807f928e",
+                    "edge-cases_snps.tab:md5,e4df5486cba52bbac689745781d6b2ea"
+                ]
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-09-12T07:59:57.921467934"
+    }
+}

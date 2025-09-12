@@ -1,5 +1,5 @@
 {
-    "Should produce a combined mask in bed format": {
+    "Should produce a combined mask in bed format for edge-cases": {
         "content": [
             {
                 "0": [
@@ -15,6 +15,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-09-12T07:53:47.530344117"
+        "timestamp": "2025-09-12T07:59:34.794506279"
     }
 }

@@ -4,7 +4,7 @@ nextflow_process {
     script "main.nf"
     process "MASK"
 
-    test("Should produce a combined mask in bed format") {
+    test("Should produce a combined mask in bed format for edge-cases") {
 
         when {
             params {
