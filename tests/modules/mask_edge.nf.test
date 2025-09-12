@@ -1,6 +1,6 @@
 nextflow_process {
 
-    name "Test Process mask"
+    name "Test Process mask - edge cases"
     script "main.nf"
     process "MASK"
 

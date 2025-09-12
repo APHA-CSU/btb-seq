@@ -1,6 +1,6 @@
 nextflow_process {
 
-    name "Test Process vcf2Consensus"
+    name "Test Process vcf2Consensus - edge cases"
     script "main.nf"
     process "VCF2CONSENSUS"
 
