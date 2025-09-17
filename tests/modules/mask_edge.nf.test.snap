@@ -1,0 +1,20 @@
+{
+    "Should produce a combined mask in bed format for edge-cases": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "edge-cases",
+                        "edge-cases.mask.bed:md5,5c0c4871b7491696a8b4bd101e2d0f3b",
+                        "edge-cases.nonmasked-regions.bed:md5,ccec7730ac592e94730fd75f809aba2f"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-09-12T07:59:34.794506279"
+    }
+}
